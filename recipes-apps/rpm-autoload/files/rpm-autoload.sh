@@ -1,9 +1,9 @@
 #!/bin/sh
 
 dev_eeprom=$(find /sys/bus/i2c/devices/*54/ -name eeprom | head -1)
-manufacturer=$(fru-print.py -b som -s $dev_eeprom -f manufacturer)
-board=$(fru-print.py -b som -s $dev_eeprom -f product | tr '[:upper:]' '[:lower:]')
-revision=$(fru-print.py -b som -s $dev_eeprom -f revision | tr '[:upper:]' '[:lower:]')
+manufacturer=$(fru-print -b som -s $dev_eeprom -f manufacturer)
+board=$(fru-print -b som -s $dev_eeprom -f product | tr '[:upper:]' '[:lower:]')
+revision=$(fru-print -b som -s $dev_eeprom -f revision | tr '[:upper:]' '[:lower:]')
 
 echo "BOARD:$board REVISION:$revision"
 
