@@ -17,6 +17,9 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         libgpiod \
         libgpiod-tools \
         system-controller-app \
+        python3-loguru \
+        python3-rich \
+        python3-chipscopy \
 "
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
 
