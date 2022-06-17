@@ -6,11 +6,11 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=e044f1626fcb471118a71a253d550cb1 \
 
 inherit  python3-dir
 
-SRC_URI = "https://artifactory.xilinx.com/artifactory/api/pypi/pypi/chipscopy/2022.1.1648747406/chipscopy-2022.1.1648747406-py3-none-any.whl#sha256=c895b7a261a413a68fbb522dd473539ea572b78b29b3c6c9a10ed5c7a1afb85a;downloadfilename=chipscopy-2022.1.1648747406-py3-none-any.zip;subdir=${BP}"
+SRC_URI = "https://files.pythonhosted.org/packages/85/99/3a5cf9f45ca1d4f4e9efad620240f50b53755d6cba5cd9bf754301fccf7a/chipscopy-2022.1.1654632407-py3-none-any.whl;downloadfilename=chipscopy-2022.1.1648747406-py3-none-any.zip;subdir=${BP}"
 
 
-SRC_URI[md5sum] = "72942a89ed426fbc05137fbdac3cb6ad"
-SRC_URI[sha256sum] = "c895b7a261a413a68fbb522dd473539ea572b78b29b3c6c9a10ed5c7a1afb85a"
+SRC_URI[md5sum] = "2aa741076d66dba27e4f23ba0923376b"
+SRC_URI[sha256sum] = "da205edb7c915d7d76fcb6347f96fd78876bcf5ddd0dae9c18ae71a38ad852b2"
 
 PN = "python3-chipscopy"
 
@@ -39,9 +39,9 @@ FILES:${PN} += "\
 "
 
 do_install() {
-    install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2022.1.1648747406.dist-info
+    install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2022.1.1654632407.dist-info
     install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy
 
     cp -r ${S}/chipscopy/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy/
-    cp -r ${S}/chipscopy-2022.1.1648747406.dist-info/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2022.1.1648747406.dist-info/
+    cp -r ${S}/chipscopy-2022.1.1654632407.dist-info/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2022.1.1654632407.dist-info/
 }
