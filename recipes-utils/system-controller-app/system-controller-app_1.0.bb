@@ -8,7 +8,7 @@ SRC_URI = "git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v20
            file://system_controller.service \
 "
 
-SRCREV="1bc436bb47953c9e2743fca4e343406381f1cf57"
+SRCREV="34b88d9c25cb27a3edafe675217c336162a5429e"
 
 inherit update-rc.d systemd
 
