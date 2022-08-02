@@ -13,7 +13,7 @@ SRC_URI = "git://github.com/Xilinx/system-controller-pmtool.git;protocol=https;b
 		               file://pmtool.conf \
                   "
 
-SRCREV = "d34724b1a333d5864c28202f7b4dd55498d0324c"
+SRCREV = "8aaad5c95c67974df8a1c590d1afb3f6ad39fa31"
 
 S = "${WORKDIR}/git"
 
