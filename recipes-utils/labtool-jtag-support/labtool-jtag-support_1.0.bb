@@ -1,7 +1,7 @@
 DESCRIPTION = "Labtool (hw_server, xsdb, xvc_server) support for vck190 system controller"
 SUMMARY = "Labtool (hw_server, xsdb, xvc_server) support for vck190 system controller"
 
-LICENSE = "Proprietary"
+LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM = "file://license/LICENSE_PBO;md5=fb790ca133353ea709bb11d2d33db8b3 \
                     file://license/LICENSE_TCL;md5=ddd26d895decd0fa868c3489ddad3251 \
                     file://license/LICENSE_3RD_PARTY_HW_SERVER;md5=4650e7d6ac72ca39a349ccad766aa676 \
