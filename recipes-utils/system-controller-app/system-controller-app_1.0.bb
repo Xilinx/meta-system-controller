@@ -4,8 +4,9 @@ SUMMARY = "System Controller App"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_URI = "git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v2022.2;protocol=https \
-           file://system_controller.service \
+SRC_URI = "\
+    git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v2022.2;protocol=https \
+    file://system_controller.service \
 "
 
 SRCREV="c40fee92c8ce7e3e938612247a460a986b3753ae"
@@ -22,10 +23,9 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S="${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc = "${MACHINE}"
+COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
 COMPATIBLE_MACHINE:a2197 = "${MACHINE}"
-COMPATIBLE_MACHINE:vpk-sc = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc = "${MACHINE}"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

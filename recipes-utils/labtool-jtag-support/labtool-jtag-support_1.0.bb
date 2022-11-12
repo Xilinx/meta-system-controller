@@ -32,18 +32,9 @@ S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
 
-SOLIBS = ".so*"
-FILES_SOLIBSDEV = ""
-FILES:${PN} += "${prefix}/local ${prefix}/local/bin ${prefix}/local/lib ${prefix}/local/lib/tcl8.5 \
-                ${prefix}/local/xilinx_vitis ${base_libdir}/ \
-		${base_libdir}/libtcl8.5.so ${base_libdir}/libtcltcf.so \
-		${@bb.utils.contains('DISTRO_FEATURES','sysvinit','${sysconfdir}/init.d/xsdb', '', d)}"
-
-
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc = "${MACHINE}"
-COMPATIBLE_MACHINE:vpk-sc = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc = "${MACHINE}"
+COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -58,10 +49,10 @@ do_install () {
     install -d ${D}${prefix}/local/lib/tcl8.5/
     install -d ${D}${prefix}/local/xilinx_vitis/
 
-    cp  ${S}${libdir}/* ${D}${libdir}/
+    cp ${S}${libdir}/* ${D}${libdir}/
     cp -r ${S}${prefix}/local/lib/tcl8.5 ${D}${prefix}/local/lib/
-    cp  ${S}${prefix}/local/bin/* ${D}${prefix}/local/bin/
-    cp -r  ${S}${prefix}/local/xilinx_vitis ${D}${prefix}/local/
+    cp ${S}${prefix}/local/bin/* ${D}${prefix}/local/bin/
+    cp -r ${S}${prefix}/local/xilinx_vitis ${D}${prefix}/local/
 
     if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then
     	install -d ${D}${sysconfdir}/init.d/
@@ -76,3 +67,15 @@ do_install () {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/xsdb.service ${D}${systemd_system_unitdir}
 }
+
+SOLIBS = ".so*"
+FILES_SOLIBSDEV = ""
+FILES:${PN} += " \
+    ${prefix}/local \
+    ${prefix}/local/bin \
+    ${prefix}/local/lib \
+    ${prefix}/local/lib/tcl8.5 \
+    ${prefix}/local/xilinx_vitis ${base_libdir}/ \
+    ${base_libdir}/libtcl8.5.so ${base_libdir}/libtcltcf.so \
+    ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','${sysconfdir}/init.d/xsdb', '', d)} \
+    "

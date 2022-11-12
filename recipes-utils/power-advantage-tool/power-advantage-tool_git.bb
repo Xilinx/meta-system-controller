@@ -14,18 +14,17 @@ SRC_URI = "git://github.com/Xilinx/jupyter-pat.git;protocol=https;branch=xlnx_re
 PV = "2.2.0+git${SRCPV}"
 SRCREV = "6a527f77fd865c2edd4463a9798486e7d34a43bf"
 
-
 S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc = "${MACHINE}"
-COMPATIBLE_MACHINE:vpk-sc = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc = "${MACHINE}"
+COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 
 RDEPENDS:${PN} = "packagegroup-petalinux-jupyter \
                   python3-ipywidgets \
                   python3-pydot \
                   "
+
 do_install() {
     install -d ${D}/${JUPYTER_DIR}/power-advantage-tool
     install -d ${D}/${JUPYTER_DIR}/power-advantage-tool/img
