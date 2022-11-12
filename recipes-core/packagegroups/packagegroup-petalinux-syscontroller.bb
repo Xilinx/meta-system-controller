@@ -1,5 +1,7 @@
 DESCRIPTION = "Required packages for system controller"
 
+PACKAGE_ARCH = "${TUNE_PKGARCH}"
+
 inherit packagegroup
 
 SYSTEM_CONTROLLER_PACKAGES = " \
@@ -19,8 +21,12 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         system-controller-app \
         python3-loguru \
         python3-rich \
-        python3-chipscopy \
 "
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
 
-SYSTEM_CONTROLLER_PACKAGES:append:vck-sc = " power-advantage-tool"
+# TODO:
+# 1. Disable power-advantage-tool due to python3-ipywidgets dependency
+# 2. Disable python3-chipscopy due to python3-plotly dependency
+# 3. python3-ipywidgets and python3-plotly are part of meta-jupyter layer. Once
+#    meta-jupyter port forward to langdale is complete this needs to be enabled.
+#SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " power-advantage-tool"
