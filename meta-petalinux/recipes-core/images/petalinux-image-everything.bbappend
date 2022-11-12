@@ -1,5 +1,9 @@
 require petalinux-image-common-sc.inc
 
-IMAGE_INSTALL:append:vck-sc = " power-advantage-tool packagegroup-petalinux-syscontroller packagegroup-petalinux-scweb"
-IMAGE_INSTALL:append:vpk-sc = " power-advantage-tool packagegroup-petalinux-syscontroller packagegroup-petalinux-scweb"
+# TODO - Disable power-advantage-tool due to python3-ipywidgets dependency which
+# is part of meta-jupyter layer.
 
+IMAGE_INSTALL:append = " \
+    packagegroup-petalinux-syscontroller \
+    packagegroup-petalinux-scweb \
+    "
