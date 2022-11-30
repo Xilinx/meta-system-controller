@@ -8,10 +8,10 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://src/LICENSE.md;md5=691ccffd5cbf3847f255a28754844a10"
 
 
-SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2022.2;protocol=https \
+SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2023.1;protocol=https \
 	   file://scwebrun.service \
                   "
-SRCREV = "06e7c61fbf1af91e8abdfd5012983d4b8dd7dc30"
+SRCREV = "0c682d4c5bb1bbe45b3328efa8e0d37edee920c8"
 
 inherit update-rc.d systemd
 
@@ -42,7 +42,7 @@ RDEPENDS:${PN} += "bash \
         python3-psutil \
         system-controller-app \        
         lmsensors-sensors \
-        fru-print \
+        freeipmi \
         "
 
 do_install() {
