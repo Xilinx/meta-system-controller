@@ -1,9 +1,8 @@
 #!/bin/sh
 
 dev_eeprom=$(find /sys/bus/i2c/devices/*54/ -name eeprom | head -1)
-manufacturer=$(fru-print -b som -s $dev_eeprom -f manufacturer)
-board=$(fru-print -b som -s $dev_eeprom -f product | tr '[:upper:]' '[:lower:]')
-revision=$(fru-print -b som -s $dev_eeprom -f revision | tr '[:upper:]' '[:lower:]')
+board=$(ipmi-fru --fru-file=${dev_eeprom} --interpret-oem-data | awk -F": " '/^  *FRU Board Product*/ { print tolower ($2) }')
+revision=$(ipmi-fru --fru-file=${dev_eeprom} --interpret-oem-data | awk -F": " '/^  *FRU Board Custom*/ { print tolower ($2); exit }')
 revision_ps=$(echo $revision | cut -b 1 | tr '[:lower:]' '[:upper:]')
 
 echo "BOARD:$board REVISION:$revision"

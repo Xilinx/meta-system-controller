@@ -15,7 +15,12 @@ SRC_URI = "file://rpm-autoload.sh \
 
 inherit update-rc.d systemd
 
-RDEPENDS:${PN} += "fpga-manager-script rpm fru-print python3"
+RDEPENDS:${PN} += " \
+	fpga-manager-script \
+	rpm \
+	freeipmi \
+	python3 \
+	"
 
 INSANE_SKIP:${PN} += "installed-vs-shipped"
 
