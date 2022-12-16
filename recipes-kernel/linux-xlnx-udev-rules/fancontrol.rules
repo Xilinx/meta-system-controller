@@ -1,0 +1,2 @@
+# Start fancontrol on System Controller when xsysmoni2c device is probed.
+ACTION=="add", SUBSYSTEM=="hwmon", ATTR{name}=="xsysmoni2c", RUN+="/usr/sbin/fancontrol"
