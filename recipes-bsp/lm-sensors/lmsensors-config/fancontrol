@@ -2,7 +2,7 @@
 # Place your device specific configuration in this file.
 
 INTERVAL=5
-FCTEMPS=/sys/class/hwmon/hwmon0/pwm1=/sys/class/hwmon/hwmon4/temp1_input
+FCTEMPS=/sys/class/hwmon/hwmon0/pwm1=/sys/class/hwmon/hwmon1/temp1_input
 FCFANS=/sys/class/hwmon/hwmon0/pwm1=/sys/class/hwmon/hwmon0/pwm1
 MINTEMP=/sys/class/hwmon/hwmon0/pwm1=35
 MAXTEMP=/sys/class/hwmon/hwmon0/pwm1=45
