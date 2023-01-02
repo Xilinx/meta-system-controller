@@ -12,8 +12,8 @@ dtbo_file="${board}-${revision}*.dtbo"
 psdtbo_file="zynqmp-sc-$board-rev$revision_ps.dtbo"
 bit_file="${board}-${revision}*.bit.bin"
 
-if [ -d "/run/media/mmcblk0p2/" ]; then
-        partition_path="/run/media/mmcblk0p2/"
+if [ -d "/rpm-files" ]; then
+        partition_path="/rpm-files"
 elif [ -d "/mnt/sd-mmcblk0p2/" ]; then
         partition_path="/mnt/sd-mmcblk0p2/"
 fi
