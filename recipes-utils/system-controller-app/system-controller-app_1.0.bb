@@ -9,7 +9,7 @@ SRC_URI = "\
     file://system_controller.service \
 "
 
-SRCREV="95446e4302217f441a22fa2f70a62c7add607e5f"
+SRCREV="f6f5948e3b1c08df5536a1307eb0f45576833bf0"
 
 inherit update-rc.d systemd
 
