@@ -7,6 +7,6 @@ BRANCH = "xlnx_rel_v2022.2"
 SRC_URI = "git://github.com/Xilinx/versal-sc-firmware.git;protocol=https;branch=${BRANCH}"
 SRCREV ?= "4b753be936372b8dee8ce3d77c4bde94a4a824b3"
 
-inherit fpgamanager_custom
+inherit dfx_user_dts
 COMPATIBLE_MACHINE = "^$"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
