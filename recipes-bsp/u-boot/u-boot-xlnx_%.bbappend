@@ -2,6 +2,7 @@ SRC_URI:append:eval-brd-sc-zynqmp = " file://sc_u-boot.cfg"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
+PACKAGE_UBOOT_DTB_NAME:eval-brd-sc-zynqmp = "uboot-device-tree.dtb"
 SYSTEM_DTB_BLOB:eval-brd-sc-zynqmp = "1"
 # u-boot blob generation configuration for system controller
 UBOOT_IMAGE_BLOB_DEFAULT:eval-brd-sc-zynqmp = "1"
