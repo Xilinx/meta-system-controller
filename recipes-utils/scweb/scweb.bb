@@ -8,7 +8,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://src/LICENSE.md;md5=691ccffd5cbf3847f255a28754844a10"
 
 
-SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2023.1;protocol=https \
+SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2023.2;protocol=https \
 	   file://scwebrun.service \
                   "
 SRCREV = "13be9f285f753f07fbca67f07255422183bb468b"
