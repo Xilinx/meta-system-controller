@@ -4,5 +4,5 @@ include sc-apps-firmware.inc
 
 FW_DIR = "vpk180"
 
-COMPATIBLE_MACHINE:eval_brd_sc = "${MACHINE}"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 

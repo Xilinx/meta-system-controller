@@ -1,4 +1,4 @@
-LICENSE = "Proprietary & GPL-2.0"
+LICENSE = "Proprietary & GPL-2.0-only"
 LIC_FILES_CHKSUM = " \
 	file://${WORKDIR}/git/LICENSE-BINARIES;md5=fa9b03ada9ffccf51dd60899bf28c702 \
 	file://${WORKDIR}/git/LICENSE-GPLv2;md5=9afdcd1be3f71bd3791fa5961075d776 \
