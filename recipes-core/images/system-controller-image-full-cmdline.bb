@@ -4,6 +4,7 @@ inherit core-image
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 
 IMAGE_FEATURES += "splash ssh-server-openssh hwcodecs package-management"
 
