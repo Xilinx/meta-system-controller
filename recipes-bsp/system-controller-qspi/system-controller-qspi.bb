@@ -8,13 +8,11 @@ DEPENDS = "virtual/imgsel virtual/imgrcry virtual/boot-bin virtual/fsbl"
 inherit deploy image-artifact-names amd_spi_image
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
 COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 
 QSPI_IMAGE_NAME = "XilinxSC_QspiImage"
 
 QSPI_IMAGE_VERSION ?= ""
-QSPI_IMAGE_VERSION:vck-sc-zynqmp = "2.0"
 QSPI_IMAGE_VERSION:eval-brd-sc-zynqmp = "2.0"
 
 CHECKSUM_OFFSET = "0x22400E0"
