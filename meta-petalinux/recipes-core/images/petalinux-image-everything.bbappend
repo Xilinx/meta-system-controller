@@ -1,11 +1,6 @@
 require petalinux-image-common-sc.inc
 
-IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " \
-    packagegroup-petalinux-syscontroller \
-    packagegroup-petalinux-scweb \
-    "
-
-IMAGE_INSTALL:append:vck-sc-zynqmp = " \
+IMAGE_INSTALL:append:system-controller = " \
     packagegroup-petalinux-syscontroller \
     packagegroup-petalinux-scweb \
     "
