@@ -33,8 +33,7 @@ S="${WORKDIR}/git"
 DEPENDS += "zlib"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
