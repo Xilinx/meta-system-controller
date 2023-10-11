@@ -10,6 +10,7 @@ IMAGE_FEATURES += "splash ssh-server-openssh hwcodecs package-management"
 
 IMAGE_INSTALL = " \
     ${CORE_IMAGE_EXTRA_INSTALL} \
+    dfx-mgr \
     image-update \
     kernel-modules \
     linux-xlnx-udev-rules \
