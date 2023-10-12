@@ -29,6 +29,7 @@ COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS += "libgpiod"
+RDEPENDS:${PN} += "python3-smbus2"
 
 do_compile(){
 	cd ${S}/build/
