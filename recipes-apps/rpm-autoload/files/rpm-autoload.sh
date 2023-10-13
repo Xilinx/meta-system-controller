@@ -30,11 +30,20 @@ else
         fi
 fi
 
-if [ -f ${base_path}/$dtbo_file ] && [ -f ${base_path}/$bit_file ] && [ -f ${base_path}/$psdtbo_file ]; then
-        echo "Applying $bit_file and $dtbo_file"
-	fpgautil -b ${base_path}/$bit_file -o ${base_path}/$dtbo_file -f Full -n Full
-	echo "Applying $psdtbo_file"
-	fpgautil -o ${base_path}/$psdtbo_file -n psdtbo
+revision_num=$(echo ${revision} | cut -c3)
+revision_ver=$(echo ${revision} | cut -c1)
+while [ ${revision_num}  >  0 ];do
+	if [ -d  /lib/firmware/xilinx/${board}-${revision_ver}0${revision_num} ]; then
+		echo "Installing RPM for ${board}-${revision_ver}0${revision_num}"
+		pkg_path="/lib/firmware/xilinx/${board}-${revision_ver}0${revision_num}"
+		break
+	fi
+	revision_num=$(echo "$(( $revision_num - 1 ))")
+done
+
+if [ -f ${pkg_path}/*.dtbo ] && [ -f ${pkg_path}/*.bit.bin ]; then
+	echo "Applying ${pkg_path}/*.dtbo and ${pkg_path}/*.bit.bin"
+	fpgautil -b ${pkg_path}/*.bit.bin -o ${pkg_path}/*.dtbo -f Full -n Full
 else
         echo "RPM did not install properly, please check ${base_path}"
 fi
