@@ -9,7 +9,7 @@ SRC_URI = "\
     file://system_controller.service \
 "
 
-SRCREV="7cfb2acae77c191c8aff3dff8cda2d357c5b7ecf"
+SRCREV="eb05cb92044666708507d42f7069640a22ec1a03"
 
 inherit update-rc.d systemd
 
@@ -44,6 +44,7 @@ do_install(){
 	cp ${S}/build/sc_appd ${D}${bindir}
 	cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
 	cp -r ${S}/board ${D}${datadir}/system-controller-app/
+	cp -r ${S}/script ${D}${datadir}/system-controller-app/
 
 	install -m 0755 ${S}/src/system_controller.sh ${D}${bindir}
 	install -d ${D}${systemd_system_unitdir}
