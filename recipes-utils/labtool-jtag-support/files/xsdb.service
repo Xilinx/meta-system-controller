@@ -1,9 +1,10 @@
 [Unit]
 Description=Enable xsdb
-After=rpm-autoload.service
+After=dfx-mgr.service rpm-autoload.service
 
 [Service]
 Type=forking
+ExecStartPre=/usr/bin/wait_debug_uio
 ExecStart=/usr/bin/xsdb
 StandardOutput=journal+console
 
