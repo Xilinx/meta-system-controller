@@ -12,6 +12,7 @@ BRANCH = "xlnx_rel_v2023.2"
 SRC_URI = " \
 	git://github.com/Xilinx/systemctl-labtool.git;branch=${BRANCH};protocol=https \
 	file://xsdb.service \
+	file://wait_debug_uio \
 "
 SRCREV = "3c2b6d4576750acb77b562701d71602308d15ea3"
 
@@ -31,6 +32,7 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
+RDEPENDS:${PN} += "bash"
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
@@ -63,6 +65,7 @@ do_install () {
 
     install -d ${D}${bindir}
     install -m 0755 ${S}/etc/init.d/xsdb ${D}${bindir}/
+    install -m 0755 ${WORKDIR}/wait_debug_uio ${D}${bindir}/
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/xsdb.service ${D}${systemd_system_unitdir}
 }
