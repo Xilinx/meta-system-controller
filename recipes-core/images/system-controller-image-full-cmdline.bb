@@ -26,7 +26,7 @@ IMAGE_INSTALL = " \
     udev-extraconf \
 "
 
-IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " \
+IMAGE_INSTALL:append:system-controller = " \
     vhk158-a01 \
     vpk120-b01 \
     vpk180-a01 \
