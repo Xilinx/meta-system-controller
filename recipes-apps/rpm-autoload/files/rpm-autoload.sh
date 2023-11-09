@@ -12,24 +12,6 @@ dtbo_file="${board}-${revision}*.dtbo"
 psdtbo_file="zynqmp-sc-$board-rev$revision_ps.dtbo"
 bit_file="${board}-${revision}*.bit.bin"
 
-if [ -d "/rpm-files" ]; then
-        partition_path="/rpm-files"
-elif [ -d "/mnt/sd-mmcblk0p2/" ]; then
-        partition_path="/mnt/sd-mmcblk0p2/"
-fi
-
-
-if [ -d ${base_path} ]  && [ -f ${base_path}/$dtbo_file ] && [ -f ${base_path}/$bit_file ] && [ -f ${base_path}/$psdtbo_file ]; then
-        echo "RPM Already installed at ${base_path}"
-else
-        if [ -f ${partition_path}/${board}-${revision}*.rpm ]; then
-                echo "Installing RPM for ${board}-${revision}"
-                /usr/bin/rpm -U --ignorearch ${partition_path}/${board}-${revision}*.rpm
-        else
-                echo "Board: ${board}-${revision} Specific RPM not found in ${partition_path}"
-        fi
-fi
-
 revision_num=$(echo ${revision} | cut -c3)
 revision_ver=$(echo ${revision} | cut -c1)
 while [ ${revision_num}  >  0 ];do
@@ -41,9 +23,16 @@ while [ ${revision_num}  >  0 ];do
 	revision_num=$(echo "$(( $revision_num - 1 ))")
 done
 
-if [ -f ${pkg_path}/*.dtbo ] && [ -f ${pkg_path}/*.bit.bin ]; then
-	echo "Applying ${pkg_path}/*.dtbo and ${pkg_path}/*.bit.bin"
-	fpgautil -b ${pkg_path}/*.bit.bin -o ${pkg_path}/*.dtbo -f Full -n Full
+overlay_path="/configfs/device-tree/overlays"
+dfxmgr_overlay="${overlay_path}/${board}-${revision}_image_1"
+
+if [ ! -d  ${dfxmgr_overlay} ]; then
+	if [ -f ${pkg_path}/*.dtbo ] && [ -f ${pkg_path}/*.bit.bin ] && [ ! -d ${dfxmgr_overlay} ]; then
+		echo "Applying ${pkg_path}/*.dtbo and ${pkg_path}/*.bit.bin using fpgautil"
+		fpgautil -b ${pkg_path}/*.bit.bin -o ${pkg_path}/*.dtbo -f Full -n Full
+	else
+		 echo "Board specific Bitstream and dtbo did not install properly, please check at ${base_path}"
+	 fi
 else
-        echo "RPM did not install properly, please check ${base_path}"
+	echo "Board specific Bitstream and dtbo already installed at ${dfxmgr_overlay}"
 fi
