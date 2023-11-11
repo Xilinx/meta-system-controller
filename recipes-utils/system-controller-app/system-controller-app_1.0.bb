@@ -5,11 +5,11 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = "\
-    git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v2023.1;protocol=https \
+    git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v2023.2;protocol=https \
     file://system_controller.service \
 "
 
-SRCREV="84e5684563bf0e2e48a7eda2c709816e949743e0"
+SRCREV="8bbff709becc9b15a9c56f82a10aa68b77c3a895"
 
 inherit update-rc.d systemd
 
