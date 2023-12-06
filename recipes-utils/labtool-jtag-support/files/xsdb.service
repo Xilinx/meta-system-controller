@@ -3,8 +3,9 @@ Description=Enable xsdb
 After=dfx-mgr.service rpm-autoload.service
 
 [Service]
-Type=forking
-ExecStartPre=/usr/bin/wait_debug_uio
+Type=notify
+NotifyAccess=all
+RemainAfterExit=yes
 ExecStart=/usr/bin/xsdb
 StandardOutput=journal+console
 
