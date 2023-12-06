@@ -12,9 +12,8 @@ BRANCH = "xlnx_rel_v2023.2"
 SRC_URI = " \
 	git://github.com/Xilinx/systemctl-labtool.git;branch=${BRANCH};protocol=https \
 	file://xsdb.service \
-	file://wait_debug_uio \
 "
-SRCREV = "3c2b6d4576750acb77b562701d71602308d15ea3"
+SRCREV = "52807a126945141ea9d1e7ebf9aba305d2d8eb2a"
 
 inherit update-rc.d systemd
 
@@ -65,7 +64,6 @@ do_install () {
 
     install -d ${D}${bindir}
     install -m 0755 ${S}/etc/init.d/xsdb ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/wait_debug_uio ${D}${bindir}/
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/xsdb.service ${D}${systemd_system_unitdir}
 }
