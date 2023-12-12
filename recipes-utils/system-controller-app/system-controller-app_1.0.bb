@@ -9,7 +9,7 @@ SRC_URI = "\
     file://system_controller.service \
 "
 
-SRCREV="eb05cb92044666708507d42f7069640a22ec1a03"
+SRCREV="def3e4459b213883d848a3ef04f62f64529562f3"
 
 inherit update-rc.d systemd
 
@@ -29,7 +29,9 @@ COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS += "libgpiod"
-RDEPENDS:${PN} += "python3-smbus2"
+RDEPENDS:${PN} += "bootgen \
+		   labtool-jtag-support \
+		   python3-smbus2"
 
 do_compile(){
 	cd ${S}/build/
