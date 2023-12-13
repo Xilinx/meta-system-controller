@@ -21,7 +21,6 @@ IMAGE_INSTALL = " \
     python3-pip \
     python3-psutil \
     resize-partition \
-    rpm-autoload \
     u-boot-tools \
     udev-extraconf \
 "
