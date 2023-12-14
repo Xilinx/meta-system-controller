@@ -1,6 +1,6 @@
 [Unit]
 Description=Enable xsdb
-After=dfx-mgr.service rpm-autoload.service
+After=dfx-mgr.service
 
 [Service]
 Type=notify
