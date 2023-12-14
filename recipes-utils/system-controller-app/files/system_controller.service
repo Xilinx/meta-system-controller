@@ -1,6 +1,6 @@
 [Unit]
 Description=system_controller_app
-After=rpm-autoload.service xsdb.service
+After=xsdb.service
 
 [Service]
 Type=forking
