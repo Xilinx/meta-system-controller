@@ -23,6 +23,7 @@ IMAGE_INSTALL = " \
     resize-partition \
     u-boot-tools \
     udev-extraconf \
+    uboot-device-tree \
 "
 
 IMAGE_INSTALL:append:system-controller = " \
