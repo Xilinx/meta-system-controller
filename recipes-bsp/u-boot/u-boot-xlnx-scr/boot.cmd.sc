@@ -15,7 +15,7 @@ if test "${board_name}-${board_rev}" = "VEK280-B01" || test "${board_name}-${boa
 else
         dtb_name=system
 fi
-
+setenv bootargs 'earlycon console=ttyPS0,115200 clk_ignore_unused root=/dev/ram0 rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@';
 for boot_target in ${boot_targets};
 do
 	echo "Trying to load boot images from ${boot_target}"
