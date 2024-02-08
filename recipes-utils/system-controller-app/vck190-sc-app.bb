@@ -3,16 +3,18 @@ SUMMARY = "System Controller App - VCK190 board specific files"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
+require system-controller-app.inc
+
 SCAP="sc-app"
 SCIM="sc_image"
 
 SRC_URI = "\
-	git://gitenterprise.xilinx.com/Platform-Management/system-controller.git;branch=xlnx_rel_v2023.2;protocol=https;name=scapp;destsuffix=${SCAP} \
-	git://gitenterprise.xilinx.com/PAEG/SystemController.git;branch=xlnx_rel_v2023.2;name=sc-images;destsuffix=${SCIM} \
+	${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https;name=scapp;destsuffix=${SCAP} \
+	${SC_IMG_REPO};branch=${SC_IMG_BRANCH};protocol=https;name=sc-images;destsuffix=${SCIM} \
 "
 
-SRCREV_scapp="102e370142b3e6612ee46d8bec0e07ba6ca07a63"
-SRCREV_sc-images="c27fa4290df99cecf5834669fc632e74ab54020a"
+SRCREV_scapp="${SC_APP_SRCREV}"
+SRCREV_sc-images="${SC_IMG_SRCREV}"
 
 BOARD = "VCK190"
 BOARD_lower = "vck190"
