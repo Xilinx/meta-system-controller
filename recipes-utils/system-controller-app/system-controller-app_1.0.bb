@@ -4,12 +4,14 @@ SUMMARY = "System Controller App"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
+require system-controller-app.inc
+
 SRC_URI = "\
-    git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v2023.2;protocol=https \
+    ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
     file://system_controller.service \
 "
 
-SRCREV="102e370142b3e6612ee46d8bec0e07ba6ca07a63"
+SRCREV="${SC_APP_SRCREV}"
 
 inherit update-rc.d systemd
 

@@ -3,13 +3,15 @@ SUMMARY = "System Controller App - VN-P-B2197-00 board specific files"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
+require system-controller-app.inc
+
 SCAP="sc-app"
 
 SRC_URI = "\
-	git://gitenterprise.xilinx.com/Platform-Management/system-controller.git;branch=xlnx_rel_v2023.2;protocol=https;name=scapp;destsuffix=${SCAP} \
+	${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https;name=scapp;destsuffix=${SCAP} \
 "
 
-SRCREV_scapp="102e370142b3e6612ee46d8bec0e07ba6ca07a63"
+SRCREV_scapp="${SC_APP_SRCREV}"
 
 BOARD = "VN-P-B2197-00"
 BOARD_lower = "vn-p-b2197-00"
