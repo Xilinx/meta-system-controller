@@ -26,6 +26,8 @@ IMAGE_INSTALL = " \
     uboot-device-tree \
 "
 
+IMAGE_INSTALL:append:system-controller = " raft"
+
 IMAGE_INSTALL:append:system-controller = " \
     vhk158-a01 \
     vpk120-b01 \
