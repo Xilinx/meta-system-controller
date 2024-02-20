@@ -1,5 +1,7 @@
 DESCRIPTION = "PetaLinux system controller scweb app packages"
 
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
 inherit packagegroup
 
 # Packages

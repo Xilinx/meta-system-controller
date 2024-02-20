@@ -1,6 +1,6 @@
 DESCRIPTION = "Required packages for system controller"
 
-PACKAGE_ARCH = "${TUNE_PKGARCH}"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit packagegroup
 
