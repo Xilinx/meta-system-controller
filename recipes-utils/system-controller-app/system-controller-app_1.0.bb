@@ -47,7 +47,6 @@ do_install(){
 	cp ${S}/build/sc_app ${D}${bindir}
 	cp ${S}/build/sc_appd ${D}${bindir}
 	cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
-	cp -r ${S}/board ${D}${datadir}/system-controller-app/
 	cp -r ${S}/script ${D}${datadir}/system-controller-app/
 
 	install -m 0755 ${S}/src/system_controller.sh ${D}${bindir}
