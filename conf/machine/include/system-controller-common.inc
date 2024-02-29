@@ -1,7 +1,5 @@
 MACHINEOVERRIDES =. "system-controller:"
 
-MACHINE_FEATURES += "fpga-overlay"
-
 IMAGE_FSTYPES += "wic wic.xz"
 
 # Enable initramfs image to switch to full root file system
