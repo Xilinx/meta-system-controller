@@ -24,6 +24,7 @@ IMAGE_INSTALL = " \
     u-boot-tools \
     udev-extraconf \
     uboot-device-tree \
+    libubootenv \
 "
 
 IMAGE_INSTALL:append:system-controller = " raft"
