@@ -56,7 +56,7 @@ echo "JS_PATH = \"\${@d.getVarFlag('JS_PATH', d.getVar('BOARD')) or ''}\""
 echo
 echo "SC_APP_REPO = \"git://github.com/Xilinx/system-controller-app.git\""
 echo "SC_APP_BRANCH = \"xlnx_rel_v2023.2\""
-echo "SC_APP_SRCREV = \"c61a9a8d8a0e86a4f292ce2b70730039650e3c84\""
+echo "SC_APP_SRCREV = \"840be9078c65c7fb37d6a9130e6a6eea8bf659f0\""
 echo
 
 dirnames=$(curl --silent ${urlproto}${urlpath}/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//')
