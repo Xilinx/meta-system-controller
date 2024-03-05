@@ -28,9 +28,3 @@ IMAGE_INSTALL = " \
 "
 
 IMAGE_INSTALL:append:system-controller = " raft"
-
-IMAGE_INSTALL:append:system-controller = " \
-    vhk158-a01 \
-    vpk120-b01 \
-    vpk180-a01 \
-"
