@@ -54,10 +54,6 @@ echo "JPG_PATH = \"\${@d.getVarFlag('JPG_PATH', d.getVar('BOARD')) or ''}\""
 echo "PNG_PATH = \"\${@d.getVarFlag('PNG_PATH', d.getVar('BOARD')) or ''}\""
 echo "JS_PATH = \"\${@d.getVarFlag('JS_PATH', d.getVar('BOARD')) or ''}\""
 echo
-echo "SC_APP_REPO = \"git://github.com/Xilinx/system-controller-app.git\""
-echo "SC_APP_BRANCH = \"xlnx_rel_v2023.2\""
-echo "SC_APP_SRCREV = \"840be9078c65c7fb37d6a9130e6a6eea8bf659f0\""
-echo
 
 dirnames=$(curl --silent ${urlproto}${urlpath}/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//')
 for dir in $dirnames; do 
