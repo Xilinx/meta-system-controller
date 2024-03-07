@@ -4,7 +4,9 @@ SUMMARY = "System Controller App"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-require system-controller-app.inc
+SC_APP_REPO = "git://github.com/Xilinx/system-controller-app.git"
+SC_APP_BRANCH = "xlnx_rel_v2023.2"
+SC_APP_SRCREV = "840be9078c65c7fb37d6a9130e6a6eea8bf659f0"
 
 SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
