@@ -1,2 +1,2 @@
-FILESEXTRAPATHS:prepend:eval-brd-sc-zynqmp := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend:system-controller := "${THISDIR}/${PN}:"
 
