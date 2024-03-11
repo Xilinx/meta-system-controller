@@ -3,8 +3,9 @@ Description=system_controller_app
 After=xvc.service hw_server.service cs_server.service
 
 [Service]
-Type=forking
-ExecStart=/usr/bin/system_controller.sh
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sc_appd
 StandardOutput=journal+console
 
 [Install]

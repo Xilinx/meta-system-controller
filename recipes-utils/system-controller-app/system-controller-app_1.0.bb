@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 SC_APP_REPO = "git://github.com/Xilinx/system-controller-app.git"
 SC_APP_BRANCH = "xlnx_rel_v2023.2"
-SC_APP_SRCREV = "840be9078c65c7fb37d6a9130e6a6eea8bf659f0"
+SC_APP_SRCREV = "410d57504b7c6700c44b9fbec77913fdef28390c"
 
 SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
@@ -15,10 +15,7 @@ SRC_URI = "\
 
 SRCREV="${SC_APP_SRCREV}"
 
-inherit update-rc.d systemd
-
-INITSCRIPT_NAME = "system_controller.sh"
-INITSCRIPT_PARAMS = "start 96 5 ."
+inherit systemd
 
 SYSTEMD_PACKAGES="${PN}"
 SYSTEMD_SERVICE:${PN}="system_controller.service"
@@ -50,14 +47,8 @@ do_install(){
 	cp ${S}/build/sc_appd ${D}${bindir}
 	cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
 	cp -r ${S}/script ${D}${datadir}/system-controller-app/
+	ln -s ${datadir}/system-controller-app/script/setup_board.sh ${D}${bindir}
 
-	install -m 0755 ${S}/src/system_controller.sh ${D}${bindir}
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
-
-	if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then
-		install -d ${D}${sysconfdir}/init.d/
-		install -m 0755 ${S}/src/system_controller.sh ${D}${sysconfdir}/init.d/
-		rm -rf ${D}{bindir}/system_controller.sh
-	fi
 }
