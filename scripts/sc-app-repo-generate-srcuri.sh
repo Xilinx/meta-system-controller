@@ -68,7 +68,6 @@ for dir in $dirnames; do
 		if [ "$i" == "../" ]; then
 			continue
 		fi
-		echo "# $i"
 		if [[ "$i" == *"elf"* ]]; then
 			name=$device-elf
 			yp_name="ELF_PATH"
@@ -78,6 +77,8 @@ for dir in $dirnames; do
 		elif [[ "$i" == *"pdi"* ]]; then
 			name=$device-system
 			yp_name="SYS_PATH"
+		elif [[ "$i" == *"xsa"* ]]; then
+			break
 		elif [[ "$i" == *"json"* ]]; then
 			name=$device-json
 			yp_name="JSON_PATH"
@@ -91,6 +92,7 @@ for dir in $dirnames; do
 			name=$device-png
 			yp_name="PNG_PATH"
 		fi
+		echo "# $i"
 		echo ${yp_name}["${device}"] = "'${urlproto}${urlpath}/${dir}/${i};name=${name}'"
 		curl -o tempfile --silent "${urlproto}${urlpath}/$dir/$i"
 		echo SRC_URI["${name}".sha256sum] = "'$(sha256sum tempfile | awk '{print $1}')'"
