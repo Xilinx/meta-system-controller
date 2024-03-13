@@ -36,8 +36,8 @@ do_install(){
 	mkdir -p ${D}${datadir}/scweb/static/js/
 
 	cp ${WORKDIR}/${BOARD_upper}.json ${D}${datadir}/system-controller-app/board/
-	cp ${WORKDIR}/system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/
-	cp ${WORKDIR}/versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/
+	cp ${WORKDIR}/vck190_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/system_wrapper.pdi
+	cp ${WORKDIR}/vck190_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
 
 	cp ${WORKDIR}/${BOARD_upper}_home.png ${D}${datadir}/scweb/static/images/
 	cp ${WORKDIR}/${BOARD}.jpg ${D}${datadir}/scweb/static/images/
