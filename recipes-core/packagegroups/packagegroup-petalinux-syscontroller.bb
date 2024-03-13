@@ -2,6 +2,9 @@ DESCRIPTION = "Required packages for system controller"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+# Need to update PR, PACKAGE_ARCH changed.
+PR = "r1"
+
 inherit packagegroup
 
 SYSTEM_CONTROLLER_PACKAGES = " \
