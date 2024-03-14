@@ -14,6 +14,7 @@ IMAGE_INSTALL = " \
     kernel-modules \
     linux-xlnx-udev-rules \
     lmsensors-fancontrol \
+    lmsensors-config \
     packagegroup-core-boot \
     packagegroup-petalinux-scweb \
     packagegroup-petalinux-syscontroller \
