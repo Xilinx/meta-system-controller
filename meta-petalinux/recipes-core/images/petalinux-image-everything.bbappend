@@ -12,6 +12,7 @@ IMAGE_INSTALL:append:system-controller = " \
     "
 
 IMAGE_INSTALL:append:system-controller = " \
+    vmk180 \
     vck190 \
     vek280 \
     vhk158 \
