@@ -78,7 +78,7 @@ for dir in $dirnames; do
 			name=$device-system
 			yp_name="SYS_PATH"
 		elif [[ "$i" == *"xsa"* ]]; then
-			break
+			continue
 		elif [[ "$i" == *"json"* ]]; then
 			name=$device-json
 			yp_name="JSON_PATH"
