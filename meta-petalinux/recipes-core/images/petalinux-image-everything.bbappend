@@ -12,10 +12,5 @@ IMAGE_INSTALL:append:system-controller = " \
     "
 
 IMAGE_INSTALL:append:system-controller = " \
-    vmk180 \
-    vck190 \
-    vek280 \
-    vhk158 \
-    vpk120 \
-    vpk180 \
+	sc-boards \
 "
