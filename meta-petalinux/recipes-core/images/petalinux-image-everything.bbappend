@@ -1,11 +1,20 @@
 require petalinux-image-common-sc.inc
 
-IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " \
+IMAGE_INSTALL:append:system-controller = " \
     packagegroup-petalinux-syscontroller \
     packagegroup-petalinux-scweb \
+    resize-partition \
+    u-boot-tools \
+    udev-extraconf \
+    uboot-device-tree \
+    libubootenv \
+    libubootenv-bin \
     "
 
-IMAGE_INSTALL:append:vck-sc-zynqmp = " \
-    packagegroup-petalinux-syscontroller \
-    packagegroup-petalinux-scweb \
-    "
+IMAGE_INSTALL:append:system-controller = " \
+    vck190 \
+    vek280 \
+    vhk158 \
+    vpk120 \
+    vpk180 \
+"

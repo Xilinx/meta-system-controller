@@ -11,9 +11,11 @@ LIC_FILES_CHKSUM = "file://license/LICENSE_PBO;md5=fb790ca133353ea709bb11d2d33db
 BRANCH = "xlnx_rel_v2023.2"
 SRC_URI = " \
 	git://github.com/Xilinx/systemctl-labtool.git;branch=${BRANCH};protocol=https \
-	file://xsdb.service \
+	file://xvc.service \
+	file://hw_server.service \
+	file://cs_server.service \
 "
-SRCREV = "3c2b6d4576750acb77b562701d71602308d15ea3"
+SRCREV = "f1337b280bc1e77589eb7b15e8560bf2399e2f4d"
 
 inherit update-rc.d systemd
 
@@ -25,16 +27,16 @@ INITSCRIPT_NAME = "xsdb"
 INITSCRIPT_PARAMS = "start 99 S ."
 
 SYSTEMD_PACKAGES="${PN}"
-SYSTEMD_SERVICE:${PN}="xsdb.service"
+SYSTEMD_SERVICE:${PN}="xvc.service hw_server.service cs_server.service"
 SYSTEMD_AUTO_ENABLE:${PN}="enable"
 
 S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
+RDEPENDS:${PN} += "bash"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -65,7 +67,9 @@ do_install () {
     install -d ${D}${bindir}
     install -m 0755 ${S}/etc/init.d/xsdb ${D}${bindir}/
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/xsdb.service ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/xvc.service ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/hw_server.service ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/cs_server.service ${D}${systemd_system_unitdir}
 }
 
 SOLIBS = ".so*"

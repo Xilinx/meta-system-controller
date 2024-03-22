@@ -4,8 +4,8 @@
 INTERVAL=5
 FCTEMPS=/sys/class/hwmon/hwmon0/pwm1=/sys/class/hwmon/hwmon1/temp1_input
 FCFANS=/sys/class/hwmon/hwmon0/pwm1=/sys/class/hwmon/hwmon0/pwm1
-MINTEMP=/sys/class/hwmon/hwmon0/pwm1=35
-MAXTEMP=/sys/class/hwmon/hwmon0/pwm1=45
+MINTEMP=/sys/class/hwmon/hwmon0/pwm1=45
+MAXTEMP=/sys/class/hwmon/hwmon0/pwm1=85
 MINSTART=/sys/class/hwmon/hwmon0/pwm1=30
 MINSTOP=/sys/class/hwmon/hwmon0/pwm1=15
 MINPWM=/sys/class/hwmon/hwmon0/pwm1=15

@@ -1,5 +1,10 @@
 DESCRIPTION = "PetaLinux system controller scweb app packages"
 
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+# Need to update PR, PACKAGE_ARCH changed.
+PR = "r1"
+
 inherit packagegroup
 
 # Packages

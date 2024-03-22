@@ -17,8 +17,7 @@ SRCREV = "6a527f77fd865c2edd4463a9798486e7d34a43bf"
 S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 RDEPENDS:${PN} = "packagegroup-petalinux-jupyter \
                   python3-ipywidgets \

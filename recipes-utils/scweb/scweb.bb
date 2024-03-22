@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://src/LICENSE.md;md5=691ccffd5cbf3847f255a28754844a10"
 SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2023.2;protocol=https \
 	   file://scwebrun.service \
                   "
-SRCREV = "13be9f285f753f07fbca67f07255422183bb468b"
+SRCREV = "85d5d5891281776b96f3927c817f213594fc04a0"
 
 inherit update-rc.d systemd
 
@@ -25,8 +25,7 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

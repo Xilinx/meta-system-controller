@@ -7,39 +7,58 @@ SECTION = "PETALINUX/apps"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://../LICENSE.md;beginline=1;endline=21;md5=17b8e1d4035e928378878301dbf1d92c"
 
+REPO ?= "git://github.com/Xilinx/system-controller-pmtool.git;protocol=https"
+BRANCH = "2.0"
+SRCREV = "ff2078284f43cc0bac15ef95474e52cad47de01b"
+
+BRANCHARG = "${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"
+SRC_URI = "${REPO};${BRANCHARG}"
+
 SRC_URI = " \
-    git://github.com/Xilinx/system-controller-pmtool.git;protocol=https;branch=xlnx_rel_v2023.2 \
+    ${REPO};${BRANCHARG} \
+    file://pmtoolrun.service \
     file://LICENSE.md \
-    file://pmtool.conf \
     "
 
-SRCREV = "8aaad5c95c67974df8a1c590d1afb3f6ad39fa31"
+inherit update-rc.d systemd
+
+INITSCRIPT_NAME = "pmtoolrun.sh"
+
+SYSTEMD_PACKAGES="${PN}"
+SYSTEMD_SERVICE:${PN}="pmtoolrun.service"
+SYSTEMD_AUTO_ENABLE:${PN}="enable"
 
 S = "${WORKDIR}/git"
+PMTOOL_DIR = "${datadir}/${PN}"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 do_configure[noexec]="1"
 do_compile[noexec]="1"
 
 RDEPENDS:${PN} += " \
-        apache2 \
-        "
+	 bash \
+	 "
 
 do_install() {
-        install -d ${D}${localstatedir}/www/pmtool/
-        cp -r ${S}/* ${D}${localstatedir}/www/pmtool/
+	install -d ${D}/${PMTOOL_DIR}
+	cp -r ${S}/src/* ${D}/${PMTOOL_DIR}
 
-        install -d ${D}${sysconfdir}/apache2/conf.d/
-        cp -r ${WORKDIR}/pmtool.conf ${D}${sysconfdir}/apache2/conf.d/
+	install -d ${D}${bindir}
+	install -m 0755 ${S}/pmtoolrun.sh ${D}${bindir}
+	install -d ${D}${systemd_system_unitdir}
+	install -m 0644 ${WORKDIR}/pmtoolrun.service ${D}${systemd_system_unitdir}
+
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then
+		install -d ${D}${sysconfdir}/init.d/
+		install -m 0755 ${S}/pmtoolrun.sh ${D}${sysconfdir}/init.d/
+	fi
 }
 
 FILES:${PN} += "\
-    ${localstatedir}/www/pmtool \
-    ${sysconfdir}/apache2/conf.d \
-    "
+	${PMTOOL_DIR} \
+	"
 
 
