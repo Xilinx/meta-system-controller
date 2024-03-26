@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://../LICENSE.md;beginline=1;endline=21;md5=17b8e1d4035e
 
 REPO ?= "git://github.com/Xilinx/system-controller-pmtool.git;protocol=https"
 BRANCH = "2.0"
-SRCREV = "242b2fbee75bae6f0e102187f0d5e3291e374450"
+SRCREV = "1b2cf9ca6a162a5a88b6ee9fa060e97a1f405514"
 
 BRANCHARG = "${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"
 SRC_URI = "${REPO};${BRANCHARG}"
