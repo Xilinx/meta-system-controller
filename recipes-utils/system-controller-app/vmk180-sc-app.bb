@@ -1,15 +1,14 @@
-SUMMARY = "System Controller App - VPK120 board specific files"
+SUMMARY = "System Controller App - VMK180 board specific files"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 require system-controller-app.inc
 
-BOARD = "vpk120"
-BOARD_upper = "VPK120"
+BOARD = "vmk180"
+BOARD_upper = "VMK180"
 
 SRC_URI = "\
-	${ES1_PATH} \
 	${SYS_PATH} \
 	${JPG_PATH} \
 	${JSON_PATH} \
@@ -37,7 +36,6 @@ do_install(){
 	mkdir -p ${D}${datadir}/scweb/static/js/
 
 	cp ${WORKDIR}/${BOARD_upper}.json ${D}${datadir}/system-controller-app/board/
-	cp ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
 	cp ${WORKDIR}/${BOARD}_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/system_wrapper.pdi
 	cp ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
 
