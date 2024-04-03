@@ -29,4 +29,7 @@ SYSTEM_CONTROLLER_PACKAGES = " \
 
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
 
-SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " power-advantage-tool"
+SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " \
+        vck190 \
+        vmk180 \
+        "

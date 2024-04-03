@@ -40,6 +40,7 @@ do_compile[noexec]="1"
 
 RDEPENDS:${PN} += " \
 	 bash \
+	 python3-bokeh \
 	 "
 
 do_install() {
