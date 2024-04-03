@@ -18,7 +18,6 @@ IMAGE_INSTALL = " \
     packagegroup-core-boot \
     packagegroup-petalinux-scweb \
     packagegroup-petalinux-syscontroller \
-    power-advantage-tool \
     python3-pip \
     python3-psutil \
     resize-partition \
