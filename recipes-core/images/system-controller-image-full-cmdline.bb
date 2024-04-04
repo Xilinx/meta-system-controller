@@ -26,6 +26,7 @@ IMAGE_INSTALL = " \
     uboot-device-tree \
     libubootenv \
     libubootenv-bin \
+    sc-licenses-manual \
 "
 
 IMAGE_INSTALL:append:system-controller = " raft"
