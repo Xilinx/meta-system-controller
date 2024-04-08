@@ -1,0 +1,17 @@
+# Copyright (C) 2024, Advanced Micro Devices, Inc. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+[Unit]
+Description=Repartition Root Disk
+DefaultDependencies=no
+After=multi-user.target
+ConditionVirtualization=!container
+ConditionDirectoryNotEmpty=|/etc/temp-repart.d
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/temp-repart.sh
+
+[Install]
+WantedBy=multi-user.target
