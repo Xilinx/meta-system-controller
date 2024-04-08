@@ -20,7 +20,6 @@ IMAGE_INSTALL = " \
     packagegroup-petalinux-syscontroller \
     python3-pip \
     python3-psutil \
-    resize-partition \
     u-boot-tools \
     udev-extraconf \
     uboot-device-tree \
@@ -30,3 +29,5 @@ IMAGE_INSTALL = " \
 "
 
 IMAGE_INSTALL:append:system-controller = " raft"
+IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " temp-repart"
+IMAGE_INSTALL:append:vck-sc-zynqmp = " resize-partition"
