@@ -9,6 +9,7 @@ IMAGE_INSTALL:append:system-controller = " \
     uboot-device-tree \
     libubootenv \
     libubootenv-bin \
+    mmc-utils \
     "
 
 IMAGE_INSTALL:append:system-controller = " \
