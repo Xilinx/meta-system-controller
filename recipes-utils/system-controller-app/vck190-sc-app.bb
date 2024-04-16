@@ -17,6 +17,8 @@ SRC_URI = "\
 	${ELF_PATH} \
 "
 
+RDEPENDS_${PN} = "packagegroup-petalinux-syscontroller"
+
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 

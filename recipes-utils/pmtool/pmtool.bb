@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://../LICENSE.md;beginline=1;endline=21;md5=17b8e1d4035e
 
 REPO ?= "git://github.com/Xilinx/system-controller-pmtool.git;protocol=https"
 BRANCH = "2.0"
-SRCREV = "1b2cf9ca6a162a5a88b6ee9fa060e97a1f405514"
+SRCREV = "d6d4fdf5512e3586b303c6788814092dbe97ec2c"
 
 BRANCHARG = "${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"
 SRC_URI = "${REPO};${BRANCHARG}"
@@ -40,6 +40,7 @@ do_compile[noexec]="1"
 
 RDEPENDS:${PN} += " \
 	 bash \
+	 python3-bokeh \
 	 "
 
 do_install() {
