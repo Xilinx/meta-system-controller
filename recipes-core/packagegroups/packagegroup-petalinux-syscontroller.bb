@@ -1,6 +1,9 @@
 DESCRIPTION = "Required packages for system controller"
 
-PACKAGE_ARCH = "${TUNE_PKGARCH}"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+# Need to update PR, PACKAGE_ARCH changed.
+PR = "r1"
 
 inherit packagegroup
 
@@ -26,4 +29,7 @@ SYSTEM_CONTROLLER_PACKAGES = " \
 
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
 
-SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " power-advantage-tool"
+SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " \
+        vck190 \
+        vmk180 \
+        "

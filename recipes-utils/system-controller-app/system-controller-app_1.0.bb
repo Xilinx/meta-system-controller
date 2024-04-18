@@ -2,19 +2,20 @@ DESCRIPTION = "System Contoller App"
 SUMMARY = "System Controller App"
 
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+LIC_FILES_CHKSUM = "file://LICENSE.md;md5=306deb5c0f33f4b0570c30ba8564f93f"
+
+SC_APP_REPO = "git://github.com/Xilinx/system-controller-app.git"
+SC_APP_BRANCH = "xlnx_rel_v2023.2"
+SC_APP_SRCREV = "fd1e6236ed8aecec58b3ae9e319b4e3dcaeefa79"
 
 SRC_URI = "\
-    git://github.com/Xilinx/system-controller-app.git;branch=xlnx_rel_v2023.2;protocol=https \
+    ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
     file://system_controller.service \
 "
 
-SRCREV="8bbff709becc9b15a9c56f82a10aa68b77c3a895"
+SRCREV="${SC_APP_SRCREV}"
 
-inherit update-rc.d systemd
-
-INITSCRIPT_NAME = "system_controller.sh"
-INITSCRIPT_PARAMS = "start 96 5 ."
+inherit systemd
 
 SYSTEMD_PACKAGES="${PN}"
 SYSTEMD_SERVICE:${PN}="system_controller.service"
@@ -23,13 +24,15 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S="${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:vck-sc-zynqmp = "${MACHINE}"
 COMPATIBLE_MACHINE:a2197 = "${MACHINE}"
-COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS += "libgpiod"
+RDEPENDS:${PN} += "bootgen \
+		   labtool-jtag-support \
+		   python3-smbus2"
 
 do_compile(){
 	cd ${S}/build/
@@ -43,15 +46,9 @@ do_install(){
 	cp ${S}/build/sc_app ${D}${bindir}
 	cp ${S}/build/sc_appd ${D}${bindir}
 	cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
-	cp -r ${S}/board ${D}${datadir}/system-controller-app/
+	cp -r ${S}/script ${D}${datadir}/system-controller-app/
+	ln -s ${datadir}/system-controller-app/script/setup_board.sh ${D}${bindir}
 
-	install -m 0755 ${S}/src/system_controller.sh ${D}${bindir}
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
-
-	if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then
-		install -d ${D}${sysconfdir}/init.d/
-		install -m 0755 ${S}/src/system_controller.sh ${D}${sysconfdir}/init.d/
-		rm -rf ${D}{bindir}/system_controller.sh
-	fi
 }
