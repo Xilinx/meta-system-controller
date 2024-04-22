@@ -1,4 +1,1 @@
-FILESEXTRAPATHS:prepend:vck-sc-zynqmp := "${THISDIR}/files:"
-
-SRC_URI:vck-sc-zynqmp += " file://0001-DTG-sync-u-boot-dtg-sync-wrt-2023.2.patch"
-
+include device-tree-sc-${XILINX_XSCT_VERSION}.inc
