@@ -52,6 +52,6 @@ do_install(){
 	install -d ${D}${systemd_system_unitdir}
 	install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
 
-	# Workaround
-	rm ${D}${datadir}/system-controller-app/BIT/xsdb_funcs.tcl
+	# Temporary workaround, vitis does not build with Scarthgap
+	rm -f ${D}/usr/share/system-controller-app/BIT/xsdb_funcs.tcl
 }
