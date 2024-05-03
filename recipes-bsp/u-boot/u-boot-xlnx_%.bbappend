@@ -2,6 +2,17 @@ SRC_URI:append:eval-brd-sc-zynqmp = " file://sc_u-boot.cfg"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
+UBOOT_MANIFEST = "${UBOOT_BINARYNAME}-${MACHINE}-${PV}-${PR}.manifest"
+
+do_compile:append:eval-brd-sc-zynqmp() {
+    printf "* ${PN}\nSRCREV: ${SRCREV}\nBRANCH: ${UBRANCH}\n\n" > ${S}/${PN}.manifest
+}
+
+do_deploy:append:eval-brd-sc-zynqmp() {
+    install -m 0644 ${S}/${PN}.manifest ${DEPLOYDIR}/${UBOOT_MANIFEST}
+    ln -sf ${UBOOT_MANIFEST} ${DEPLOYDIR}/${UBOOT_BINARYNAME}-${MACHINE}.manifest
+}
+
 PACKAGE_UBOOT_DTB_NAME:eval-brd-sc-zynqmp = "uboot-device-tree.dtb"
 # u-boot blob generation configuration for system controller
 UBOOT_IMAGE_BLOB_DEFAULT:eval-brd-sc-zynqmp = "1"
