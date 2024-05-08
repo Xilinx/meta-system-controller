@@ -25,6 +25,7 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         python3-loguru \
         python3-rich \
         python3-chipscopy \
+        sc-boards \
         "
 
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
