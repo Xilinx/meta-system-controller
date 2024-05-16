@@ -12,20 +12,19 @@ IMAGE_INSTALL = " \
     dfx-mgr \
     image-update \
     kernel-modules \
+    libubootenv \
+    libubootenv-bin \
     linux-xlnx-udev-rules \
-    lmsensors-fancontrol \
     lmsensors-config \
+    lmsensors-fancontrol \
     packagegroup-core-boot \
     packagegroup-petalinux-scweb \
     packagegroup-petalinux-syscontroller \
     python3-pip \
     python3-psutil \
-    u-boot-tools \
-    udev-extraconf \
-    uboot-device-tree \
-    libubootenv \
-    libubootenv-bin \
     sc-licenses-manual \
+    u-boot-tools \
+    uboot-device-tree \
 "
 
 IMAGE_INSTALL:append:system-controller = " raft"
