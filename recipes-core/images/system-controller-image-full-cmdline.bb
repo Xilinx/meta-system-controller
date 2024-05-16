@@ -30,4 +30,5 @@ IMAGE_INSTALL = " \
 
 IMAGE_INSTALL:append:system-controller = " raft"
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " temp-repart"
+IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " ${@bb.utils.contains('DISTRO_FEATURES', 'rauc', 'rauc', '', d)}"
 IMAGE_INSTALL:append:vck-sc-zynqmp = " resize-partition"
