@@ -8,14 +8,14 @@ LIC_FILES_CHKSUM = "file://license/LICENSE_PBO;md5=fb790ca133353ea709bb11d2d33db
                     file://license/LICENSE_3RD_PARTY_CS_SERVER;md5=38e14296063e0ca8b88c1a5149284bd6 \
 "
 
-BRANCH = "xlnx_rel_v2024.1"
+BRANCH = "xlnx_rel_v2024.2"
 SRC_URI = " \
 	git://github.com/Xilinx/systemctl-labtool.git;branch=${BRANCH};protocol=https \
 	file://xvc.service \
 	file://hw_server.service \
 	file://cs_server.service \
 "
-SRCREV = "d403526b61255db1aea42e40d6af58687dbc4c86"
+SRCREV = "be26ac75201e489f27c70ccf86272cbc206a10de"
 
 inherit update-rc.d systemd
 
