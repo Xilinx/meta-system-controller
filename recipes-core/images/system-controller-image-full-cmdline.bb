@@ -18,8 +18,8 @@ IMAGE_INSTALL = " \
     lmsensors-config \
     lmsensors-fancontrol \
     packagegroup-core-boot \
-    packagegroup-petalinux-scweb \
-    packagegroup-petalinux-syscontroller \
+    packagegroup-scweb \
+    packagegroup-syscontroller \
     python3-pip \
     python3-psutil \
     raft \

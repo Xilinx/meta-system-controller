@@ -1,4 +1,4 @@
-DESCRIPTION = "PetaLinux system controller scweb app packages"
+DESCRIPTION = "system controller scweb app packages"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -12,8 +12,7 @@ SYS_CONTROLLER_SCWEB_PACKAGES = " \
         python3 \
         python3-flask \
         python3-flask-restful \
-        packagegroup-petalinux-syscontroller \
-        packagegroup-petalinux-lmsensors \
+        packagegroup-syscontroller \
         pmtool \
         scweb \
        "

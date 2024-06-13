@@ -17,7 +17,7 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         python3-twisted \
         python3-gevent \
         python3-matplotlib \
-        packagegroup-petalinux-lmsensors \
+        packagegroup-lmsensors \
         i2c-tools \
         libgpiod \
         libgpiod-tools \
@@ -25,6 +25,9 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         python3-loguru \
         python3-rich \
         python3-chipscopy \
+        lmsensors-sensors \
+        lmsensors-libsensors \
+        lmsensors-sensorsdetect \
         "
 
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
