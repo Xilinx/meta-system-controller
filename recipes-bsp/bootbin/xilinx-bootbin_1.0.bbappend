@@ -49,3 +49,7 @@ do_deploy:append:eval-brd-sc-zynqmp() {
 
     ln -sf ${BOOTBIN_BASE_NAME}.bin ${DEPLOYDIR}/SC-BootFW-${BOOTBIN_VER_MAIN}.bin
 }
+
+do_deploy:append:kria() {
+    ln -sf ${BOOTBIN_BASE_NAME}.bin ${DEPLOYDIR}/${@d.getVar("MACHINE")}-${BOOTBIN_VER_MAIN}${IMAGE_VERSION_SUFFIX}.bin
+}

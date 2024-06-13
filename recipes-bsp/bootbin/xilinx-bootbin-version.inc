@@ -1,1 +1,1 @@
-BOOTBIN_VER_MAIN:eval-brd-sc-zynqmp = "01.00"
+BOOTBIN_VER_MAIN:eval-brd-sc-zynqmp = "1.00"

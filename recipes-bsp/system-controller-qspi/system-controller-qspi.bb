@@ -7,13 +7,13 @@ DEPENDS = "virtual/imgsel virtual/imgrcry virtual/boot-bin virtual/fsbl"
 
 inherit deploy image-artifact-names amd_spi_image
 
+IMAGE_NAME_SUFFIX = ""
+
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "${MACHINE}"
 
-QSPI_IMAGE_NAME = "XilinxSC_QspiImage"
-
-QSPI_IMAGE_VERSION ?= ""
-QSPI_IMAGE_VERSION:eval-brd-sc-zynqmp = "2.0"
+QSPI_VERSION:eval-brd-sc-zynqmp = "2.0"
+QSPI_IMAGE_VERSION:eval-brd-sc-zynqmp = "sc-qspi-eval-brd-sc-v${QSPI_VERSION}${IMAGE_VERSION_SUFFIX}"
 
 CHECKSUM_OFFSET = "0x22400E0"
 
@@ -27,7 +27,7 @@ do_manifest () {
 
 do_deploy () {
     install -Dm 644 ${B}/${IMAGE_NAME}.bin ${DEPLOYDIR}/${IMAGE_NAME}.bin
-    ln -s ${IMAGE_NAME}.bin ${DEPLOYDIR}/${IMAGE_LINK_NAME}.bin
+    ln -s ${IMAGE_NAME}.bin ${DEPLOYDIR}/${QSPI_IMAGE_VERSION}.bin
 
     install -Dm 644 ${B}/${IMAGE_NAME}.manifest ${DEPLOYDIR}/${IMAGE_NAME}.manifest
     ln -s ${IMAGE_NAME}.manifest ${DEPLOYDIR}/${IMAGE_LINK_NAME}.manifest
