@@ -30,11 +30,14 @@ COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS += "libgpiod"
-RDEPENDS:${PN} += "bash \
-		   bootgen \
-		   labtool-jtag-support \
-		   python3-smbus2 \
-		   netcat"
+RDEPENDS:${PN} += " \
+    bash \
+    bootgen \
+    labtool-jtag-support \
+    python3-smbus2 \
+    whiptail \
+    netcat \
+    "
 
 do_compile(){
 	cd ${S}/build/
@@ -42,19 +45,20 @@ do_compile(){
 }
 
 do_install(){
-	install -d ${D}/usr/bin/
-	install -d ${D}${datadir}/system-controller-app
+    install -d ${D}/usr/bin/
+    install -d ${D}${datadir}/system-controller-app
 
-	cp ${S}/build/sc_app ${D}${bindir}
-	cp ${S}/build/sc_appd ${D}${bindir}
-	cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
-	cp -r ${S}/script ${D}${datadir}/system-controller-app/
-	ln -s ${datadir}/system-controller-app/script/setup_board.sh ${D}${bindir}
+    cp ${S}/build/sc_app ${D}${bindir}
+    cp ${S}/build/sc_appd ${D}${bindir}
+    cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
+    cp -r ${S}/script ${D}${datadir}/system-controller-app/
+    ln -s ${datadir}/system-controller-app/script/setup_board.sh ${D}${bindir}
+    ln -s ${datadir}/system-controller-app/script/system_config.sh ${D}${bindir}
 
-	install -d ${D}${systemd_system_unitdir}
-	install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
+    install -d ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
 
-	# Temporary workaround, vitis does not build with Scarthgap
-	rm -f ${D}/usr/share/system-controller-app/BIT/xsdb_funcs.tcl
-	rm -f ${D}/usr/share/system-controller-app/BIT/versal_bit_download.tcl
+    # Temporary workaround, vitis does not build with Scarthgap
+    rm -f ${D}/usr/share/system-controller-app/BIT/xsdb_funcs.tcl
+    rm -f ${D}/usr/share/system-controller-app/BIT/versal_bit_download.tcl
 }
