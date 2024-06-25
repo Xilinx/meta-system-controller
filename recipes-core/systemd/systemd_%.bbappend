@@ -1,5 +1,5 @@
-PR:eval-brd-sc-zynqmp = "r1"
+PR:system-controller = "r1"
 
-PACKAGE_ARCH:eval-brd-sc-zynqmp = "${MACHINE_ARCH}"
+PACKAGE_ARCH:system-controller = "${MACHINE_ARCH}"
 
-PACKAGECONFIG:append:eval-brd-sc-zynqmp = " repart openssl"
+PACKAGECONFIG:append:system-controller = " repart openssl"
