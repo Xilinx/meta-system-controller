@@ -3,15 +3,12 @@ require petalinux-image-common-sc.inc
 IMAGE_INSTALL:append:system-controller = " \
     packagegroup-petalinux-syscontroller \
     packagegroup-petalinux-scweb \
-    resize-partition \
-    u-boot-tools \
-    udev-extraconf \
-    uboot-device-tree \
     libubootenv \
     libubootenv-bin \
     mmc-utils \
+    resize-partition \
+    sc-boards \
+    u-boot-tools \
+    uboot-device-tree \
+    udev-extraconf \
     "
-
-IMAGE_INSTALL:append:system-controller = " \
-	sc-boards \
-"
