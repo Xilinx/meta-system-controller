@@ -37,7 +37,7 @@ do_install:eval-brd-sc-zynqmp() {
 }
 
 SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE:${PN} = "temp-repart.service"
+SYSTEMD_SERVICE:${PN}:eval-brd-sc-zynqmp = "temp-repart.service"
 
 FILES:eval-brd-sc-zynqmp:${PN} += "${sysconfdir}/temp-repart.d/ ${sysconfdir}/systemd/system/*.service"
 RDEPENDS:eval-brd-sc-zynqmp:${PN} = "e2fsprogs-mke2fs"
