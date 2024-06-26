@@ -12,3 +12,8 @@ IMAGE_INSTALL:append:system-controller = " \
     uboot-device-tree \
     udev-extraconf \
     "
+
+IMAGE_INSTALL:append:system-controller:eval-brd-sc-zynqmp = " \
+    rauc \
+    temp-repart \
+    "
