@@ -33,3 +33,18 @@ SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " \
         vck190 \
         vmk180 \
         "
+
+SYSTEM_CONTROLLER_PACKAGES:append:eval-brd-sc-zynqmp = " \
+        rauc \
+        rauc-service \
+        rauc-mark-good \
+        temp-repart \
+        json-glib \
+        lzo \
+        libnl \
+        lz4 \
+        squashfs-tools \
+        kernel-module-dm-bio-prison-6.1.60-xilinx-v2023.2 \
+        kernel-module-dm-persistent-data-6.1.60-xilinx-v2023.2 \
+        kernel-module-dm-thin-pool-6.1.60-xilinx-v2023.2 \
+        "
