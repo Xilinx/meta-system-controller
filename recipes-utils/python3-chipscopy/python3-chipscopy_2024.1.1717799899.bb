@@ -27,6 +27,7 @@ RDEPENDS:${PN} += " \
         ${PYTHON_PN}-plotly \
         ${PYTHON_PN}-regex \
         ${PYTHON_PN}-pandas \
+        ${PYTHON_PN}-antlr4-runtime \
         "
 
 DEPENDS += " \
