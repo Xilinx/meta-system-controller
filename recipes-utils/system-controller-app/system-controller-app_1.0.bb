@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=306deb5c0f33f4b0570c30ba8564f93f"
 
 SC_APP_REPO = "git://github.com/Xilinx/system-controller-app.git"
 SC_APP_BRANCH = "xlnx_rel_v2023.2"
-SC_APP_SRCREV = "ca6aa3d0bff83f0a75a56f2bee0590301b27c65e"
+SC_APP_SRCREV = "2f3b549ae893e813f48a4d0d287ef5418b04929d"
 
 SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
@@ -52,8 +52,6 @@ do_install(){
     cp ${S}/build/sc_appd ${D}${bindir}
     cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
     cp -r ${S}/script ${D}${datadir}/system-controller-app/
-    ln -s ${datadir}/system-controller-app/script/setup_board.sh ${D}${bindir}
-    ln -s ${datadir}/system-controller-app/script/system_config.sh ${D}${bindir}
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
