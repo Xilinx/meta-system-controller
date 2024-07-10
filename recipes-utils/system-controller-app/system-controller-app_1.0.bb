@@ -11,6 +11,10 @@ SC_APP_SRCREV = "2f3b549ae893e813f48a4d0d287ef5418b04929d"
 SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
     file://system_controller.service \
+    file://collect_logs.sh \
+    file://setup_board.sh \
+    file://system_config.sh \
+    file://version_info.sh \
 "
 
 SRCREV="${SC_APP_SRCREV}"
@@ -52,6 +56,7 @@ do_install(){
     cp ${S}/build/sc_appd ${D}${bindir}
     cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
     cp -r ${S}/script ${D}${datadir}/system-controller-app/
+    install -m 755 ${WORKDIR}/*.sh ${D}${bindir}
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
