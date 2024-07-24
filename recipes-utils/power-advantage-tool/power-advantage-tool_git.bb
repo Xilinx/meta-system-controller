@@ -19,7 +19,7 @@ S = "${WORKDIR}/git"
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
-RDEPENDS:${PN} = "packagegroup-petalinux-jupyter \
+RDEPENDS:${PN} = "packagegroup-xilinx-jupyter \
                   python3-ipywidgets \
                   python3-pydot \
                   "
