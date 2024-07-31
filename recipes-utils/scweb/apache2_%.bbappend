@@ -8,8 +8,3 @@ do_install:append:system-controller() {
     install -m 0644 ${WORKDIR}/httpd.conf ${D}${sysconfdir}/apache2
 }
 
-# in the SC build, busybox also provides an httpd server
-# busybox's default priofity is 50, make sure this one "wins"
-ALTERNATIVE:${PN} = "httpd"
-ALTERNATIVE_LINK_NAME[httpd] = "${sbindir}/httpd"
-ALTERNATIVE_PRIORITY[httpd] = "60"
