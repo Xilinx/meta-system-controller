@@ -1,0 +1,13 @@
+--- a/chipscopy/api/ddr/ddr.py
++++ b/chipscopy/api/ddr/ddr.py
+@@ -61,8 +61,8 @@ class DDR(DebugCore["DDRMCClient"]):
+     def __init__(self, ddr_node):
+         super(DDR, self).__init__(CoreType.DDR, ddr_node)
+         self.node_name = ddr_node.props["Name"]
+-        self.mc_index = ddr_node.props["mc_index"]
+-        self.mc_loc = ddr_node.props["mc_loc"]
++        self.mc_index = ddr_node.props["additional_props"]["mc_index"]
++        self.mc_loc = ddr_node.props["additional_props"]["mc_loc"]
+         self.name = "ddr_" + self.mc_index
+         self.ddr_node = self.core_tcf_node
+         self.is_enabled = self.is_user_enabled()
