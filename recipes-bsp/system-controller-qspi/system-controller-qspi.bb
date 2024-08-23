@@ -20,7 +20,7 @@ CHECKSUM_OFFSET = "0x22400E0"
 do_manifest () {
     printf "=== QSPI\nVERSION: ${QSPI_IMAGE_VERSION}\n\n" > ${B}/${IMAGE_NAME}.manifest
     cat ${DEPLOY_DIR_IMAGE}/imgrcry-${MACHINE}.manifest >> ${B}/${IMAGE_NAME}.manifest
-    cat ${DEPLOY_DIR_IMAGE}/imgsel-${MACHINE}.manifest >> ${B}/${IMAGE_NAME}.manifest
+    cat ${DEPLOY_DIR_IMAGE}/image-selector-${MACHINE}.manifest >> ${B}/${IMAGE_NAME}.manifest
     printf "=== BOOT.BIN\n" >> ${B}/${IMAGE_NAME}.manifest
     cat ${DEPLOY_DIR_IMAGE}/boot.bin.manifest >> ${B}/${IMAGE_NAME}.manifest
 }
