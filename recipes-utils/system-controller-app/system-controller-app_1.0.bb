@@ -62,8 +62,14 @@ do_install(){
     install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
 
     # Temporary workaround, vitis does not build with Scarthgap
+    # Temporary workaround, vitis does not build with Scarthgap
+    rm -f ${D}/usr/share/system-controller-app/BIT/alt_boot_mode.tcl
+    rm -f ${D}/usr/share/system-controller-app/BIT/idcode_verify.tcl
+    rm -f ${D}/usr/share/system-controller-app/BIT/qsfp_download.tcl
+    rm -f ${D}/usr/share/system-controller-app/BIT/read_efuse.tcl
     rm -f ${D}/usr/share/system-controller-app/BIT/xsdb_funcs.tcl
     rm -f ${D}/usr/share/system-controller-app/BIT/versal_bit_download.tcl
+    rm -f ${D}/usr/share/system-controller-app/script/sfp_presence.tcl
     rm -f ${D}/usr/share/system-controller-app/script/versal_tcl_cmd.tcl
     rm -f ${D}/usr/share/system-controller-app/script/versal_pdi_download.tcl
 }
