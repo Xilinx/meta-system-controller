@@ -28,7 +28,7 @@ ADDN_COMPILE_DEPENDS = ""
 ADDN_COMPILE_DEPENDS:eval-brd-sc-zynqmp = "\
     bootbin-version-header:do_deploy \
     fsbl:do_deploy pmu-firmware:do_deploy \
-    arm-trusted-firmware:do_deploy \
+    virtual/arm-trusted-firmware:do_deploy \
     u-boot-xlnx:do_deploy device-tree:do_deploy \
     "
 
