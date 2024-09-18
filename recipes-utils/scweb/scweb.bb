@@ -8,10 +8,10 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://src/LICENSE.md;md5=691ccffd5cbf3847f255a28754844a10"
 
 
-SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2023.2;protocol=https \
+SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2024.2;protocol=https \
 	   file://scwebrun.service \
                   "
-SRCREV = "9e26b4485d377cedabf336d4e40c775c7e6427bb"
+SRCREV = "a39d0d8a4e491721adfba2c7308aca57df6be11e"
 
 inherit update-rc.d systemd
 
