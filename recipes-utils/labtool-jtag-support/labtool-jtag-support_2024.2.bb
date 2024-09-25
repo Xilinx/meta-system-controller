@@ -34,6 +34,7 @@ S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
 RDEPENDS:${PN} += "bash"
+RPROVIDES:${PN} += "/usr/local/xilinx_vitis/xsdb"
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
