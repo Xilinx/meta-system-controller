@@ -64,6 +64,4 @@ do_install(){
     # Temporary workaround, vitis does not build with Scarthgap
     rm -f ${D}/usr/share/system-controller-app/BIT/xsdb_funcs.tcl
     rm -f ${D}/usr/share/system-controller-app/BIT/versal_bit_download.tcl
-    rm -f ${D}/usr/share/system-controller-app/script/versal_tcl_cmd.tcl
-    rm -f ${D}/usr/share/system-controller-app/script/versal_pdi_download.tcl
 }
