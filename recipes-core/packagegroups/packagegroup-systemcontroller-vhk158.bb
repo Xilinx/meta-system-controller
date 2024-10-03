@@ -5,8 +5,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 VHK158_PACKAGES = " \
- 		vhk158-a01 \
-		vhk158-sc-app \
+		systemcontroller-firmware-vhk158-a01 \
+		systemcontroller-app-vhk158 \
         "
 
 RDEPENDS:${PN} = "${VHK158_PACKAGES}"

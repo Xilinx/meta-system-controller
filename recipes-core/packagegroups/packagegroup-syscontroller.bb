@@ -34,6 +34,6 @@ SYSTEM_CONTROLLER_PACKAGES = " \
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
 
 SYSTEM_CONTROLLER_PACKAGES:append:vck-sc-zynqmp = " \
-        vck190 \
-        vmk180 \
+        packagegroup-systemcontroller-vck190 \
+        packagegroup-systemcontroller-vmk180 \
         "

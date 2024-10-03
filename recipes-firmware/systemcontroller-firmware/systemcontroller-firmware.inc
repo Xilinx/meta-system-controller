@@ -10,3 +10,15 @@ SRCREV ?= "43bd0335da8f9368135805a496877509afc0b1f7"
 inherit dfx_user_dts
 COMPATIBLE_MACHINE = "^$"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+do_configure[prefuncs] =+ "move_fw_files"
+python move_fw_files () {
+    import shutil
+    import os
+
+    s = d.getVar('S')
+    fw_filename = d.getVar('FW_FILENAME')
+    pn = d.getVar('PN')
+    shutil.move(os.path.join(s, fw_filename + '.bit'), os.path.join(s, pn + '.bit'))
+    shutil.move(os.path.join(s, fw_filename + '.dtsi'), os.path.join(s, pn + '.dtsi'))
+}

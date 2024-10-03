@@ -5,8 +5,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 VEK280_PACKAGES = " \
-		vek280-a01 \
-		vek280-sc-app \
+		systemcontroller-firmware-vek280-a01 \
+		systemcontroller-app-vek280 \
         "
 
 RDEPENDS:${PN} = "${VEK280_PACKAGES}"

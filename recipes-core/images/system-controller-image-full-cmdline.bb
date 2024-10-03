@@ -24,7 +24,7 @@ IMAGE_INSTALL = " \
     python3-psutil \
     raft \
     repart-resize \
-    sc-licenses-manual \
+    systemcontroller-licenses-manual \
     u-boot-tools \
     uboot-device-tree \
 "

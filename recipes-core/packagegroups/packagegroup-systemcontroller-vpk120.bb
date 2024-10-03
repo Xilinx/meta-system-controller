@@ -5,8 +5,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 VPK120_PACKAGES = " \
-        vpk120-b01 \
-		vpk120-sc-app \
+        systemcontroller-firmware-vpk120-b01 \
+		systemcontroller-app-vpk120 \
         "
 
 RDEPENDS:${PN} = "${VPK120_PACKAGES}"
