@@ -23,10 +23,8 @@ IMAGE_INSTALL = " \
     python3-pip \
     python3-psutil \
     raft \
+    repart-resize \
     sc-licenses-manual \
     u-boot-tools \
     uboot-device-tree \
 "
-
-IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " temp-repart"
-IMAGE_INSTALL:append:vck-sc-zynqmp = " resize-partition"

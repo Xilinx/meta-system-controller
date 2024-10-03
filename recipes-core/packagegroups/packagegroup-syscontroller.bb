@@ -28,6 +28,7 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         lmsensors-sensors \
         lmsensors-libsensors \
         lmsensors-sensorsdetect \
+        repart-resize \
         "
 
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"
