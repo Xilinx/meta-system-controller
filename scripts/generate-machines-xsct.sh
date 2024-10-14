@@ -4,7 +4,7 @@ XSCT_VERSION=2024.2
 
 ### The following table controls the automatic generated of the machine .conf files (lines start with #M#)
 ### Machine               Board Template          PRE     POST
-#M# eval-brd-sc-zynqmp    zynqmp-sc-revb          #\ Yocto\ uboot\ device-tree\ variables\\nYAML_CONSOLE_DEVICE_CONFIG:pn-uboot-device-tree\ ?=\ \"psu_uart_1\"\\n    # Add the following files to /boot\\nIMAGE_BOOT_FILES += \"system-sc-revc-zynqmp.dtb system.dtb\"\\nWKS_FILES = \"system-controller-nobootpartition.wks\"
+#M# eval-brd-sc-zynqmp    zynqmp-sc-revb          #\ Yocto\ uboot\ device-tree\ variables\\nYAML_CONSOLE_DEVICE_CONFIG:pn-uboot-device-tree\ ?=\ \"psu_uart_1\"\\n    # Add the following files to /boot\\nIMAGE_BOOT_FILES += \"system-sc-revc-zynqmp.dtb system.dtb\"\\nWKS_FILES = \"system-controller-nobootpartition.wks\"\\n\\n# enable RAUC_DEMO for this board by default\\nSYSTEM_CONTROLLER_RAUC_DEMO = \"yes\"
 #M# vck-sc-zynqmp         zynqmp-e-a2197-00-revb  none    # Add the following files to pack in wic FAT partition\\nIMAGE_BOOT_FILES += \"boot.bin system.dtb\"\\n# Pack bitstream in BOOT.BIN for vck-sc-zynqmp\\nBIF_BITSTREAM_ATTR  = \"bitstream\"
 
 this=$(realpath $0)
