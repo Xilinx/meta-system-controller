@@ -26,5 +26,7 @@ IMAGE_INSTALL = " \
     repart-resize \
     systemcontroller-licenses-manual \
     u-boot-tools \
-    uboot-device-tree \
 "
+
+IMAGE_INSTALL:append:eval-brd-sc-zynqmp = "uboot-device-tree"
+IMAGE_INSTALL:remove:eval-brd-sc-zynqmp-sdt = "uboot-device-tree"

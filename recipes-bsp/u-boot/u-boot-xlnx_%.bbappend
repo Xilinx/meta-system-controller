@@ -4,6 +4,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 UBOOT_MANIFEST = "${UBOOT_BINARYNAME}-${MACHINE}-${PV}-${PR}.manifest"
 
+DEPENDS:append:eval-brd-sc-zynqmp = " uboot-device-tree"
+DEPENDS:remove:eval-brd-sc-zynqmp-sdt = " uboot-device-tree"
+
 do_compile:append:eval-brd-sc-zynqmp() {
     printf "* ${PN}\nSRCREV: ${SRCREV}\nBRANCH: ${UBRANCH}\n\n" > ${S}/${PN}.manifest
 }

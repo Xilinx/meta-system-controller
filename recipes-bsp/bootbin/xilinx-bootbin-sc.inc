@@ -27,7 +27,7 @@ do_configure:append:eval-brd-sc-zynqmp() {
 ADDN_COMPILE_DEPENDS = ""
 ADDN_COMPILE_DEPENDS:eval-brd-sc-zynqmp = "\
     bootbin-version-header:do_deploy \
-    fsbl:do_deploy pmu-firmware:do_deploy \
+    fsbl:do_deploy pmufw:do_deploy \
     virtual/arm-trusted-firmware:do_deploy \
     u-boot-xlnx:do_deploy device-tree:do_deploy \
     "
@@ -38,7 +38,7 @@ do_compile:append:eval-brd-sc-zynqmp() {
     printf "SHA1: ${bootbin_sha}\n\n" > ${B}/${BOOTBIN_MANIFEST_FILE}
 
     cat ${DEPLOY_DIR_IMAGE}/bootbin-version-header-${MACHINE}.manifest \
-        ${DEPLOY_DIR_IMAGE}/fsbl-${MACHINE}.manifest ${DEPLOY_DIR_IMAGE}/pmu-firmware-${MACHINE}.manifest \
+        ${FSBL_DEPLOY_DIR}/fsbl-${MACHINE}.manifest ${PMU_FIRMWARE_DEPLOY_DIR}/pmu-firmware-${MACHINE}.manifest \
         ${DEPLOY_DIR_IMAGE}/arm-trusted-firmware.manifest ${DEPLOY_DIR_IMAGE}/u-boot-${MACHINE}.manifest \
         ${DEPLOY_DIR_IMAGE}/device-tree-${MACHINE}.manifest ${B}/bootbin_yocto_layers.txt >> ${B}/${BOOTBIN_MANIFEST_FILE}
 }
