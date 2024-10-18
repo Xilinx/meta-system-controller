@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MIT
 #
 
-DEV="eth0"
+DEV="end0"
 WIDTH=50
 HEIGHT=15
 IPCONFIG="DHCP"
