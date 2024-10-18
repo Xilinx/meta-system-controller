@@ -1,6 +1,6 @@
 # meta-system-controller
 
-This layer enables AMD Xilinx ZynqMP and Versal system controller metadata
+This layer enables AMD ZynqMP and Versal system controller metadata
 such as machine configuration files, boot firmware components, applications etc.
 
 ## Maintainers, Patches/Submissions, Community
@@ -13,10 +13,10 @@ the [meta-xilinx mailing list](https://lists.yoctoproject.org/g/meta-xilinx):
 When sending patches, please make sure the email subject line includes
 `[meta-system-controller][<BRANCH_NAME>][PATCH]` and cc'ing the maintainers.
 
-For more details follow the OE community patch submission guidelines, as described in:
+For more details follow the Yocto Project community patch submission guidelines,
+as described in:
 
-https://www.openembedded.org/wiki/Commit_Patch_Message_Guidelines
-https://www.openembedded.org/wiki/How_to_submit_a_patch_to_OpenEmbedded
+https://docs.yoctoproject.org/dev/contributor-guide/submit-changes.html#
 
 `git send-email --to meta-xilinx@lists.yoctoproject.org *.patch`
 
@@ -29,13 +29,14 @@ https://www.openembedded.org/wiki/How_to_submit_a_patch_to_OpenEmbedded
 `git format-patch -s --subject "meta-system-controller][<BRANCH_NAME>][PATCH" -1`
 
 **Example:**
-`git format-patch -s --subject "meta-system-controller][rel-v2023.1][PATCH" -1`
+`git format-patch -s --subject "meta-system-controller][rel-v2024.2][PATCH" -1`
 
 **Maintainers:**
 
 	Mark Hatle <mark.hatle@amd.com>
 	Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 	John Toomey <john.toomey@amd.com>
+	Trevor Woerner <trevor.woerner@amd.com>
 ---
 ## Dependencies
 
@@ -43,25 +44,29 @@ This layer depends on:
 
 	URI: https://git.yoctoproject.org/poky
 	layers: meta, meta-poky
-	branch: langdale
+	branch: scarthgap
 
 	URI: https://git.openembedded.org/meta-openembedded
 	layers: meta-oe
-	branch: langdale
+	branch: scarthgap
 
 	URI:
         https://git.yoctoproject.org/meta-xilinx (official version)
-        https://github.com/Xilinx/meta-xilinx (development and amd xilinx release)
+        https://github.com/Xilinx/meta-xilinx (development and AMD release)
 	layers: meta-xilinx-microblaze, meta-xilinx-core
-	branch: langdale or amd xilinx release version (e.g. rel-v2023.1)
+	branch: scarthgap or AMD release version (e.g. rel-v2024.2)
 
 	URI:
         https://git.yoctoproject.org/meta-xilinx-tools (official version)
-        https://github.com/Xilinx/meta-xilinx-tools (development and amd xilinx release)
-	branch: langdale or amd xilinx release version (e.g. rel-v2023.1)
+        https://github.com/Xilinx/meta-xilinx-tools (development and AMD release)
+	branch: scarthgap or AMD release version (e.g. rel-v2024.2)
 
 	URI: https://github.com/Xilinx/meta-petalinux
-	branch: amd xilinx release version (e.g. rel-v2023.1)
+	branch: AMD release version (e.g. rel-v2024.2)
 
 	URI: https://github.com/Xilinx/meta-jupyter
-	branch: langdale or amd xilinx release version (e.g. rel-v2023.1)
+	branch: scarthgap or AMD release version (e.g. rel-v2024.2)
+
+	URI: https://git.yoctoproject.org/meta-arm
+	layers: meta-arm, meta-arm-toolchain
+	branch: scarthgap
