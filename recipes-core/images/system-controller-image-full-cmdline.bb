@@ -26,6 +26,7 @@ IMAGE_INSTALL = " \
     repart-resize \
     systemcontroller-licenses-manual \
     u-boot-tools \
+    ser2net \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = "uboot-device-tree"
