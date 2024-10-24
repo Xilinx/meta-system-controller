@@ -29,5 +29,5 @@ IMAGE_INSTALL = " \
     ser2net \
 "
 
-IMAGE_INSTALL:append:eval-brd-sc-zynqmp = "uboot-device-tree"
+IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
 IMAGE_INSTALL:remove:eval-brd-sc-zynqmp-sdt = "uboot-device-tree"

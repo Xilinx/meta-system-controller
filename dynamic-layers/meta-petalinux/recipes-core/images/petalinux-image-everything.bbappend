@@ -12,5 +12,5 @@ IMAGE_INSTALL:append:system-controller = " \
     udev-extraconf \
     "
 
-IMAGE_INSTALL:append:eval-brd-sc-zynqmp = "uboot-device-tree"
+IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
 IMAGE_INSTALL:remove:eval-brd-sc-zynqmp-sdt = "uboot-device-tree"
