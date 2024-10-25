@@ -8,3 +8,6 @@ do_install:append:system-controller() {
     install -m 0644 ${WORKDIR}/httpd.conf ${D}${sysconfdir}/apache2
 }
 
+ALTERNATIVE:${PN} = "httpd"
+ALTERNATIVE_LINK_NAME[httpd] = "${sbindir}/httpd"
+ALTERNATIVE_PRIORITY[httpd] = "60"
