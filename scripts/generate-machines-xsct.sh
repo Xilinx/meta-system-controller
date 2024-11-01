@@ -98,6 +98,10 @@ for mach in ${!MACHINES[@]}; do
     sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e 's,\(^require conf/machine/.*\.conf\),\1\n\n'"${POST[${mach}]}"','
   fi
 
+  # Unconditionally enable fpga-manager MACHINE_FEATURES
+  sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf \
+    -e 's:\(MACHINE_FEATURES[ \t]*+=[ \t]*"\):\1fpga-overlay :'
+
   case ${MACHINES[${mach}]} in
     eval-brd-sc-zynqmp)
       sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf \

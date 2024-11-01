@@ -15,7 +15,7 @@ IMAGE_INSTALL = " \
     libubootenv \
     libubootenv-bin \
     linux-xlnx-udev-rules \
-    lmsensors-config \
+    lmsensors-config-libsensors \
     lmsensors-fancontrol \
     packagegroup-core-boot \
     packagegroup-scweb \
