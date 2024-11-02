@@ -11,7 +11,6 @@ SC_BOARDS_PACKAGES = " \
     packagegroup-systemcontroller-vhk158 \
     packagegroup-systemcontroller-vpk120 \
     packagegroup-systemcontroller-vpk180 \
-    packagegroup-systemcontroller-vm-p-m1369-00 \
         "
 
 RDEPENDS:${PN} = "${SC_BOARDS_PACKAGES}"
