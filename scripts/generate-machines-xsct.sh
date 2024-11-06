@@ -84,7 +84,7 @@ for mach in ${!MACHINES[@]}; do
   echo
   set -x
   rm -rf output
-  gen-machineconf parse-xsa --hw-description ${URLS[${mach}]} -c ${conf_path} --machine-name ${MACHINES[${mach}]} --require-machine system-controller-generic --add-config CONFIG_SUBSYSTEM_MACHINE_NAME=\"${BOARDS[${mach}]}\"
+  gen-machineconf parse-xsa --hw-description ${URLS[${mach}]} -c ${conf_path} --machine-name ${MACHINES[${mach}]} --require-machine system-controller-generic --add-config CONFIG_SUBSYSTEM_MACHINE_NAME=\"${BOARDS[${mach}]}\" --add-config CONFIG_SUBSYSTEM_FPGA_MANAGER=y
   set +x
 
   ######### Post gen-machineconf changes
@@ -97,10 +97,6 @@ for mach in ${!MACHINES[@]}; do
   if [ -n "${POST[${mach}]}" ]; then
     sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e 's,\(^require conf/machine/.*\.conf\),\1\n\n'"${POST[${mach}]}"','
   fi
-
-  # Unconditionally enable fpga-manager MACHINE_FEATURES
-  sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf \
-    -e 's:\(MACHINE_FEATURES[ \t]*+=[ \t]*"\):\1fpga-overlay :'
 
   case ${MACHINES[${mach}]} in
     eval-brd-sc-zynqmp)
