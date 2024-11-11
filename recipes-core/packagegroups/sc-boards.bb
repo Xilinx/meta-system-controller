@@ -11,6 +11,7 @@ SC_BOARDS_PACKAGES = " \
     vhk158 \
     vpk120 \
     vpk180 \
+    vm-p-m1369-00 \
         "
 
 RDEPENDS:${PN} = "${SC_BOARDS_PACKAGES}"
