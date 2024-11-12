@@ -8,8 +8,8 @@ SRC_URI = "git://github.com/Xilinx/versal-sc-firmware.git;protocol=https;branch=
 SRCREV ?= "43bd0335da8f9368135805a496877509afc0b1f7"
 
 inherit dfx_user_dts
-COMPATIBLE_MACHINE = "^$"
-PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+COMPATIBLE_MACHINE = "${MACHINE}"
 
 do_configure[prefuncs] =+ "move_fw_files"
 python move_fw_files () {

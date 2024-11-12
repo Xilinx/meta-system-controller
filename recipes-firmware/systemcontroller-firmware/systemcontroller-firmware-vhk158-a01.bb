@@ -7,8 +7,6 @@ include systemcontroller-firmware.inc
 FW_DIR = "vhk158"
 FW_FILENAME = "vhk158-a01"
 
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
-
 do_install:append() {
     # create symbolic links to supported revisions of the same board
     for board in a01 b01; do

@@ -7,8 +7,6 @@ include systemcontroller-firmware.inc
 FW_DIR = "vpk180"
 FW_FILENAME = "vpk180-a01"
 
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
-
 do_install:append() {
     # create symbolic links to supported revisions of the same board
     for board in a01 b01; do

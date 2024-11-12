@@ -11,8 +11,6 @@ include systemcontroller-firmware.inc
 FW_DIR = "vek280"
 FW_FILENAME = "vek280-a01"
 
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
-
 do_install:append() {
     # create symbolic links to supported revisions of the same board
     for board in a01 b01 b02 b03; do
