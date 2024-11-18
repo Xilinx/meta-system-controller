@@ -31,3 +31,5 @@ IMAGE_INSTALL = " \
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
 IMAGE_INSTALL:remove:eval-brd-sc-zynqmp-sdt = "uboot-device-tree"
+IMAGE_INSTALL:remove:zynqmp-k26-sc-xsct-base = "uboot-device-tree"
+IMAGE_INSTALL:remove:zynqmp-k24-sc-xsct-base = "uboot-device-tree"
