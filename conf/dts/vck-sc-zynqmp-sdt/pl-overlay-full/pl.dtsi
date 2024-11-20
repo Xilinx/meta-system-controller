@@ -6,6 +6,7 @@
 &amba{
 	clocking3: clocking3 {
 		compatible = "xlnx,fclk";
+		status = "okay";
 		assigned-clocks = <&zynqmp_clk 0x4a>;
 		assigned-clock-rates = <0x1659fd16>;
 		#clock-cells = <0x0>;
@@ -14,6 +15,7 @@
 	};
 	clocking2: clocking2 {
 		compatible = "xlnx,fclk";
+		status = "okay";
 		assigned-clocks = <&zynqmp_clk 0x49>;
 		assigned-clock-rates = <0x11e19751>;
 		#clock-cells = <0x0>;
@@ -22,6 +24,7 @@
 	};
 	clocking1: clocking1 {
 		compatible = "xlnx,fclk";
+		status = "okay";
 		assigned-clocks = <&zynqmp_clk 0x48>;
 		assigned-clock-rates = <0x17d7746>;
 		#clock-cells = <0x0>;
@@ -30,6 +33,7 @@
 	};
 	clocking0: clocking0 {
 		compatible = "xlnx,fclk";
+		status = "okay";
 		assigned-clocks = <&zynqmp_clk 0x47>;
 		assigned-clock-rates = <0x5f5dd19>;
 		#clock-cells = <0x0>;
@@ -47,7 +51,7 @@
 	};
 };
 &amba{
-	SYSCTLR_SI5332: axi_iic@80000000 {
+	SYSCTLR_SI5332: i2c@80000000 {
 		interrupts = <0x0 0x59 0x4>;
 		xlnx,iic-freq-khz = <0x64>;
 		compatible = "xlnx,axi-iic-2.1", "xlnx,xps-iic-2.00.a";
@@ -67,13 +71,13 @@
 		xlnx,ten-bit-adr = <0x0>;
 		xlnx,default-value = <0x0>;
 		interrupt-names = "iic2intc_irpt";
-		xlnx,timing-reg-width = <0x20>;
 		xlnx,iic-board-interface = "Custom";
+		xlnx,timing-reg-width = <0x20>;
 		xlnx,iic-freq = <0x186a0>;
 		xlnx,smbus-pmbus-host = <0x0>;
-		xlnx,sda-inertial-delay = <0x0>;
 		xlnx,name = "SYSCTLR_SI5332";
 		xlnx,axi-aclk-freq-mhz = <0x5f5dd19>;
+		xlnx,sda-inertial-delay = <0x0>;
 	};
 	debug_bridge_0: debug_bridge@80010000 {
 		xlnx,xvc-sw-id = <0x1>;
@@ -97,8 +101,8 @@
 		xlnx,en-int-sim = <0x1>;
 		xlnx,clk-input-freq-hz = <0x11e1a300>;
 		xlnx,ir-id-instr = <0x0>;
-		xlnx,pcie-ext-cfg-base-addr = <0x400>;
 		xlnx,edk-iptype = "PERIPHERAL";
+		xlnx,pcie-ext-cfg-base-addr = <0x400>;
 		xlnx,build-revision = <0x0>;
 		xlnx,use-softbscan = <0x1>;
 		xlnx,ir-user1-instr = <0x0>;
