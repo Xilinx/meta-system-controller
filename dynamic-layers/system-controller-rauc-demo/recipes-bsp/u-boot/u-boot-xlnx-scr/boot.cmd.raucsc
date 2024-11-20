@@ -68,8 +68,8 @@ do
 		# (eMMC) with an older U-Boot (boot.bin in QSPI). Merely checking the U-Boot version will not
 		# suffice; both before and after the fix the U-Boot version is the same. Therefore in order to
 		# detect a new versus old U-Boot the boot.bin in the QSPI must be examined; if it contains
-		# the string 'SC-BootFW' at offset 0x70 then we know this is a new U-Boot and can proceed
-		# with the A/B logic, otherwise we have to fall back to non A/B behaviour.
+		# the string 'BOOT-' at offset 0x70 then we know this is an old U-Boot and can not proceed
+		# with the A/B logic, otherwise we can proceed to use RAUC.
 		#
 		# Further complicating the situation, there are 2 boot.bins, therefore the code must start by
 		# figuring out which of the two is running. This can be determined by examining the values
@@ -103,23 +103,15 @@ do
 
 		# place the compare-to string 'SC-BootFW' in RAM at $kernel_addr_r + 0x20
 		setexpr CMP2 $kernel_addr_r + 0x20
-		mw.b $CMP2 0x53
+		mw.b $CMP2 0x42			# 'B'
 		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x43
+		mw.b $CMP2 0x4f			# 'O'
 		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x2d
+		mw.b $CMP2 0x4f			# 'O'
 		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x42
+		mw.b $CMP2 0x54			# 'T'
 		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x6f
-		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x6f
-		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x74
-		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x46
-		setexpr CMP2 $CMP2 + 1
-		mw.b $CMP2 0x57
+		mw.b $CMP2 0x2d			# '-'
 		# leave CMP2 pointing at the start of the compare-to string
 		setexpr CMP2 $kernel_addr_r + 0x20
 
@@ -193,26 +185,26 @@ do
 			DO_RAUC=0
 		fi
 
-		# at this point the 9 bytes in *${kernel_addr_r} is the version of the active boot.bin
+		# at this point the 5 bytes in *${kernel_addr_r} is the version of the active boot.bin
 		# and *${kernel_addr_r} + 0x20 contains the compare-to string (CMP2)
 		if itest $DO_RAUC == 1; then
 			echo "boot.bin version:"
-			md.b $kernel_addr_r 9
+			md.b $kernel_addr_r 5
 			echo "compare-to string:"
-			md.b $CMP2 9
+			md.b $CMP2 5
 
-			cmp.b $kernel_addr_r $CMP2 9
+			cmp.b $kernel_addr_r $CMP2 5
 			if itest $? == 0; then
-				echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
-				echo "*            boot.bin version good            *"
-				echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
-				DO_RAUC=1
-			else
 				echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
 				echo "*     !!!  older boot.bin detected   !!!      *"
 				echo "*     !!! rauc will not be performed !!!      *"
 				echo "* falling back to booting the first partition *"
 				echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+			else
+				echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+				echo "*            boot.bin version good            *"
+				echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+				DO_RAUC=1
 			fi
 		else
 			echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
