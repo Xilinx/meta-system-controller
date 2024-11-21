@@ -84,7 +84,12 @@ for mach in ${!MACHINES[@]}; do
   echo
   set -x
   rm -rf output
-  gen-machineconf parse-xsa --hw-description ${URLS[${mach}]} -c ${conf_path} --machine-name ${MACHINES[${mach}]} --require-machine system-controller-generic --add-config CONFIG_SUBSYSTEM_MACHINE_NAME=\"${BOARDS[${mach}]}\" --add-config CONFIG_SUBSYSTEM_FPGA_MANAGER=y
+  if [ ${MACHINES[${mach}]} = "vck-sc-zynqmp" ]; then
+    add_args=""
+  else
+    add_args="--add-config CONFIG_SUBSYSTEM_FPGA_MANAGER=y"
+  fi
+  gen-machineconf parse-xsa --hw-description ${URLS[${mach}]} -c ${conf_path} --machine-name ${MACHINES[${mach}]} --require-machine system-controller-generic --add-config CONFIG_SUBSYSTEM_MACHINE_NAME=\"${BOARDS[${mach}]}\" ${add_args}
   set +x
 
   ######### Post gen-machineconf changes
