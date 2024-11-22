@@ -1,16 +1,16 @@
-SUMMARY = "Recipe to add 2022.1 ChipScopy Python Package"
+SUMMARY = "Recipe to add 2024.2 ChipScopy Python Package"
 LICENSE = "Apache-2.0 & EPL-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=e044f1626fcb471118a71a253d550cb1 \
+LIC_FILES_CHKSUM = "file://LICENSE;md5=2d94686e8e79887c3661be21c344e542 \
                     file://epl-v20.html;md5=84283fa8859daf213bdda5a9f8d1be1d \
 "
 
 inherit  python3-dir
 
-SRC_URI = "https://files.pythonhosted.org/packages/23/24/14ac5a54c06735ff9cbdf8192a5791e7fbe15f838416b532066667c0a9d6/chipscopy-2024.1.1717799899-py3-none-any.whl;downloadfilename=chipscopy-2024.1.1717799899-py3-none-any.zip;subdir=${BP}"
+SRC_URI = "https://files.pythonhosted.org/packages/7f/f3/b78243090c21cf0f5fff59f034ae65425e1f1d6b0f25d27bd1ba26af6977/chipscopy-2024.2.1732283942-py3-none-any.whl;downloadfilename=chipscopy-2024.2.1732283942-py3-none-any.zip;subdir=${BP}"
 
 
-SRC_URI[md5sum] = "1ed749dd35a8577bdf799b6277727f0f"
-SRC_URI[sha256sum] = "a411cc29d78962483a8336f4539b06b276bb6b6990c97521019e0e24e0f4bf2d"
+SRC_URI[md5sum] = "ee7ce26b781f3a973eb2ad3ecea028bb"
+SRC_URI[sha256sum] = "9fe73c783f8e503cebbab277f13ddde7f5f6bad8b48bc3801223a856cec699b2"
 
 PN = "python3-chipscopy"
 
@@ -40,9 +40,9 @@ FILES:${PN} += "\
 "
 
 do_install() {
-    install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2024.1.1717799899.dist-info
+    install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2024.2.1732283942.dist-info
     install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy
 
     cp -r ${S}/chipscopy/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy/
-    cp -r ${S}/chipscopy-2024.1.1717799899.dist-info/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2024.1.1717799899.dist-info/
+    cp -r ${S}/chipscopy-2024.2.1732283942.dist-info/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2024.2.1732283942.dist-info/
 }
