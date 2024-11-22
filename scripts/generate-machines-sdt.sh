@@ -2,7 +2,7 @@
 
 ### The following table controls the automatic generated of the machine .conf files (lines start with #M#)
 ### Machine              BOARD                     OVERLAY    PRE     POST
-#M# vck-sc-zynqmp-sdt    system-controller-generic.conf       full       none    MACHINEOVERRIDES =\. \"system-controller:vck-sc-zynqmp:\"
+#M# vck-sc-zynqmp-sdt    system-controller-generic.conf       none       none    MACHINEOVERRIDES =\. \"system-controller:vck-sc-zynqmp:\"
 #M# eval-brd-sc-zynqmp-sdt system-controller-generic.conf     full       none    MACHINEOVERRIDES =\. \"system-controller:eval-brd-sc-zynqmp:\"
 
 this=$(realpath $0)
