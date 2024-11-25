@@ -12,7 +12,7 @@ fi
 EEPROM=$(/bin/ls /sys/bus/i2c/devices/1-0054/eeprom 2> /dev/null || /bin/ls /sys/bus/i2c/devices/11-0054/eeprom 2> /dev/null)
 BOARD=$(/usr/sbin/ipmi-fru --fru-file="$EEPROM" --interpret-oem-data | /usr/bin/awk -F": " '/FRU Board Product/ { print tolower ($2) }')
 echo Install board packages for "$BOARD"
-if dnf install -y "${BOARD}"; then
+if dnf install -y "packagegroup-systemcontroller-${BOARD}"; then
     echo "Install complete. Automatically rebooting in 5s."
     sleep 5 && reboot
 else
