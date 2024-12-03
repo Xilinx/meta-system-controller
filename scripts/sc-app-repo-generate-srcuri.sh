@@ -4,8 +4,8 @@
 # Usage:
 # cd sources/meta-system-controller
 # ./scripts/sc-app-repo-generate-srcuri.sh \
-#    https://xcoartifactory.xilinx.com/artifactory/system-controller/sc_app_bsp/2023.2/2023.2_02232200/internal/ \
-#    > recipes-utils/system-conroller-app/system-controller-app.inc
+#    https://xcoartifactory.xilinx.com/artifactory/system-controller/sc_app_bsp/2023.2/2023.2_02232200/external/ \
+#    > recipes-utils/system-controller-app/system-controller-app.inc
 #
 # It is assumed the URL being pointed to will be a series of directories. The BOARD value
 # will be the directory name, and the contents within the directory will be the board
