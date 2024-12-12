@@ -11,23 +11,9 @@ rootfs_name=@@RAMDISK_IMAGE@@
 
 #Set DT selection
 if test "${board_name}-${board_rev}" = "VEK280-B01" || test "${board_name}-${board_rev}" = "VEK280-B02" || test "${board_name}-${board_rev}" = "VEK280-B03"; then
-        echo "/*******************************************************"
-        echo " * VEK280 RevB detected "
-        echo " * Using DT /boot/devicetree/system-sc-revc-zynqmp.dtb  "
-        echo " *******************************************************/"
         dtb_name=devicetree/system-sc-revc-zynqmp
-elif test "${board_name}" = "VHK158" || test "${board_name}" = "VPK180" || test "${board_name}" = "VPK120" || test "${board_name}" = "VEK280"; then
-        echo "/*******************************************************"
-        echo " * SC Gen 2 board detected "
-        echo " * Using DT /boot/systemd.dtb  "
-        echo " *******************************************************/"
-        dtb_name=system
 else
-        echo "/*******************************************************"
-        echo " * SC Gen 3 board detected "
-        echo " * Using DT from firmware "
-        echo " *******************************************************/"
-        env delete dtb_name
+        dtb_name=system
 fi
 
 setenv bootargs 'earlycon console=ttyPS0,115200 root=/dev/ram0 rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@';
