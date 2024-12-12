@@ -106,4 +106,10 @@ for mach in ${!MACHINES[@]}; do
   if [ -n "${POST[${mach}]}" ]; then
     sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e 's,\(^require conf/machine/'${INCLUDES[${mach}]}'\),\1\n\n'"${POST[${mach}]}"','
   fi
+
+  # Delete redundant BIF_ entry
+  sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e '/^\# Update bootbin to use proper device tree/,+2d'
+
+  # Fix the IMAGE_BOOT_FILES
+  sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e 's,^IMAGE_BOOT_FILES.*,IMAGE_BOOT_FILES =+ \"devicetree/cortexa53-linux.dtb;system.dtb\",'
 done
