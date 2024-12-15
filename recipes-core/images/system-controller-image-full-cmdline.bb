@@ -24,6 +24,7 @@ IMAGE_INSTALL = " \
     python3-psutil \
     raft \
     repart-resize \
+    boot-fw-update \
     systemcontroller-licenses-manual \
     u-boot-tools \
     ser2net \
