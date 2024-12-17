@@ -5,6 +5,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 VEK385_PACKAGES = " \
+		systemcontroller-firmware-vek385-a01 \
 		systemcontroller-app-vek385 \
         "
 
