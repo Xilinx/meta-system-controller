@@ -6,6 +6,8 @@
 # SPDX-License-Identifier: MIT
 #
 
+SC_UPDATE="SC Update 7"
+
 print_msg() {
     echo ""
     echo "$1"
@@ -40,21 +42,27 @@ fi
 
 MSG="${BOOT_DEVICE} Image Information"
 print_msg "${MSG}"
+echo "RELEASE=\"${SC_UPDATE}\""
 cat /etc/os-release
 
 # Information about individual packages
-RPMS="system-controller-app scweb acap labtool-jtag-support pmtool raft power-advantage-tool"
-RPM_INFO=$(dnf info -C $RPMS 2>/dev/null)
+RPMS="system-controller-app scweb acap labtool-jtag-support pmtool raft"
+RPM_INFO=$(dnf info -C ${RPMS} 2>/dev/null)
 
 for I in ${RPMS}; do
     MSG="Package Information for '$I'"
-    VERS=$(echo "$RPM_INFO" | grep -A 2 -e "Name.*: $I" | grep 'Release')
+    VERS=$(echo "${RPM_INFO}" | grep -A 2 -e "Name.*: $I" | grep 'Release')
     print_msg "${MSG}"
-    echo -n "Installed "
-    echo "$VERS" | head -n 1
+    if [[ -z "${VERS}" ]]; then
+        echo -n "Uninstalled"
+    else
+        echo -n "Installed "
+    fi
 
-    if [ "$(echo "$VERS" | wc -l)" -ge 2 ]; then
+    echo "${VERS}" | head -n 1
+
+    if [ "$(echo "${VERS}" | wc -l)" -ge 2 ]; then
         echo -n "Latest    "
-        echo "$VERS" | tail -n 1
+        echo "${VERS}" | tail -n 1
     fi
 done
