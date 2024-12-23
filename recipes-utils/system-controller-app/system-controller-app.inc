@@ -62,11 +62,6 @@ SRC_URI[vek280-system.sha256sum] = 'cffa7c42221ac2618c3cff34e9f965484e6c10ad098f
 ELF_PATH[vek280] = 'https://artifactory.xilinx.com:443/artifactory/system-controller/sc_app_bsp/2024.2/2024.2_1213241431/external/VEK280/vek280_versal_bit.elf;name=vek280-elf'
 SRC_URI[vek280-elf.sha256sum] = '39943e7fea112dcb50a5655ff2319e36c549594e1686114bf0a6692fe438d5c4'
 
-# VEK385
-# VEK385.json
-JSON_PATH[vek385] = 'https://artifactory.xilinx.com:443/artifactory/system-controller/sc_app_bsp/2024.2/2024.2_1213241431/external/VEK385/VEK385.json;name=vek385-json'
-SRC_URI[vek385-json.sha256sum] = '8b24c0f15c11f899258a0d5ed3ee72c65ff75751db96751d5c31f98cb015565f'
-
 # VHK158
 # vhk158.jpg
 JPG_PATH[vhk158] = 'https://artifactory.xilinx.com:443/artifactory/system-controller/sc_app_bsp/2024.2/2024.2_1213241431/external/VHK158/vhk158.jpg;name=vhk158-jpg'
