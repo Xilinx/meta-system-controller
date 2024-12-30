@@ -7,7 +7,6 @@
 #
 
 SCAPP_DIR="/usr/share/system-controller-app"
-SCAPP_SCRIPTDIR="${SCAPP_DIR}/script"
 SCAPP_LOGDIR="${SCAPP_DIR}/.sc_app/log"
 
 rm -rf "${SCAPP_LOGDIR}" 2> /dev/null
@@ -27,17 +26,14 @@ journalctl -u system_controller > "${LOGDIR}"/sc_appd.log
 dmesg > "${LOGDIR}"/dmesg.log
 ps aux > "${LOGDIR}"/pslist.log
 rpm -qa > "${LOGDIR}"/installed_packages.log
-"${SCAPP_SCRIPTDIR}"/version_info.sh > "${LOGDIR}"/version_info.log
+/usr/bin/version_info.sh > "${LOGDIR}"/version_info.log
 
 for I in summary all common board multirecord; do
     sc_app -c geteeprom -t onboard -v "$I" >> "${LOGDIR}"/eeprom.log
 done
 
-if [ "${BOARD}" = "VCK190" ] || [ "${BOARD}" = "VMK180" ]; then
-    dd if=/sys/bus/i2c/devices/i2c-11/11-0054/eeprom of="${LOGDIR}"/eeprom.bin bs=1 count=256 2> /dev/null
-else
-    dd if=/sys/bus/i2c/devices/i2c-1/1-0054/eeprom of="${LOGDIR}"/eeprom.bin bs=1 count=256 2> /dev/null
-fi
+EEPROM="$(ls /sys/bus/i2c/devices/*/eeprom_cc*/nvmem | sed 's/_cc[0-9a-z/]*//')"
+dd if="${EEPROM}" of="${LOGDIR}"/eeprom.bin bs=1 count=256 2> /dev/null
 
 fw_printenv > "${LOGDIR}"/uboot.env
 

@@ -22,7 +22,7 @@ if [ -f /etc/profile.d/socks_proxy.sh ]; then
     . /etc/profile.d/socks_proxy.sh
 fi
 
-EEPROM=$(/bin/ls /sys/bus/i2c/devices/1-0054/eeprom 2> /dev/null || /bin/ls /sys/bus/i2c/devices/11-0054/eeprom 2> /dev/null)
+EEPROM=$(ls /sys/bus/i2c/devices/*/eeprom_cc*/nvmem 2> /dev/null)
 BOARD=$(/usr/sbin/ipmi-fru --fru-file="$EEPROM" --interpret-oem-data | /usr/bin/awk -F": " '/FRU Board Product/ { print $2 }')
 LEGACY_BOARD=$(if [ "${BOARD}" = "VCK190" ] || [ "${BOARD}" = "VMK180" ]; then echo "1"; else echo "0"; fi)
 
@@ -44,6 +44,7 @@ MSG="${BOOT_DEVICE} Image Information"
 print_msg "${MSG}"
 echo "RELEASE=\"${SC_UPDATE}\""
 cat /etc/os-release
+echo "SC_APP=\"$(/usr/bin/sc_app -c version | grep 'Commit' | sed 's/^Commit:\t\+//')\""
 
 # Information about individual packages
 RPMS="system-controller-app scweb acap labtool-jtag-support pmtool raft"
