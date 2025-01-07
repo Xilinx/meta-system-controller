@@ -10,6 +10,7 @@ IMAGE_INSTALL:append:system-controller = " \
     resize-partition \
     u-boot-tools \
     udev-extraconf \
+    ser2net \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
