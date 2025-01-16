@@ -1,4 +1,5 @@
 SRC_URI:append:eval-brd-sc-zynqmp = " file://sc_u-boot.cfg"
+SRC_URI:append:eval-brd-sc-zynqmp = " file://sc_fru.cfg"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
