@@ -15,7 +15,7 @@ SRC_URI = " \
 	file://hw_server.service \
 	file://cs_server.service \
 "
-SRCREV = "b4e41cce64b0e3ef2849d355c9479e81bec53065"
+SRCREV = "766705cad2acc96db64ff6411481a206840fa803"
 
 inherit update-rc.d systemd
 
@@ -33,7 +33,7 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
-RDEPENDS:${PN} += "bash"
+RDEPENDS:${PN} += "bash libxcrypt"
 RPROVIDES:${PN} += "/usr/local/xilinx_vitis/xsdb"
 
 COMPATIBLE_MACHINE = "^$"
@@ -52,7 +52,7 @@ do_install () {
     install -d ${D}${prefix}/local/lib/tcl8.5/
     install -d ${D}${prefix}/local/xilinx_vitis/
 
-    cp ${S}${libdir}/* ${D}${libdir}/
+    cp ${S}${libdir}/libtcl* ${D}${libdir}/
     cp -r ${S}${prefix}/local/lib/tcl8.5 ${D}${prefix}/local/lib/
     cp ${S}${prefix}/local/bin/* ${D}${prefix}/local/bin/
     cp -r ${S}${prefix}/local/xilinx_vitis ${D}${prefix}/local/
@@ -65,8 +65,6 @@ do_install () {
     install -d ${D}${sysconfdir}/profile.d/
     install -m 0755 ${S}/etc/profile.d/xsdb-variables.sh ${D}${sysconfdir}/profile.d/xsdb-variables.sh
 
-    install -d ${D}${bindir}
-    install -m 0755 ${S}/etc/init.d/xsdb ${D}${bindir}/
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/xvc.service ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/hw_server.service ${D}${systemd_system_unitdir}
