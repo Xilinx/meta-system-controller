@@ -11,6 +11,7 @@ IMAGE_INSTALL:append:system-controller = " \
     u-boot-tools \
     udev-extraconf \
     ser2net \
+    picocom \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
