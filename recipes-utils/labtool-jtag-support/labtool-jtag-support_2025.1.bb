@@ -15,7 +15,7 @@ SRC_URI = " \
 	file://hw_server.service \
 	file://cs_server.service \
 "
-SRCREV = "766705cad2acc96db64ff6411481a206840fa803"
+SRCREV = "29d535aab3e778e83aec8c1018f0d4f7afade856"
 
 inherit update-rc.d systemd
 
@@ -34,7 +34,7 @@ S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
 RDEPENDS:${PN} += "bash libxcrypt"
-RPROVIDES:${PN} += "/usr/local/xilinx_vitis/xsdb"
+RPROVIDES:${PN} += "/opt/labtools/xilinx_vitis/xsdb"
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
@@ -45,21 +45,11 @@ do_configure[noexec]="1"
 do_compile[noexec]="1"
 
 do_install () {
-    install -d ${D}${libdir}/
-    install -d ${D}${prefix}/local/
-    install -d ${D}${prefix}/local/bin/
-    install -d ${D}${prefix}/local/lib/
-    install -d ${D}${prefix}/local/lib/tcl8.5/
-    install -d ${D}${prefix}/local/xilinx_vitis/
-
-    cp ${S}${libdir}/libtcl* ${D}${libdir}/
-    cp -r ${S}${prefix}/local/lib/tcl8.5 ${D}${prefix}/local/lib/
-    cp ${S}${prefix}/local/bin/* ${D}${prefix}/local/bin/
-    cp -r ${S}${prefix}/local/xilinx_vitis ${D}${prefix}/local/
+    cp -r ${S}/opt ${D}${base_prefix}
 
     if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then
-    	install -d ${D}${sysconfdir}/init.d/
-    	install -m 0755 ${S}${sysconfdir}/init.d/xsdb ${D}${sysconfdir}/init.d/
+        install -d ${D}${sysconfdir}/init.d/
+        install -m 0755 ${S}${sysconfdir}/init.d/xsdb ${D}${sysconfdir}/init.d/
     fi
 
     install -d ${D}${sysconfdir}/profile.d/
@@ -74,11 +64,6 @@ do_install () {
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 FILES:${PN} += " \
-    ${prefix}/local \
-    ${prefix}/local/bin \
-    ${prefix}/local/lib \
-    ${prefix}/local/lib/tcl8.5 \
-    ${prefix}/local/xilinx_vitis ${base_libdir}/ \
-    ${base_libdir}/libtcl8.5.so ${base_libdir}/libtcltcf.so \
+    ${base_prefix}/opt/labtools \
     ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','${sysconfdir}/init.d/xsdb', '', d)} \
     "

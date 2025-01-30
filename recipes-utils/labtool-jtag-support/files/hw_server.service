@@ -7,7 +7,7 @@ After=xvc.service
 Type=simple
 Restart=always
 NotifyAccess=all
-ExecStart=/usr/local/bin/hw_server -e "set auto-open-servers xilinx-xvc:127.0.0.1:2542" 
+ExecStart=/opt/labtools/bin/hw_server -e "set auto-open-servers xilinx-xvc:127.0.0.1:2542" 
 StandardOutput=journal+console
 
 [Install]
