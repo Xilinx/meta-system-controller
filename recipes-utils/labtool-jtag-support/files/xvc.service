@@ -6,7 +6,7 @@ After=dfx-mgr.service
 Type=simple
 Restart=always
 NotifyAccess=all
-ExecStart=bash -c '/usr/local/bin/xvc_server -d $(ls -lt /sys/class/uio | grep debug_bridge | awk \'{print $9}\')'
+ExecStart=bash -c '/opt/labtools/bin/xvc_server -d $(ls -lt /sys/class/uio | grep debug_bridge | awk \'{print $9}\')'
 StandardOutput=journal+console
 
 [Install]
