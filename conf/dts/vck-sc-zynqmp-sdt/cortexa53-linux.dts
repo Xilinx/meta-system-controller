@@ -847,7 +847,6 @@
                         xlnx,enet-clk-freq-hz = <0x773545d>;
                         xlnx,enet-slcr-100mbps-div0 = <0x3c>;
                         xlnx,ptp-enet-clock = <0x0>;
-                        local-mac-address = [00 0A 23 00 00 00];
                         xlnx,enet-slcr-100mbps-div1 = <0x1>;
                         phys = <0x5c 0x0 0x8 0x0 0x0>;
                         phy-handle = <0x83>;
@@ -2232,6 +2231,10 @@
                 };
         };
 
+        binman: binman {
+                phandle = <0x125>;
+        };
+
         pss_ref_clk: pss_ref_clk {
                 bootph-all;
                 compatible = "fixed-clock";
@@ -2278,7 +2281,7 @@
                 #address-cells = <0x2>;
                 #size-cells = <0x2>;
                 firmware-name = "project_1.bit.bin";
-                phandle = <0x125>;
+                phandle = <0x126>;
 
                 SYSCTLR_SI5332: i2c@80000000 {
                         interrupts = <0x0 0x59 0x4>;
@@ -2645,6 +2648,7 @@
                 psu_iouslcr_0 = "/axi/psu_iouslcr@ff180000";
                 amba_xppu = "/indirect-bus@1";
                 lpd_xppu = "/indirect-bus@1/xppu@ff980000";
+                binman = "/binman";
                 pss_ref_clk = "/pss_ref_clk";
                 video_clk = "/video_clk";
                 pss_alt_ref_clk = "/pss_alt_ref_clk";
