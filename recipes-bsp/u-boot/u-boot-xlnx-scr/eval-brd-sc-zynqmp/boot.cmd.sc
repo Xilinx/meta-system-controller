@@ -16,7 +16,7 @@ if test "${board_name}-${board_rev}" = "VEK280-B01" || test "${board_name}-${boa
         echo " * Using DT /boot/devicetree/system-sc-revc-zynqmp.dtb  "
         echo " *******************************************************/"
         dtb_name=/boot/devicetree/system-sc-revc-zynqmp.dtb
-elif test "${board_name}" = "VHK158" || test "${board_name}" = "VPK180" || test "${board_name}" = "VPK120" || test "${board_name}" = "VEK280"; then
+elif test "${board_name}" = "VHK158" || test "${board_name}" = "VPK180" || test "${board_name}" = "VPK120" || test "${board_name}" = "VEK280" || test "${board_name}" = "VM-P-M1369-00"; then
         echo "/*******************************************************"
         echo " * SC Gen 2 board detected "
         echo " * Using DT /boot/systemd.dtb  "
