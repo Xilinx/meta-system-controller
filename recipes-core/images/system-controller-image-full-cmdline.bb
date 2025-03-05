@@ -28,6 +28,7 @@ IMAGE_INSTALL = " \
     u-boot-tools \
     ser2net \
     picocom \
+    coreutils \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
