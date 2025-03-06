@@ -1,5 +1,4 @@
 /dts-v1/;
-
 / {
         compatible = "xlnx,zynqmp-e-a2197-00-revB", "xlnx,zynqmp-a2197-revB", "xlnx,zynqmp-a2197", "xlnx,zynqmp";
         #address-cells = <0x2>;
