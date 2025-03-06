@@ -9,7 +9,8 @@ SRCREV ?= "43bd0335da8f9368135805a496877509afc0b1f7"
 
 inherit dfx_user_dts
 
-COMPATIBLE_MACHINE = "${MACHINE}"
+COMPATIBLE_MACHINE = "^$"
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 do_configure[prefuncs] =+ "move_fw_files"
 python move_fw_files () {
