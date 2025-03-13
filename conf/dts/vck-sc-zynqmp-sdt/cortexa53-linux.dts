@@ -150,8 +150,8 @@
                         opp-microvolt = <0xf4240>;
                 };
 
-                opp-599994018 {
-                        opp-hz = <0x0 0x23c32ea2>;
+                opp-599994019 {
+                        opp-hz = <0x0 0x23c32ea3>;
                         clock-latency-ns = <0x7a120>;
                         opp-microvolt = <0xf4240>;
                 };
