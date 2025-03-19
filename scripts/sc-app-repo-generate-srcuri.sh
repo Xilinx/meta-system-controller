@@ -53,6 +53,8 @@ echo "JSON_PATH = \"\${@d.getVarFlag('JSON_PATH', d.getVar('BOARD')) or ''}\""
 echo "JPG_PATH = \"\${@d.getVarFlag('JPG_PATH', d.getVar('BOARD')) or ''}\""
 echo "PNG_PATH = \"\${@d.getVarFlag('PNG_PATH', d.getVar('BOARD')) or ''}\""
 echo "JS_PATH = \"\${@d.getVarFlag('JS_PATH', d.getVar('BOARD')) or ''}\""
+echo "BOOT_BIN_PATH = \"\${@d.getVarFlag('BOOT_BIN_PATH', d.getVar('BOARD')) or ''}\""
+echo "OSPI_PATH = \"\${@d.getVarFlag('OSPI_PATH', d.getVar('BOARD')) or ''}\""
 echo
 
 dirnames=$(curl --silent ${urlproto}${urlpath}/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//')
@@ -65,6 +67,7 @@ for dir in $dirnames; do
 	device=$(basename "$dir")
 	device="${device,,}"
 	for i in $files; do
+		opts=''
 		if [ "$i" == "../" ]; then
 			continue
 		fi
@@ -91,9 +94,16 @@ for dir in $dirnames; do
 		elif [[ "$i" == *"png"* ]]; then
 			name=$device-png
 			yp_name="PNG_PATH"
+		elif [[ "$i" == *"BOOT"* ]]; then
+			name=$device-boot-bin
+			yp_name="BOOT_BIN_PATH"
+		elif [[ "$i" == *"bin.gz"* ]]; then
+			name=$device-ospi
+			yp_name="OSPI_PATH"
+			opts=';unpack=0'
 		fi
 		echo "# $i"
-		echo ${yp_name}["${device}"] = "'${urlproto}${urlpath}/${dir}/${i};name=${name}'"
+		echo ${yp_name}["${device}"] = "'${urlproto}${urlpath}/${dir}/${i};name=${name}${opts}'"
 		curl -o tempfile --silent "${urlproto}${urlpath}/$dir/$i"
 		echo SRC_URI["${name}".sha256sum] = "'$(sha256sum tempfile | awk '{print $1}')'"
 		echo
