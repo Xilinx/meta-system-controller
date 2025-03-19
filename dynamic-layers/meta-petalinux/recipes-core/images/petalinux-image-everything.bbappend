@@ -12,6 +12,7 @@ IMAGE_INSTALL:append:system-controller = " \
     udev-extraconf \
     ser2net \
     picocom \
+    embpf-bootfw-update-tool \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
