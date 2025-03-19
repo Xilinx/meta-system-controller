@@ -29,6 +29,7 @@ IMAGE_INSTALL = " \
     ser2net \
     picocom \
     coreutils \
+    embpf-bootfw-update-tool \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"

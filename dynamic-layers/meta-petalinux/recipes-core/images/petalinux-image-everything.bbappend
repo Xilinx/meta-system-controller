@@ -13,6 +13,7 @@ IMAGE_INSTALL:append:system-controller = " \
     ser2net \
     picocom \
     lmsensors-fancontrol \
+    embpf-bootfw-update-tool \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
