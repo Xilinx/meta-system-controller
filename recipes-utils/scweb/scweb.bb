@@ -42,6 +42,7 @@ RDEPENDS:${PN} += "bash \
         system-controller-app \        
         lmsensors-sensors \
         freeipmi \
+        embpf-bootfw-update-tool \
         "
 
 do_install() {
