@@ -7,7 +7,6 @@ fitimage_name=/boot/@@FIT_IMAGE@@
 kernel_name=/boot/@@KERNEL_IMAGE@@
 ramdisk_name=/boot/@@RAMDISK_IMAGE1@@
 rootfs_name=/boot/@@RAMDISK_IMAGE@@
-CONSOLE=ttyPS0
 @@PRE_BOOTENV@@
 
 #Set DT selection
@@ -29,9 +28,8 @@ else
         echo " * Using DT from firmware "
         echo " *******************************************************/"
         env delete dtb_name
-        CONSOLE=ttyPS1
 fi
-setenv bootargs 'earlycon console=${CONSOLE},115200 clk_ignore_unused root=/dev/ram0 rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@';
+setenv bootargs 'earlycon console=ttyPS0,115200 clk_ignore_unused root=/dev/ram0 rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@';
 for boot_target in ${boot_targets};
 do
 	echo "Trying to load boot images from ${boot_target}"
@@ -262,7 +260,7 @@ do
 			done
 
 			if test -n "${RAUC_BOOTPART}"; then
-				env set bootargs "earlycon console=${CONSOLE},115200 clk_ignore_unused rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@ rootwait root=${RAUC_BOOTPART} rauc.slot=${RAUC_SLOT}"
+				env set bootargs "earlycon console=ttyPS0,115200 clk_ignore_unused rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@ rootwait root=${RAUC_BOOTPART} rauc.slot=${RAUC_SLOT}"
 				env save
 			else
 				echo "no valid RAUC slot found, resetting tries to 3"
@@ -273,7 +271,7 @@ do
 			fi
 		else
 			env set RAUC_BOOTDEV "mmc 0:1"
-			env set bootargs "earlycon console=${CONSOLE},115200 clk_ignore_unused rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@ rootwait root=/dev/mmcblk0p1"
+			env set bootargs "earlycon console=ttyPS0,115200 clk_ignore_unused rw init_fatal_sh=1 @@KERNEL_COMMAND_APPEND@@ rootwait root=/dev/mmcblk0p1"
 		fi
 
 		# reset kernel_addr_r
