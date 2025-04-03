@@ -15,7 +15,7 @@ SRC_URI = " \
 	file://hw_server.service \
 	file://cs_server.service \
 "
-SRCREV = "0777b6aefdf651fa7e4e85a9284342cc7eb216b5"
+SRCREV = "11bab11b19625ea82f670c8887a55ff71bde1c6b"
 
 inherit update-rc.d systemd
 
