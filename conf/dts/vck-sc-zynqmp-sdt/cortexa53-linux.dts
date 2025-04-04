@@ -22,9 +22,10 @@
                 compatible = "cpus,cluster";
                 #ranges-address-cells = <0x2>;
                 #ranges-size-cells = <0x2>;
-                phandle = <0xa1>;
+                phandle = <0xa5>;
 
                 psu_cortexa53_0: cpu@0 {
+                        #cooling-cells = <0x2>;
                         compatible = "arm,cortex-a53";
                         device_type = "cpu";
                         enable-method = "psci";
@@ -52,6 +53,7 @@
                 };
 
                 psu_cortexa53_1: cpu@1 {
+                        #cooling-cells = <0x2>;
                         compatible = "arm,cortex-a53";
                         device_type = "cpu";
                         enable-method = "psci";
@@ -74,6 +76,7 @@
                 };
 
                 psu_cortexa53_2: cpu@2 {
+                        #cooling-cells = <0x2>;
                         compatible = "arm,cortex-a53";
                         device_type = "cpu";
                         enable-method = "psci";
@@ -96,6 +99,7 @@
                 };
 
                 psu_cortexa53_3: cpu@3 {
+                        #cooling-cells = <0x2>;
                         compatible = "arm,cortex-a53";
                         device_type = "cpu";
                         enable-method = "psci";
@@ -178,7 +182,7 @@
                 #address-cells = <0x2>;
                 #size-cells = <0x2>;
                 ranges;
-                phandle = <0xa8>;
+                phandle = <0xac>;
 
                 ipi_mailbox_pmu1: mailbox@ff9905c0 {
                         bootph-all;
@@ -195,11 +199,11 @@
                 compatible = "arm,dcc";
                 status = "disabled";
                 bootph-all;
-                phandle = <0xa9>;
+                phandle = <0xad>;
         };
 
         pmu {
-                compatible = "arm,armv8-pmuv3";
+                compatible = "arm,cortex-a53-pmu";
                 interrupt-parent = <&gic>;
                 interrupts = <0x0 0x8f 0x4 0x0 0x90 0x4 0x0 0x91 0x4 0x0 0x92 0x4>;
                 interrupt-affinity = <&psu_cortexa53_0>,
@@ -215,12 +219,6 @@
 
         firmware {
 
-                optee: optee {
-                        compatible = "linaro,optee-tz";
-                        method = "smc";
-                        phandle = <0xaa>;
-                };
-
                 zynqmp_firmware: zynqmp-firmware {
                         compatible = "xlnx,zynqmp-firmware";
                         #power-domain-cells = <0x1>;
@@ -235,7 +233,7 @@
                                 interrupts = <0x0 0x23 0x4>;
                                 mboxes = <0x7c 0x0 0x7c 0x1>;
                                 mbox-names = "tx", "rx";
-                                phandle = <0xab>;
+                                phandle = <0xae>;
                         };
 
                         soc-nvmem {
@@ -248,97 +246,97 @@
 
                                         soc_revision: soc-revision@0 {
                                                 reg = <0x0 0x4>;
-                                                phandle = <0xac>;
+                                                phandle = <0xaf>;
                                         };
 
                                         efuse_dna: efuse-dna@c {
                                                 reg = <0xc 0xc>;
-                                                phandle = <0xad>;
+                                                phandle = <0xb0>;
                                         };
 
                                         efuse_usr0: efuse-usr0@20 {
                                                 reg = <0x20 0x4>;
-                                                phandle = <0xae>;
+                                                phandle = <0xb1>;
                                         };
 
                                         efuse_usr1: efuse-usr1@24 {
                                                 reg = <0x24 0x4>;
-                                                phandle = <0xaf>;
+                                                phandle = <0xb2>;
                                         };
 
                                         efuse_usr2: efuse-usr2@28 {
                                                 reg = <0x28 0x4>;
-                                                phandle = <0xb0>;
+                                                phandle = <0xb3>;
                                         };
 
                                         efuse_usr3: efuse-usr3@2c {
                                                 reg = <0x2c 0x4>;
-                                                phandle = <0xb1>;
+                                                phandle = <0xb4>;
                                         };
 
                                         efuse_usr4: efuse-usr4@30 {
                                                 reg = <0x30 0x4>;
-                                                phandle = <0xb2>;
+                                                phandle = <0xb5>;
                                         };
 
                                         efuse_usr5: efuse-usr5@34 {
                                                 reg = <0x34 0x4>;
-                                                phandle = <0xb3>;
+                                                phandle = <0xb6>;
                                         };
 
                                         efuse_usr6: efuse-usr6@38 {
                                                 reg = <0x38 0x4>;
-                                                phandle = <0xb4>;
+                                                phandle = <0xb7>;
                                         };
 
                                         efuse_usr7: efuse-usr7@3c {
                                                 reg = <0x3c 0x4>;
-                                                phandle = <0xb5>;
+                                                phandle = <0xb8>;
                                         };
 
                                         efuse_miscusr: efuse-miscusr@40 {
                                                 reg = <0x40 0x4>;
-                                                phandle = <0xb6>;
+                                                phandle = <0xb9>;
                                         };
 
                                         efuse_chash: efuse-chash@50 {
                                                 reg = <0x50 0x4>;
-                                                phandle = <0xb7>;
+                                                phandle = <0xba>;
                                         };
 
                                         efuse_pufmisc: efuse-pufmisc@54 {
                                                 reg = <0x54 0x4>;
-                                                phandle = <0xb8>;
+                                                phandle = <0xbb>;
                                         };
 
                                         efuse_sec: efuse-sec@58 {
                                                 reg = <0x58 0x4>;
-                                                phandle = <0xb9>;
+                                                phandle = <0xbc>;
                                         };
 
                                         efuse_spkid: efuse-spkid@5c {
                                                 reg = <0x5c 0x4>;
-                                                phandle = <0xba>;
+                                                phandle = <0xbd>;
                                         };
 
                                         efuse_aeskey: efuse-aeskey@60 {
                                                 reg = <0x60 0x20>;
-                                                phandle = <0xbb>;
+                                                phandle = <0xbe>;
                                         };
 
                                         efuse_ppk0hash: efuse-ppk0hash@a0 {
                                                 reg = <0xa0 0x30>;
-                                                phandle = <0xbc>;
+                                                phandle = <0xbf>;
                                         };
 
                                         efuse_ppk1hash: efuse-ppk1hash@d0 {
                                                 reg = <0xd0 0x30>;
-                                                phandle = <0xbd>;
+                                                phandle = <0xc0>;
                                         };
 
                                         efuse_pufuser: efuse-pufuser@100 {
                                                 reg = <0x100 0x7f>;
-                                                phandle = <0xbe>;
+                                                phandle = <0xc1>;
                                         };
                                 };
                         };
@@ -365,7 +363,7 @@
                                 compatible = "xlnx,zynqmp-gpio-modepin";
                                 gpio-controller;
                                 #gpio-cells = <0x2>;
-                                phandle = <0x87>;
+                                phandle = <0x8b>;
                         };
 
                         zynqmp_clk: clock-controller {
@@ -395,7 +393,98 @@
                 #address-cells = <0x2>;
                 #size-cells = <0x2>;
                 ranges;
-                phandle = <0xbf>;
+                phandle = <0xc2>;
+        };
+
+        ams {
+                compatible = "iio-hwmon";
+                io-channels = <0x1c 0x0 0x1c 0x1 0x1c 0x2 0x1c 0x3 0x1c 0x4 0x1c 0x5 0x1c 0x6 0x1c 0x7 0x1c 0x8 0x1c 0x9 0x1c 0xa 0x1c 0xb 0x1c 0xc 0x1c 0xd 0x1c 0xe 0x1c 0xf 0x1c 0x10 0x1c 0x11 0x1c 0x12 0x1c 0x13 0x1c 0x14 0x1c 0x15 0x1c 0x16 0x1c 0x17 0x1c 0x18 0x1c 0x19 0x1c 0x1a 0x1c 0x1b 0x1c 0x1c 0x1c 0x1d>;
+        };
+
+        tsens_apu: thermal-sensor-apu {
+                compatible = "generic-adc-thermal";
+                #thermal-sensor-cells = <0x0>;
+                io-channels = <0x1c 0x7>;
+                io-channel-names = "sensor-channel";
+                phandle = <0x83>;
+        };
+
+        tsens_rpu: thermal-sensor-rpu {
+                compatible = "generic-adc-thermal";
+                #thermal-sensor-cells = <0x0>;
+                io-channels = <0x1c 0x8>;
+                io-channel-names = "sensor-channel";
+                phandle = <0x85>;
+        };
+
+        tsens_pl: thermal-sensor-pl {
+                compatible = "generic-adc-thermal";
+                #thermal-sensor-cells = <0x0>;
+                io-channels = <0x1c 0x14>;
+                io-channel-names = "sensor-channel";
+                phandle = <0x86>;
+        };
+
+        thermal-zones {
+
+                apu-thermal {
+                        polling-delay-passive = <0x3e8>;
+                        polling-delay = <0x1388>;
+                        thermal-sensors = <0x83>;
+
+                        trips {
+
+                                apu_passive: passive {
+                                        temperature = <0x16b48>;
+                                        hysteresis = <0xdac>;
+                                        type = "passive";
+                                        phandle = <0x84>;
+                                };
+
+                                apu_critical: critical {
+                                        temperature = <0x178f4>;
+                                        hysteresis = <0xdac>;
+                                        type = "critical";
+                                        phandle = <0xc3>;
+                                };
+                        };
+
+                        cooling-maps {
+
+                                map {
+                                        trip = <0x84>;
+                                        cooling-device = <0x78 0xffffffff 0xffffffff 0x79 0xffffffff 0xffffffff 0x7a 0xffffffff 0xffffffff 0x7b 0xffffffff 0xffffffff>;
+                                };
+                        };
+                };
+
+                rpu-thermal {
+                        polling-delay = <0x2710>;
+                        thermal-sensors = <0x85>;
+
+                        trips {
+
+                                critical {
+                                        temperature = <0x178f4>;
+                                        hysteresis = <0xdac>;
+                                        type = "critical";
+                                };
+                        };
+                };
+
+                pl-thermal {
+                        polling-delay = <0x2710>;
+                        thermal-sensors = <0x86>;
+
+                        trips {
+
+                                critical {
+                                        temperature = <0x178f4>;
+                                        hysteresis = <0xdac>;
+                                        type = "critical";
+                                };
+                        };
+                };
         };
 
         amba: axi {
@@ -420,7 +509,7 @@
                         power-domains = <&zynqmp_firmware 0x2f>;
                         clocks = <&zynqmp_clk 0x3f>,
                          <&zynqmp_clk 0x1f>;
-                        phandle = <0xc0>;
+                        phandle = <0xc4>;
                 };
 
                 can1: can@ff070000 {
@@ -436,7 +525,7 @@
                         power-domains = <&zynqmp_firmware 0x30>;
                         clocks = <&zynqmp_clk 0x40>,
                          <&zynqmp_clk 0x1f>;
-                        phandle = <0xc1>;
+                        phandle = <0xc5>;
                 };
 
                 cci: cci@fd6e0000 {
@@ -446,7 +535,7 @@
                         ranges = <0x0 0x0 0xfd6e0000 0x10000>;
                         #address-cells = <0x1>;
                         #size-cells = <0x1>;
-                        phandle = <0xc2>;
+                        phandle = <0xc6>;
 
                         pmu@9000 {
                                 compatible = "arm,cci-400-pmu,r1";
@@ -454,6 +543,42 @@
                                 interrupt-parent = <&gic>;
                                 interrupts = <0x0 0x7b 0x4 0x0 0x7b 0x4 0x0 0x7b 0x4 0x0 0x7b 0x4 0x0 0x7b 0x4>;
                         };
+                };
+
+                psu_cortexa53_0_debug: debug@fec10000 {
+                        compatible = "arm,coresight-cpu-debug", "arm,primecell";
+                        reg = <0x0 0xfec10000 0x0 0x1000>;
+                        clock-names = "apb_pclk";
+                        cpu = <0x78>;
+                        clocks = <&zynqmp_clk 0xc>;
+                        phandle = <0xc7>;
+                };
+
+                psu_cortexa53_1_debug: debug@fed10000 {
+                        compatible = "arm,coresight-cpu-debug", "arm,primecell";
+                        reg = <0x0 0xfed10000 0x0 0x1000>;
+                        clock-names = "apb_pclk";
+                        cpu = <0x79>;
+                        clocks = <&zynqmp_clk 0xc>;
+                        phandle = <0xc8>;
+                };
+
+                psu_cortexa53_2_debug: debug@fee10000 {
+                        compatible = "arm,coresight-cpu-debug", "arm,primecell";
+                        reg = <0x0 0xfee10000 0x0 0x1000>;
+                        clock-names = "apb_pclk";
+                        cpu = <0x7a>;
+                        clocks = <&zynqmp_clk 0xc>;
+                        phandle = <0xc9>;
+                };
+
+                psu_cortexa53_3_debug: debug@fef10000 {
+                        compatible = "arm,coresight-cpu-debug", "arm,primecell";
+                        reg = <0x0 0xfef10000 0x0 0x1000>;
+                        clock-names = "apb_pclk";
+                        cpu = <0x7b>;
+                        clocks = <&zynqmp_clk 0xc>;
+                        phandle = <0xca>;
                 };
 
                 fpd_dma_chan1: dma-controller@fd500000 {
@@ -811,7 +936,7 @@
                         power-domains = <&zynqmp_firmware 0x2c>;
                         clocks = <&zynqmp_clk 0x3c>,
                          <&zynqmp_clk 0x1f>;
-                        phandle = <0xc3>;
+                        phandle = <0xcb>;
                 };
 
                 gem0: ethernet@ff0b0000 {
@@ -848,18 +973,18 @@
                         xlnx,ptp-enet-clock = <0x0>;
                         xlnx,enet-slcr-100mbps-div1 = <0x1>;
                         phys = <0x5c 0x0 0x8 0x0 0x0>;
-                        phy-handle = <0x83>;
+                        phy-handle = <0x87>;
                         is-internal-pcspma;
                         phandle = <0x34>;
 
                         mdio: mdio {
                                 #address-cells = <0x1>;
                                 #size-cells = <0x0>;
-                                phandle = <0xc4>;
+                                phandle = <0xcc>;
 
                                 phy0: ethernet-phy@0 {
                                         reg = <0x0>;
-                                        phandle = <0x83>;
+                                        phandle = <0x87>;
                                 };
                         };
                 };
@@ -880,7 +1005,7 @@
                          <&zynqmp_clk 0x32>,
                          <&zynqmp_clk 0x2c>;
                         assigned-clocks = <&zynqmp_clk 0x2c>;
-                        phandle = <0xc5>;
+                        phandle = <0xcd>;
                 };
 
                 gem2: ethernet@ff0d0000 {
@@ -899,7 +1024,7 @@
                          <&zynqmp_clk 0x33>,
                          <&zynqmp_clk 0x2c>;
                         assigned-clocks = <&zynqmp_clk 0x2c>;
-                        phandle = <0xc6>;
+                        phandle = <0xce>;
                 };
 
                 gem3: ethernet@ff0e0000 {
@@ -918,7 +1043,7 @@
                          <&zynqmp_clk 0x34>,
                          <&zynqmp_clk 0x2c>;
                         assigned-clocks = <&zynqmp_clk 0x2c>;
-                        phandle = <0xc7>;
+                        phandle = <0xcf>;
                 };
 
                 gpio: gpio@ff0a0000 {
@@ -969,7 +1094,7 @@
                                 gpio-controller;
                                 #gpio-cells = <0x2>;
                                 gpio-line-names = [4D 41 58 36 36 34 33 5F 4F 54 5F 42 00 4D 41 58 36 36 34 33 5F 46 41 4E 46 41 49 4C 5F 42 00 00 00 50 4D 42 55 53 32 5F 49 4E 41 32 32 36 5F 41 4C 45 52 54 00 00 00 4D 41 58 36 36 34 33 5F 46 55 4C 4C 53 50 44 00 46 4D 43 50 31 5F 46 4D 43 5F 50 52 53 4E 54 5F 4D 32 43 5F 42 00 46 4D 43 50 32 5F 46 4D 43 5F 50 52 53 4E 54 5F 4D 32 43 5F 42 00 46 4D 43 50 31 5F 46 4D 43 50 5F 50 52 53 4E 54 5F 4D 32 43 5F 42 00 46 4D 43 50 32 5F 46 4D 43 50 5F 50 52 53 4E 54 5F 4D 32 43 5F 42 00 56 43 43 49 4E 54 5F 56 52 48 4F 54 5F 42 00 38 41 33 34 30 30 31 5F 45 58 50 5F 52 53 54 5F 42 00 50 4D 42 55 53 5F 41 4C 45 52 54 00 50 4D 42 55 53 31 5F 49 4E 41 32 32 36 5F 41 4C 45 52 54 00];
-                                phandle = <0xc8>;
+                                phandle = <0xd0>;
                         };
 
                         i2c-mux@74 {
@@ -986,19 +1111,19 @@
                                         irps5401_47: irps5401@47 {
                                                 compatible = "infineon,irps5401";
                                                 reg = <0x47>;
-                                                phandle = <0xc9>;
+                                                phandle = <0xd1>;
                                         };
 
                                         irps5401_4c: irps5401@4c {
                                                 compatible = "infineon,irps5401";
                                                 reg = <0x4c>;
-                                                phandle = <0xca>;
+                                                phandle = <0xd2>;
                                         };
 
                                         irps5401_4d: irps5401@4d {
                                                 compatible = "infineon,irps5401";
                                                 reg = <0x4d>;
-                                                phandle = <0xcb>;
+                                                phandle = <0xd3>;
                                         };
                                 };
 
@@ -1013,7 +1138,7 @@
                                                 label = "ina226-vccint";
                                                 reg = <0x40>;
                                                 shunt-resistor = <0x1f4>;
-                                                phandle = <0x90>;
+                                                phandle = <0x94>;
                                         };
 
                                         vcc_soc: ina226@41 {
@@ -1022,7 +1147,7 @@
                                                 label = "ina226-vcc-soc";
                                                 reg = <0x41>;
                                                 shunt-resistor = <0x1f4>;
-                                                phandle = <0x91>;
+                                                phandle = <0x95>;
                                         };
 
                                         vcc_pmc: ina226@42 {
@@ -1031,7 +1156,7 @@
                                                 label = "ina226-vcc-pmc";
                                                 reg = <0x42>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x92>;
+                                                phandle = <0x96>;
                                         };
 
                                         vcc_ram: ina226@43 {
@@ -1040,7 +1165,7 @@
                                                 label = "ina226-vcc-ram";
                                                 reg = <0x43>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x93>;
+                                                phandle = <0x97>;
                                         };
 
                                         vcc_pslp: ina226@44 {
@@ -1049,7 +1174,7 @@
                                                 label = "ina226-vcc-pslp";
                                                 reg = <0x44>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x94>;
+                                                phandle = <0x98>;
                                         };
 
                                         vcc_psfp: ina226@45 {
@@ -1058,7 +1183,7 @@
                                                 label = "ina226-vcc-psfp";
                                                 reg = <0x45>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x95>;
+                                                phandle = <0x99>;
                                         };
                                 };
 
@@ -1079,7 +1204,7 @@
                                                 label = "ina226-vccaux";
                                                 reg = <0x40>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x96>;
+                                                phandle = <0x9a>;
                                         };
 
                                         vccaux_pmc: ina226@41 {
@@ -1088,7 +1213,7 @@
                                                 label = "ina226-vccaux-pmc";
                                                 reg = <0x41>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x97>;
+                                                phandle = <0x9b>;
                                         };
 
                                         vcco_503: ina226@45 {
@@ -1097,7 +1222,7 @@
                                                 label = "ina226-vcco-503";
                                                 reg = <0x45>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x98>;
+                                                phandle = <0x9c>;
                                         };
 
                                         vcc_1v8: ina226@46 {
@@ -1106,7 +1231,7 @@
                                                 label = "ina226-vcc-1v8";
                                                 reg = <0x46>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x99>;
+                                                phandle = <0x9d>;
                                         };
 
                                         vcc_3v3: ina226@47 {
@@ -1115,7 +1240,7 @@
                                                 label = "ina226-vcc-3v3";
                                                 reg = <0x47>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x9a>;
+                                                phandle = <0x9e>;
                                         };
 
                                         vcc_1v2_ddr4: ina226@48 {
@@ -1124,7 +1249,7 @@
                                                 label = "ina226-vcc-1v2-ddr4";
                                                 reg = <0x48>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x9b>;
+                                                phandle = <0x9f>;
                                         };
 
                                         vcc1v1_lp4: ina226@49 {
@@ -1133,7 +1258,7 @@
                                                 label = "ina226-vcc1v1-lp4";
                                                 reg = <0x49>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0x9c>;
+                                                phandle = <0xa0>;
                                         };
 
                                         vadj_fmc: ina226@4a {
@@ -1142,7 +1267,7 @@
                                                 label = "ina226-vadj-fmc";
                                                 reg = <0x4a>;
                                                 shunt-resistor = <0x7d0>;
-                                                phandle = <0x9d>;
+                                                phandle = <0xa1>;
                                         };
 
                                         mgtyavcc: ina226@4b {
@@ -1151,7 +1276,7 @@
                                                 label = "ina226-mgtyavcc";
                                                 reg = <0x4b>;
                                                 shunt-resistor = <0x7d0>;
-                                                phandle = <0x9e>;
+                                                phandle = <0xa2>;
                                         };
 
                                         mgtyavtt: ina226@4c {
@@ -1160,7 +1285,7 @@
                                                 label = "ina226-mgtyavtt";
                                                 reg = <0x4c>;
                                                 shunt-resistor = <0x7d0>;
-                                                phandle = <0x9f>;
+                                                phandle = <0xa3>;
                                         };
 
                                         mgtyvccaux: ina226@4d {
@@ -1169,7 +1294,7 @@
                                                 label = "ina226-mgtyvccaux";
                                                 reg = <0x4d>;
                                                 shunt-resistor = <0x1388>;
-                                                phandle = <0xa0>;
+                                                phandle = <0xa4>;
                                         };
                                 };
 
@@ -1193,7 +1318,7 @@
                                                 clock-frequency = <0x9502f90>;
                                                 clock-output-names = "si570_zsfp_clk";
                                                 silabs,skip-recall;
-                                                phandle = <0x8e>;
+                                                phandle = <0x92>;
                                         };
                                 };
 
@@ -1211,7 +1336,7 @@
                                                 clock-frequency = <0x5f5e100>;
                                                 clock-output-names = "si570_user1";
                                                 silabs,skip-recall;
-                                                phandle = <0x8f>;
+                                                phandle = <0x93>;
                                         };
                                 };
 
@@ -1253,12 +1378,12 @@
                                         #address-cells = <0x1>;
                                         #size-cells = <0x0>;
                                         reg = <0x0>;
-                                        phandle = <0xcc>;
+                                        phandle = <0xd4>;
 
                                         eeprom: eeprom@54 {
                                                 compatible = "st,24c128", "atmel,24c128";
                                                 reg = <0x54>;
-                                                phandle = <0xcd>;
+                                                phandle = <0xd5>;
                                         };
 
                                         si570_ref_clk: clock-generator@5d {
@@ -1270,13 +1395,13 @@
                                                 clock-frequency = <0x1fca055>;
                                                 clock-output-names = "ref_clk";
                                                 silabs,skip-recall;
-                                                phandle = <0x89>;
+                                                phandle = <0x8d>;
                                         };
 
                                         eeprom_ebm: eeprom@52 {
                                                 compatible = "st,24c128", "atmel,24c128";
                                                 reg = <0x52>;
-                                                phandle = <0xce>;
+                                                phandle = <0xd6>;
                                         };
                                 };
 
@@ -1284,12 +1409,12 @@
                                         #address-cells = <0x1>;
                                         #size-cells = <0x0>;
                                         reg = <0x1>;
-                                        phandle = <0xcf>;
+                                        phandle = <0xd7>;
 
                                         eeprom_fmc1: eeprom@50 {
                                                 compatible = "st,24c128", "atmel,24c128";
                                                 reg = <0x50>;
-                                                phandle = <0xd0>;
+                                                phandle = <0xd8>;
                                         };
                                 };
 
@@ -1297,12 +1422,12 @@
                                         #address-cells = <0x1>;
                                         #size-cells = <0x0>;
                                         reg = <0x2>;
-                                        phandle = <0xd1>;
+                                        phandle = <0xd9>;
 
                                         eeprom_fmc2: eeprom@50 {
                                                 compatible = "st,24c128", "atmel,24c128";
                                                 reg = <0x50>;
-                                                phandle = <0xd2>;
+                                                phandle = <0xda>;
                                         };
                                 };
 
@@ -1320,7 +1445,7 @@
                                                 clock-frequency = <0xbebc200>;
                                                 clock-output-names = "si570_ddrdimm1_clk";
                                                 silabs,skip-recall;
-                                                phandle = <0x8a>;
+                                                phandle = <0x8e>;
                                         };
                                 };
 
@@ -1338,7 +1463,7 @@
                                                 clock-frequency = <0xbebc200>;
                                                 clock-output-names = "si570_lpddr4_clk2";
                                                 silabs,skip-recall;
-                                                phandle = <0x8b>;
+                                                phandle = <0x8f>;
                                         };
                                 };
 
@@ -1356,7 +1481,7 @@
                                                 clock-frequency = <0xbebc200>;
                                                 clock-output-names = "si570_lpddr4_clk1";
                                                 silabs,skip-recall;
-                                                phandle = <0x8c>;
+                                                phandle = <0x90>;
                                         };
                                 };
 
@@ -1374,7 +1499,7 @@
                                                 clock-frequency = <0x9502f90>;
                                                 clock-output-names = "si570_hsdp_clk";
                                                 silabs,skip-recall;
-                                                phandle = <0x8d>;
+                                                phandle = <0x91>;
                                         };
                                 };
 
@@ -1545,7 +1670,7 @@
                         interrupt-parent = <&gic>;
                         interrupts = <0x0 0x76 0x4 0x0 0x75 0x4 0x0 0x74 0x4 0x0 0x73 0x4 0x0 0x72 0x4>;
                         interrupt-names = "misc", "dummy", "intx", "msi1", "msi0";
-                        msi-parent = <0x84>;
+                        msi-parent = <0x88>;
                         reg = <0x0 0xfd0e0000 0x0 0x1000 0x0 0xfd480000 0x0 0x1000 0x80 0x0 0x0 0x10000000>;
                         reg-names = "breg", "pcireg", "cfg";
                         ranges = <0x2000000 0x0 0xe0000000 0x0 0xe0000000 0x0 0x10000000 0x43000000 0x6 0x0 0x6 0x0 0x2 0x0>;
@@ -1557,13 +1682,13 @@
                          <0x0 0x0 0x0 0x4 &pcie_intc 0x4>;
                         power-domains = <&zynqmp_firmware 0x3b>;
                         clocks = <&zynqmp_clk 0x17>;
-                        phandle = <0x84>;
+                        phandle = <0x88>;
 
                         pcie_intc: legacy-interrupt-controller {
                                 interrupt-controller;
                                 #address-cells = <0x0>;
                                 #interrupt-cells = <0x1>;
-                                phandle = <0x85>;
+                                phandle = <0x89>;
                         };
                 };
 
@@ -1581,7 +1706,7 @@
                         power-domains = <&zynqmp_firmware 0x2d>;
                         clocks = <&zynqmp_clk 0x35>,
                          <&zynqmp_clk 0x1f>;
-                        phandle = <0xd3>;
+                        phandle = <0xdb>;
                 };
 
                 psgtr: phy@fd400000 {
@@ -1617,7 +1742,7 @@
                         power-domains = <&zynqmp_firmware 0x1c>;
                         resets = <&zynqmp_reset 0x10>;
                         clocks = <&zynqmp_clk 0x16>;
-                        phandle = <0xd4>;
+                        phandle = <0xdc>;
                 };
 
                 sdhci0: mmc@ff160000 {
@@ -1635,7 +1760,7 @@
                         clocks = <&zynqmp_clk 0x36>,
                          <&zynqmp_clk 0x1f>;
                         assigned-clocks = <&zynqmp_clk 0x36>;
-                        phandle = <0xd5>;
+                        phandle = <0xdd>;
                 };
 
                 sdhci1: mmc@ff170000 {
@@ -1703,7 +1828,7 @@
                         power-domains = <&zynqmp_firmware 0x23>;
                         clocks = <&zynqmp_clk 0x3a>,
                          <&zynqmp_clk 0x1f>;
-                        phandle = <0xd6>;
+                        phandle = <0xde>;
                 };
 
                 spi1: spi@ff050000 {
@@ -1718,7 +1843,7 @@
                         power-domains = <&zynqmp_firmware 0x24>;
                         clocks = <&zynqmp_clk 0x3b>,
                          <&zynqmp_clk 0x1f>;
-                        phandle = <0xd7>;
+                        phandle = <0xdf>;
                 };
 
                 ttc0: timer@ff110000 {
@@ -1730,7 +1855,7 @@
                         timer-width = <0x20>;
                         power-domains = <&zynqmp_firmware 0x18>;
                         clocks = <&zynqmp_clk 0x1f>;
-                        phandle = <0xd8>;
+                        phandle = <0xe0>;
                 };
 
                 ttc1: timer@ff120000 {
@@ -1742,7 +1867,7 @@
                         timer-width = <0x20>;
                         power-domains = <&zynqmp_firmware 0x19>;
                         clocks = <&zynqmp_clk 0x1f>;
-                        phandle = <0xd9>;
+                        phandle = <0xe1>;
                 };
 
                 ttc2: timer@ff130000 {
@@ -1754,7 +1879,7 @@
                         timer-width = <0x20>;
                         power-domains = <&zynqmp_firmware 0x1a>;
                         clocks = <&zynqmp_clk 0x1f>;
-                        phandle = <0xda>;
+                        phandle = <0xe2>;
                 };
 
                 ttc3: timer@ff140000 {
@@ -1766,7 +1891,7 @@
                         timer-width = <0x20>;
                         power-domains = <&zynqmp_firmware 0x1b>;
                         clocks = <&zynqmp_clk 0x1f>;
-                        phandle = <0xdb>;
+                        phandle = <0xe3>;
                 };
 
                 uart0: serial@ff000000 {
@@ -1807,7 +1932,7 @@
                         clocks = <&zynqmp_clk 0x39>,
                          <&zynqmp_clk 0x1f>;
                         assigned-clocks = <&zynqmp_clk 0x39>;
-                        phandle = <0xdc>;
+                        phandle = <0xe4>;
                 };
 
                 usb0: usb@ff9d0000 {
@@ -1828,7 +1953,7 @@
                          <&zynqmp_clk 0x22>;
                         assigned-clocks = <&zynqmp_clk 0x20>,
                          <&zynqmp_clk 0x22>;
-                        phandle = <0xdd>;
+                        phandle = <0xe5>;
 
                         dwc3_0: usb@fe200000 {
                                 compatible = "snps,dwc3";
@@ -1837,11 +1962,11 @@
                                 interrupt-parent = <&gic>;
                                 interrupt-names = "host", "peripheral", "otg", "wakeup";
                                 interrupts = <0x0 0x41 0x4 0x0 0x41 0x4 0x0 0x45 0x4 0x0 0x4b 0x4>;
-                                snps,quirk-frame-length-adjustment = <0x20>;
                                 clock-names = "ref";
+                                snps,quirk-frame-length-adjustment = <0x20>;
                                 snps,resume-hs-terminations;
                                 clocks = <&zynqmp_clk 0x22>;
-                                phandle = <0xde>;
+                                phandle = <0xe6>;
                         };
                 };
 
@@ -1862,7 +1987,7 @@
                          <&zynqmp_clk 0x22>;
                         assigned-clocks = <&zynqmp_clk 0x21>,
                          <&zynqmp_clk 0x22>;
-                        phandle = <0xdf>;
+                        phandle = <0xe7>;
 
                         dwc3_1: usb@fe300000 {
                                 compatible = "snps,dwc3";
@@ -1871,11 +1996,11 @@
                                 interrupt-parent = <&gic>;
                                 interrupt-names = "host", "peripheral", "otg", "wakeup";
                                 interrupts = <0x0 0x46 0x4 0x0 0x46 0x4 0x0 0x4a 0x4 0x0 0x4c 0x4>;
-                                snps,quirk-frame-length-adjustment = <0x20>;
                                 clock-names = "ref";
+                                snps,quirk-frame-length-adjustment = <0x20>;
                                 snps,resume-hs-terminations;
                                 clocks = <&zynqmp_clk 0x22>;
-                                phandle = <0xe0>;
+                                phandle = <0xe8>;
                         };
                 };
 
@@ -1888,7 +2013,7 @@
                         timeout-sec = <0x3c>;
                         reset-on-timeout;
                         clocks = <&zynqmp_clk 0x4b>;
-                        phandle = <0xe1>;
+                        phandle = <0xe9>;
                 };
 
                 lpd_watchdog: watchdog@ff150000 {
@@ -1899,12 +2024,11 @@
                         reg = <0x0 0xff150000 0x0 0x1000>;
                         timeout-sec = <0xa>;
                         clocks = <&zynqmp_clk 0x70>;
-                        phandle = <0xe2>;
+                        phandle = <0xea>;
                 };
 
                 xilinx_ams: ams@ffa50000 {
                         compatible = "xlnx,zynqmp-ams";
-                        status = "okay";
                         interrupt-parent = <&gic>;
                         interrupts = <0x0 0x38 0x4>;
                         reg = <0x0 0xffa50000 0x0 0x800>;
@@ -1913,6 +2037,7 @@
                         #io-channel-cells = <0x1>;
                         ranges = <0x0 0x0 0xffa50800 0x800>;
                         clocks = <&zynqmp_clk 0x46>;
+                        status = "okay";
                         xlnx,clock-freq = <0x33>;
                         xlnx,ip-name = "psu_ams";
                         phandle = <0x1c>;
@@ -1944,7 +2069,7 @@
                         #dma-cells = <0x1>;
                         clocks = <&zynqmp_clk 0x14>;
                         assigned-clocks = <&zynqmp_clk 0x14>;
-                        phandle = <0x88>;
+                        phandle = <0x8c>;
                 };
 
                 zynqmp_dpsub: display@fd4a0000 {
@@ -1959,14 +2084,14 @@
                         power-domains = <&zynqmp_firmware 0x29>;
                         resets = <&zynqmp_reset 0x3>;
                         dma-names = "vid0", "vid1", "vid2", "gfx0", "aud0", "aud1";
-                        dmas = <0x88 0x0 0x88 0x1 0x88 0x2 0x88 0x3 0x88 0x4 0x88 0x5>;
+                        dmas = <0x8c 0x0 0x8c 0x1 0x8c 0x2 0x8c 0x3 0x8c 0x4 0x8c 0x5>;
                         clocks = <&zynqmp_clk 0x1c>,
                          <&zynqmp_clk 0x11>,
                          <&zynqmp_clk 0x10>;
                         assigned-clocks = <&zynqmp_clk 0x12>,
                          <&zynqmp_clk 0x11>,
                          <&zynqmp_clk 0x10>;
-                        phandle = <0xe3>;
+                        phandle = <0xeb>;
 
                         ports {
                                 #address-cells = <0x1>;
@@ -1974,32 +2099,32 @@
 
                                 live_video: port@0 {
                                         reg = <0x0>;
-                                        phandle = <0xe4>;
+                                        phandle = <0xec>;
                                 };
 
                                 live_gfx: port@1 {
                                         reg = <0x1>;
-                                        phandle = <0xe5>;
+                                        phandle = <0xed>;
                                 };
 
                                 live_audio: port@2 {
                                         reg = <0x2>;
-                                        phandle = <0xe6>;
+                                        phandle = <0xee>;
                                 };
 
                                 out_video: port@3 {
                                         reg = <0x3>;
-                                        phandle = <0xe7>;
+                                        phandle = <0xef>;
                                 };
 
                                 out_audio: port@4 {
                                         reg = <0x4>;
-                                        phandle = <0xe8>;
+                                        phandle = <0xf0>;
                                 };
 
                                 out_dp: port@5 {
                                         reg = <0x5>;
-                                        phandle = <0xe9>;
+                                        phandle = <0xf1>;
                                 };
                         };
                 };
@@ -2013,7 +2138,7 @@
                         timeout-sec = <0x3c>;
                         reset-on-timeout;
                         xlnx,clock-freq = <0x5f5b9f5>;
-                        phandle = <0xea>;
+                        phandle = <0xf2>;
                 };
 
                 coresight_0: coresight@fe800000 {
@@ -2048,7 +2173,7 @@
                         #size-cells = <0x2>;
                         bootph-all;
                         ranges;
-                        phandle = <0x11c>;
+                        phandle = <0x124>;
                 };
 
                 ipi8: ipi@ff350000 {
@@ -2064,7 +2189,7 @@
                         #size-cells = <0x2>;
                         bootph-all;
                         ranges;
-                        phandle = <0x11d>;
+                        phandle = <0x125>;
                 };
 
                 ipi9: ipi@ff360000 {
@@ -2080,7 +2205,7 @@
                         #size-cells = <0x2>;
                         bootph-all;
                         ranges;
-                        phandle = <0x11e>;
+                        phandle = <0x126>;
                 };
 
                 ipi10: ipi@ff370000 {
@@ -2096,7 +2221,7 @@
                         #size-cells = <0x2>;
                         bootph-all;
                         ranges;
-                        phandle = <0x11f>;
+                        phandle = <0x127>;
                 };
 
                 psu_csu_0: psu_csu@ffca0000 {
@@ -2218,7 +2343,7 @@
                 compatible = "indirect-bus";
                 #address-cells = <0x2>;
                 #size-cells = <0x2>;
-                phandle = <0x125>;
+                phandle = <0x12d>;
 
                 lpd_xppu: xppu@ff980000 {
                         compatible = "xlnx,xppu";
@@ -2231,46 +2356,51 @@
         };
 
         binman: binman {
-                phandle = <0x126>;
+                phandle = <0x12e>;
         };
 
-        pss_ref_clk: pss_ref_clk {
+        pss_ref_clk: pss-ref-clk {
                 bootph-all;
                 compatible = "fixed-clock";
                 #clock-cells = <0x0>;
                 clock-frequency = <0x1fca055>;
+                clock-output-names = "pss_ref_clk";
                 phandle = <0x7d>;
         };
 
-        video_clk: video_clk {
+        video_clk: video-clk {
                 bootph-all;
                 compatible = "fixed-clock";
                 #clock-cells = <0x0>;
                 clock-frequency = <0x19bfcc0>;
+                clock-output-names = "video_clk";
                 phandle = <0x7e>;
         };
 
-        pss_alt_ref_clk: pss_alt_ref_clk {
+        pss_alt_ref_clk: pss-alt-ref-clk {
                 bootph-all;
                 compatible = "fixed-clock";
                 #clock-cells = <0x0>;
                 clock-frequency = <0x0>;
+                clock-output-names = "pss_alt_ref_clk";
                 phandle = <0x7f>;
         };
 
-        gt_crx_ref_clk: gt_crx_ref_clk {
+        gt_crx_ref_clk: gt-crx-ref-clk {
                 bootph-all;
                 compatible = "fixed-clock";
                 #clock-cells = <0x0>;
                 clock-frequency = <0x66ff300>;
+                clock-output-names = "gt_crx_ref_clk";
                 phandle = <0x81>;
         };
 
-        aux_ref_clk: aux_ref_clk {
+        aux_ref_clk: aux-ref-clk {
                 bootph-all;
                 compatible = "fixed-clock";
                 #clock-cells = <0x0>;
                 clock-frequency = <0x19bfcc0>;
+                clock-output-names = "aux_ref_clk";
                 phandle = <0x80>;
         };
 
@@ -2280,7 +2410,7 @@
                 #address-cells = <0x2>;
                 #size-cells = <0x2>;
                 firmware-name = "project_1.bit.bin";
-                phandle = <0x127>;
+                phandle = <0x12f>;
 
                 SYSCTLR_SI5332: i2c@80000000 {
                         interrupts = <0x0 0x59 0x4>;
@@ -2390,92 +2520,92 @@
                 compatible = "fixed-clock";
                 #clock-cells = <0x0>;
                 clock-frequency = <0x7735940>;
-                phandle = <0x86>;
+                phandle = <0x8a>;
         };
 
         ina226-vccint {
                 compatible = "iio-hwmon";
-                io-channels = <0x90 0x0 0x90 0x1 0x90 0x2 0x90 0x3>;
+                io-channels = <0x94 0x0 0x94 0x1 0x94 0x2 0x94 0x3>;
         };
 
         ina226-vcc-soc {
                 compatible = "iio-hwmon";
-                io-channels = <0x91 0x0 0x91 0x1 0x91 0x2 0x91 0x3>;
+                io-channels = <0x95 0x0 0x95 0x1 0x95 0x2 0x95 0x3>;
         };
 
         ina226-vcc-pmc {
                 compatible = "iio-hwmon";
-                io-channels = <0x92 0x0 0x92 0x1 0x92 0x2 0x92 0x3>;
+                io-channels = <0x96 0x0 0x96 0x1 0x96 0x2 0x96 0x3>;
         };
 
         ina226-vcc-ram {
                 compatible = "iio-hwmon";
-                io-channels = <0x93 0x0 0x93 0x1 0x93 0x2 0x93 0x3>;
+                io-channels = <0x97 0x0 0x97 0x1 0x97 0x2 0x97 0x3>;
         };
 
         ina226-vcc-pslp {
                 compatible = "iio-hwmon";
-                io-channels = <0x94 0x0 0x94 0x1 0x94 0x2 0x94 0x3>;
+                io-channels = <0x98 0x0 0x98 0x1 0x98 0x2 0x98 0x3>;
         };
 
         ina226-vcc-psfp {
                 compatible = "iio-hwmon";
-                io-channels = <0x95 0x0 0x95 0x1 0x95 0x2 0x95 0x3>;
+                io-channels = <0x99 0x0 0x99 0x1 0x99 0x2 0x99 0x3>;
         };
 
         ina226-vccaux {
                 compatible = "iio-hwmon";
-                io-channels = <0x96 0x0 0x96 0x1 0x96 0x2 0x96 0x3>;
+                io-channels = <0x9a 0x0 0x9a 0x1 0x9a 0x2 0x9a 0x3>;
         };
 
         ina226-vccaux-pmc {
                 compatible = "iio-hwmon";
-                io-channels = <0x97 0x0 0x97 0x1 0x97 0x2 0x97 0x3>;
+                io-channels = <0x9b 0x0 0x9b 0x1 0x9b 0x2 0x9b 0x3>;
         };
 
         ina226-vcco-503 {
                 compatible = "iio-hwmon";
-                io-channels = <0x98 0x0 0x98 0x1 0x98 0x2 0x98 0x3>;
+                io-channels = <0x9c 0x0 0x9c 0x1 0x9c 0x2 0x9c 0x3>;
         };
 
         ina226-vcc-1v8 {
                 compatible = "iio-hwmon";
-                io-channels = <0x99 0x0 0x99 0x1 0x99 0x2 0x99 0x3>;
+                io-channels = <0x9d 0x0 0x9d 0x1 0x9d 0x2 0x9d 0x3>;
         };
 
         ina226-vcc-3v3 {
                 compatible = "iio-hwmon";
-                io-channels = <0x9a 0x0 0x9a 0x1 0x9a 0x2 0x9a 0x3>;
+                io-channels = <0x9e 0x0 0x9e 0x1 0x9e 0x2 0x9e 0x3>;
         };
 
         ina226-vcc-1v2-ddr4 {
                 compatible = "iio-hwmon";
-                io-channels = <0x9b 0x0 0x9b 0x1 0x9b 0x2 0x9b 0x3>;
+                io-channels = <0x9f 0x0 0x9f 0x1 0x9f 0x2 0x9f 0x3>;
         };
 
         ina226-vcc-1v1-lp4 {
                 compatible = "iio-hwmon";
-                io-channels = <0x9c 0x0 0x9c 0x1 0x9c 0x2 0x9c 0x3>;
+                io-channels = <0xa0 0x0 0xa0 0x1 0xa0 0x2 0xa0 0x3>;
         };
 
         ina226-vadj-fmc {
                 compatible = "iio-hwmon";
-                io-channels = <0x9d 0x0 0x9d 0x1 0x9d 0x2 0x9d 0x3>;
+                io-channels = <0xa1 0x0 0xa1 0x1 0xa1 0x2 0xa1 0x3>;
         };
 
         ina226-mgtyavcc {
                 compatible = "iio-hwmon";
-                io-channels = <0x9e 0x0 0x9e 0x1 0x9e 0x2 0x9e 0x3>;
+                io-channels = <0xa2 0x0 0xa2 0x1 0xa2 0x2 0xa2 0x3>;
         };
 
         ina226-mgtyavtt {
                 compatible = "iio-hwmon";
-                io-channels = <0x9f 0x0 0x9f 0x1 0x9f 0x2 0x9f 0x3>;
+                io-channels = <0xa3 0x0 0xa3 0x1 0xa3 0x2 0xa3 0x3>;
         };
 
         ina226-mgtyvccaux {
                 compatible = "iio-hwmon";
-                io-channels = <0xa0 0x0 0xa0 0x1 0xa0 0x2 0xa0 0x3>;
+                io-channels = <0xa4 0x0 0xa4 0x1 0xa4 0x2 0xa4 0x3>;
         };
 
         __symbols__ {
@@ -2490,7 +2620,6 @@
                 zynqmp_ipi = "/zynqmp-ipi";
                 ipi_mailbox_pmu1 = "/zynqmp-ipi/mailbox@ff9905c0";
                 dcc = "/dcc";
-                optee = "/firmware/optee";
                 zynqmp_firmware = "/firmware/zynqmp-firmware";
                 zynqmp_power = "/firmware/zynqmp-firmware/power-management";
                 soc_revision = "/firmware/zynqmp-firmware/soc-nvmem/nvmem-layout/soc-revision@0";
@@ -2518,12 +2647,21 @@
                 modepin_gpio = "/firmware/zynqmp-firmware/gpio";
                 zynqmp_clk = "/firmware/zynqmp-firmware/clock-controller";
                 fpga_full = "/fpga-region";
+                tsens_apu = "/thermal-sensor-apu";
+                tsens_rpu = "/thermal-sensor-rpu";
+                tsens_pl = "/thermal-sensor-pl";
+                apu_passive = "/thermal-zones/apu-thermal/trips/passive";
+                apu_critical = "/thermal-zones/apu-thermal/trips/critical";
                 amba_apu = "/apu-bus";
                 amba = "/axi";
                 imux = "/axi/interrupt-multiplex";
                 can0 = "/axi/can@ff060000";
                 can1 = "/axi/can@ff070000";
                 cci = "/axi/cci@fd6e0000";
+                psu_cortexa53_0_debug = "/axi/debug@fec10000";
+                psu_cortexa53_1_debug = "/axi/debug@fed10000";
+                psu_cortexa53_2_debug = "/axi/debug@fee10000";
+                psu_cortexa53_3_debug = "/axi/debug@fef10000";
                 fpd_dma_chan1 = "/axi/dma-controller@fd500000";
                 fpd_dma_chan2 = "/axi/dma-controller@fd510000";
                 fpd_dma_chan3 = "/axi/dma-controller@fd520000";
@@ -2649,11 +2787,11 @@
                 amba_xppu = "/indirect-bus@1";
                 lpd_xppu = "/indirect-bus@1/xppu@ff980000";
                 binman = "/binman";
-                pss_ref_clk = "/pss_ref_clk";
-                video_clk = "/video_clk";
-                pss_alt_ref_clk = "/pss_alt_ref_clk";
-                gt_crx_ref_clk = "/gt_crx_ref_clk";
-                aux_ref_clk = "/aux_ref_clk";
+                pss_ref_clk = "/pss-ref-clk";
+                video_clk = "/video-clk";
+                pss_alt_ref_clk = "/pss-alt-ref-clk";
+                gt_crx_ref_clk = "/gt-crx-ref-clk";
+                aux_ref_clk = "/aux-ref-clk";
                 amba_pl = "/amba_pl";
                 SYSCTLR_SI5332 = "/amba_pl/i2c@80000000";
                 debug_bridge_0 = "/amba_pl/debug_bridge@80010000";
