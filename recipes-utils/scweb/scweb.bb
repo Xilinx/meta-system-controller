@@ -39,6 +39,7 @@ RDEPENDS:${PN} += "bash \
         python3-flask \
         python3-flask-restful \
         python3-psutil \
+	python3-websockets \
         system-controller-app \        
         lmsensors-sensors \
         freeipmi \
