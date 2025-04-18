@@ -13,6 +13,7 @@ IMAGE_INSTALL:append:system-controller = " \
     ser2net \
     picocom \
     embpf-bootfw-update-tool \
+    python3-frugy \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
