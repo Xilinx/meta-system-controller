@@ -14,6 +14,7 @@ IMAGE_INSTALL:append:system-controller = " \
     picocom \
     lmsensors-fancontrol \
     embpf-bootfw-update-tool \
+    python3-frugy \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"

@@ -22,6 +22,7 @@ IMAGE_INSTALL = " \
     packagegroup-syscontroller \
     python3-pip \
     python3-psutil \
+	python3-frugy \
     raft \
     repart-resize \
     systemcontroller-licenses-manual \
