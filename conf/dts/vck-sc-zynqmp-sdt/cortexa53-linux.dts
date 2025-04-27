@@ -149,26 +149,26 @@
                 opp-shared;
                 phandle = <0x60>;
 
-                opp-1199988037 {
-                        opp-hz = <0x0 0x47865d45>;
+                opp-1200000000 {
+                        opp-hz = <0x0 0x47868c00>;
                         clock-latency-ns = <0x7a120>;
                         opp-microvolt = <0xf4240>;
                 };
 
-                opp-599994019 {
-                        opp-hz = <0x0 0x23c32ea3>;
+                opp-600000000 {
+                        opp-hz = <0x0 0x23c34600>;
                         clock-latency-ns = <0x7a120>;
                         opp-microvolt = <0xf4240>;
                 };
 
-                opp-399996012 {
-                        opp-hz = <0x0 0x17d7746c>;
+                opp-400000000 {
+                        opp-hz = <0x0 0x17d78400>;
                         clock-latency-ns = <0x7a120>;
                         opp-microvolt = <0xf4240>;
                 };
 
-                opp-299997009 {
-                        opp-hz = <0x0 0x11e19751>;
+                opp-300000000 {
+                        opp-hz = <0x0 0x11e1a300>;
                         clock-latency-ns = <0x7a120>;
                         opp-microvolt = <0xf4240>;
                 };
