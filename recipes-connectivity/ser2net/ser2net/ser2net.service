@@ -5,6 +5,7 @@ Description=Serial port to network proxy
 Documentation=man:ser2net(8)
 
 [Service]
+ExecStartPre=/usr/bin/ser2net_config.sh
 ExecStart=/usr/sbin/ser2net -n -c /etc/ser2net.yaml -P /run/ser2net.pid
 Type=exec
 Restart=on-failure
