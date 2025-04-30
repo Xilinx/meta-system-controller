@@ -36,3 +36,8 @@ CC_DTBS_DUP:eval-brd-sc-zynqmp = " \
 			zynqmp-vek280-revB01:zynqmp-vek280-revB02 \
 			zynqmp-vek280-revB01:zynqmp-vek280-revB03 \
 			"
+
+UBRANCH:zynqmp-k24-sc-xsct-base = "xlnx_rebase_v2025.01"
+SRCREV:zynqmp-k24-sc-xsct-base = "362f842cf37f7c83c84781cf638ae22a79ee9a26"
+SRC_URI:remove:zynqmp-k24-sc-xsct-base = "file://sc_fru.cfg"
+DEPENDS:remove:zynqmp-k24-sc-xsct-base = " uboot-device-tree"
