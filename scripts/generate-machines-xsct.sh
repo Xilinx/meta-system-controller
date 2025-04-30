@@ -6,6 +6,7 @@ XSCT_VERSION=2025.1
 ### Machine               Board Template          PRE     POST
 #M# eval-brd-sc-zynqmp    zynqmp-sc-revb          #\ Yocto\ uboot\ device-tree\ variables\\nYAML_CONSOLE_DEVICE_CONFIG:pn-uboot-device-tree\ ?=\ \"psu_uart_1\"\\n    # Add the following files to /boot\\nIMAGE_BOOT_FILES += \"system-sc-revc-zynqmp.dtb system.dtb\"\\nWKS_FILES = \"system-controller-nobootpartition.wks\"\\n\\n# enable RAUC_DEMO for this board by default\\nSYSTEM_CONTROLLER_RAUC_DEMO = \"yes\"
 #M# vck-sc-zynqmp         zynqmp-e-a2197-00-revb  none    # Add the following files to pack in wic FAT partition\\nIMAGE_BOOT_FILES += \"boot.bin system.dtb\"\\n# Pack bitstream in BOOT.BIN for vck-sc-zynqmp\\nBIF_BITSTREAM_ATTR  = \"bitstream\"
+#M# zynqmp-k24-sc-xsct-base  zynqmp-sc-k24-reva   none    # Add the following files to /boot\\nIMAGE_BOOT_FILES += "system.dtb"\\nWKS_FILES = "system-controller-nobootpartition.wks"
 
 this=$(realpath $0)
 
@@ -117,6 +118,17 @@ for mach in ${!MACHINES[@]}; do
     vck-sc-zynqmp)
       sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf \
         -e 's:Machine configuration for the vck-sc-zynqmp boards.:Machine configuration for vck190 and vmk180 system controller.:'
+      ;;
+    zynqmp-k24-sc-xsct-base)
+      sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf \
+        -e 's:Machine configuration for the zynqmp-k24-sc-xsct-base boards.:Machine configuration for kria k24 based system controller.:' \
+        -e 's,YAML_CONSOLE_DEVICE_CONFIG:pn-device-tree ?= "psu_uart_0",YAML_CONSOLE_DEVICE_CONFIG:pn-device-tree ?= "psu_uart_1",' \
+        -e 's,TFA_CONSOLE ?= "cadence",TFA_CONSOLE ?= "cadence1",' \
+        -e 's,YAML_SERIAL_CONSOLE_STDIN:pn-pmu-firmware ?= "psu_uart_0",YAML_SERIAL_CONSOLE_STDIN:pn-pmu-firmware ?= "psu_uart_1",' \
+        -e 's,YAML_SERIAL_CONSOLE_STDOUT:pn-pmu-firmware ?= "psu_uart_0",YAML_SERIAL_CONSOLE_STDOUT:pn-pmu-firmware ?= "psu_uart_1",' \
+        -e 's,YAML_SERIAL_CONSOLE_STDIN:pn-fsbl-firmware ?= "psu_uart_0",YAML_SERIAL_CONSOLE_STDIN:pn-fsbl-firmware ?= "psu_uart_1",' \
+        -e 's,YAML_SERIAL_CONSOLE_STDOUT:pn-fsbl-firmware ?= "psu_uart_0",YAML_SERIAL_CONSOLE_STDOUT:pn-fsbl-firmware ?= "psu_uart_1",' \
+        -e '4i MACHINEOVERRIDES =. \"eval-brd-sc-zynqmp:\"'
       ;;
   esac
 done
