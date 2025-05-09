@@ -1,9 +1,9 @@
 #! /bin/bash -e
 
 ### The following table controls the automatic generated of the machine .conf files (lines start with #M#)
-### Machine              BOARD                     OVERLAY    PRE     POST
-#M# vck-sc-zynqmp-sdt    system-controller-generic.conf       none       none    MACHINEOVERRIDES =\. \"system-controller:vck-sc-zynqmp:\"
-#M# eval-brd-sc-zynqmp-sdt system-controller-generic.conf     full       none    MACHINEOVERRIDES =\. \"system-controller:eval-brd-sc-zynqmp:\"
+### Machine                     INCLUDE                         OVERLAY    PRE     POST
+#M# vck-sc-zynqmp-sdt           system-controller-generic.conf  none       none    # Add the following files to pack in wic FAT partition\\nIMAGE_BOOT_FILES += \"boot.bin system.dtb\"\\n# Pack bitstream in BOOT.BIN for vck-sc-zynqmp-sdt\\nBIF_BITSTREAM_ATTR  = \"bitstream\"\\nMACHINEOVERRIDES =\. \"system-controller:vck-sc-zynqmp:\"
+#M# eval-brd-sc-zynqmp-sdt      system-controller-generic.conf  full       none    # Add the following files to /boot\\nIMAGE_BOOT_FILES += \"system-sc-revc-zynqmp.dtb system.dtb\"\\nWKS_FILES = \"system-controller-nobootpartition.wks\"\\n\\n# enable RAUC_DEMO for this board by default\\nSYSTEM_CONTROLLER_RAUC_DEMO = \"yes\"\\nMACHINEOVERRIDES =\. \"system-controller:eval-brd-sc-zynqmp:\"
 
 this=$(realpath $0)
 
@@ -106,10 +106,4 @@ for mach in ${!MACHINES[@]}; do
   if [ -n "${POST[${mach}]}" ]; then
     sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e 's,\(^require conf/machine/'${INCLUDES[${mach}]}'\),\1\n\n'"${POST[${mach}]}"','
   fi
-
-  # Delete redundant BIF_ entry
-  sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e '/^\# Update bootbin to use proper device tree/,+2d'
-
-  # Fix the IMAGE_BOOT_FILES
-  sed -i ${conf_path}/machine/${MACHINES[${mach}]}.conf -e 's,^IMAGE_BOOT_FILES.*,IMAGE_BOOT_FILES =+ \"devicetree/cortexa53-linux.dtb;system.dtb\",'
 done
