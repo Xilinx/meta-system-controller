@@ -18,6 +18,7 @@ SRCREV = "4cf8b6405ac9ac1ba1489e784b5cfdfdc9a58ba8"
 
 SRC_URI:append:system-controller = " \
     file://ser2net.yaml \
+    file://default.yaml \
     file://ser2net.service \
     file://ser2net_config.sh \
 "
@@ -39,6 +40,7 @@ CONFFILES:${PN} += "${sysconfdir}/ser2net/ser2net.yaml"
 do_install:append() {
     install -d ${D}${sysconfdir}/ser2net
     install -D -m 0644 ${WORKDIR}/ser2net.yaml ${D}${sysconfdir}/ser2net.yaml
+    install -D -m 0644 ${WORKDIR}/default.yaml ${D}${sysconfdir}/ser2net/default.yaml
     install -D -m 0755 ${WORKDIR}/ser2net_config.sh ${D}${bindir}/ser2net_config.sh
     if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
         install -d ${D}${systemd_unitdir}/system
