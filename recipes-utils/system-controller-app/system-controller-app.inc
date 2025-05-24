@@ -66,8 +66,8 @@ SRC_URI[vek280-elf.sha256sum] = '39943e7fea112dcb50a5655ff2319e36c549594e1686114
 
 # VEK385
 # edf-ospi-versal-2ve-2vm-vek385-sdt-seg-20250427145253.bin.gz
-OSPI_PATH[vek385] = 'https://petalinux.xilinx.com/sswreleases/rel-v2025/system-controller/sc_app_bsp/2025.1/2025.1_202505180139/external/VEK385/edf-ospi-versal-2ve-2vm-vek385-sdt-seg.bin.gz;name=vek385-ospi;unpack=0'
-SRC_URI[vek385-ospi.sha256sum] = '7425aabfbf3bbd6bcbf49d8954768cb79a45e03285471892f0f580da439af3e7'
+OSPI_PATH[vek385] = 'https://petalinux.xilinx.com/sswreleases/rel-v2025/system-controller/sc_app_bsp/2025.1/2025.1_202505222340/external/VEK385/edf-ospi-versal-2ve-2vm-vek385-sdt-seg.bin.gz;name=vek385-ospi;unpack=0'
+SRC_URI[vek385-ospi.sha256sum] = '7ebe60b20be2bb7e5ce8a7b85be0428a15740d2c2f964599738fa4136734d55b'
 
 # BOOT_vek385.bin
 BOOT_BIN_PATH[vek385] = 'https://petalinux.xilinx.com/sswreleases/rel-v2024/system-controller/sc_app_bsp/2024.2/2024.2_202505021433/external/VEK385/BOOT_vek385.bin;name=vek385-boot-bin'
