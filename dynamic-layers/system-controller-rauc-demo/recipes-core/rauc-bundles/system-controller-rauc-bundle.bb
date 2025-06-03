@@ -12,3 +12,7 @@ RAUC_SLOT_rootfs[fstype] = "ext4"
 
 RAUC_KEY_FILE = "${THISDIR}/files/development-1.key.pem"
 RAUC_CERT_FILE = "${THISDIR}/files/development-1.cert.pem"
+
+COMPATIBLE_MACHINE = "(^$)"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp = "eval-brd-sc-zynqmp"
+COMPATIBLE_MACHINE:eval-brd-sc-zynqmp-sdt = "eval-brd-sc-zynqmp-sdt"
