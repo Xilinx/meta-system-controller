@@ -9,7 +9,9 @@ BOARD = "vm-p-m1369-00"
 BOARD_upper = "VM-P-M1369-00"
 
 SRC_URI = "\
+	${ES1_PATH} \
 	${JSON_PATH} \
+	${ELF_PATH} \
 "
 
 RDEPENDS_${PN} = "packagegroup-syscontroller"
@@ -25,6 +27,10 @@ FILES:${PN} += " \
 
 do_install(){
 	mkdir -p ${D}${datadir}/system-controller-app/board
+	mkdir -p ${D}${datadir}/system-controller-app/BIT
+	mkdir -p ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}
 
 	cp ${WORKDIR}/${BOARD_upper}.json ${D}${datadir}/system-controller-app/board/
+	cp ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
+	cp ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
 }
