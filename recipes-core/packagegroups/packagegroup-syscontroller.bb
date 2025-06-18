@@ -29,6 +29,7 @@ SYSTEM_CONTROLLER_PACKAGES = " \
         lmsensors-libsensors \
         lmsensors-sensorsdetect \
         repart-resize \
+        sc-usb-gadget \
         "
 
 RDEPENDS:${PN} = "${SYSTEM_CONTROLLER_PACKAGES}"

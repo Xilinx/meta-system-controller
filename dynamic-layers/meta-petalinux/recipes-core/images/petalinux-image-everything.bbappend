@@ -15,6 +15,7 @@ IMAGE_INSTALL:append:system-controller = " \
     lmsensors-fancontrol \
     embpf-bootfw-update-tool \
     python3-frugy \
+    sc-usb-gadget \
     "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
