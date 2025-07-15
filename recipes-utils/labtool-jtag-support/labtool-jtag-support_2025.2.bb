@@ -34,7 +34,7 @@ RDEPENDS:${PN} += "bash libxcrypt"
 RPROVIDES:${PN} += "/opt/labtools/xilinx_vitis/xsdb"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

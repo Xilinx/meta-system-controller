@@ -16,7 +16,7 @@ DEPENDS = "gensio libyaml"
 SRC_URI = " git://github.com/cminyard/ser2net.git;branch=master;protocol=https "
 SRCREV = "4cf8b6405ac9ac1ba1489e784b5cfdfdc9a58ba8"
 
-SRC_URI:append:system-controller = " \
+SRC_URI:append:zynqmp-generic = " \
     file://ser2net.yaml \
     file://default.yaml \
     file://ser2net.service \

@@ -2,8 +2,10 @@ DESCRIPTION = "A full featured console-only image for System Controller."
 
 inherit core-image
 
+require system-controller.inc
+
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
 
 IMAGE_FEATURES += "splash ssh-server-openssh hwcodecs package-management"
 

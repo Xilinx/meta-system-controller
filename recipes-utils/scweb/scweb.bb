@@ -25,7 +25,7 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

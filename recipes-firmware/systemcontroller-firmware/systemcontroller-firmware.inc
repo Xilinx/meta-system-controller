@@ -12,7 +12,7 @@ PR = 'r1'
 inherit dfx_user_dts
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
 
 do_configure[prefuncs] =+ "move_fw_files"
 python move_fw_files () {

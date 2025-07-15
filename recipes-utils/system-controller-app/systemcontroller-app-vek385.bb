@@ -8,7 +8,7 @@ require system-controller-app.inc
 BOARD = "vek385"
 BOARD_upper = "VEK385"
 
-FILESEXTRAPATHS:prepend:system-controller := "${THISDIR}/${BOARD}:"
+FILESEXTRAPATHS:prepend:zynqmp-generic := "${THISDIR}/${BOARD}:"
 
 SRC_URI = "\
 	${ES1_PATH} \
@@ -22,13 +22,13 @@ SRC_URI = "\
 	${OSPI_PATH} \
 "
 
-SRC_URI:append:system-controller = " file://ser2net_vek385_a01.yaml \
+SRC_URI:append:zynqmp-generic = " file://ser2net_vek385_a01.yaml \
                                      file://ser2net_vek385_b1.yaml "
 
 RDEPENDS_${PN} = "packagegroup-syscontroller"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 

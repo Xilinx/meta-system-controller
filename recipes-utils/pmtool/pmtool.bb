@@ -32,7 +32,7 @@ S = "${WORKDIR}/git"
 PMTOOL_DIR = "${datadir}/${PN}"
 
 COMPATIBLE_MACHINE = "^$"
-COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 do_configure[noexec]="1"
