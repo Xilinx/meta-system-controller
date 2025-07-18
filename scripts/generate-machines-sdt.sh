@@ -1,9 +1,8 @@
 #! /bin/bash -e
 
 ### The following table controls the automatic generated of the machine .conf files (lines start with #M#)
-### Machine                     INCLUDE                         OVERLAY    PRE     POST
-#M# vck-sc-zynqmp-sdt           system-controller-generic.conf  none       none    # Add the following files to pack in wic FAT partition\\nIMAGE_BOOT_FILES += \"boot.bin system.dtb\"\\n# Pack bitstream in BOOT.BIN for vck-sc-zynqmp-sdt\\nBIF_BITSTREAM_ATTR  = \"bitstream\"\\nMACHINEOVERRIDES =\. \"system-controller:vck-sc-zynqmp:\"
-#M# eval-brd-sc-zynqmp-sdt      system-controller-generic.conf  full       none    # Add the following files to /boot\\nIMAGE_BOOT_FILES += \"system-sc-revc-zynqmp.dtb system.dtb\"\\nWKS_FILES = \"system-controller-nobootpartition.wks\"\\n\\n# enable RAUC_DEMO for this board by default\\nSYSTEM_CONTROLLER_RAUC_DEMO = \"yes\"\\nMACHINEOVERRIDES =\. \"system-controller:eval-brd-sc-zynqmp:\"
+### Machine                     INCLUDE                   OVERLAY PRE     POST
+#M# zynqmp-k24-sc-sdt-base      zynqmp-generic.conf       full    none    # This prevents inclusion of XEN dtsi into system.dtb\\nENABLE_XEN_DTSI:zynqmp-k24-sc-sdt-base = \"\"\\nENABLE_XEN_QEMU_DTSI:zynqmp-k24-sc-sdt-base = \"\"\\n
 
 this=$(realpath $0)
 
