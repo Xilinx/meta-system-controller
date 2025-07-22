@@ -1891,10 +1891,9 @@
                                 bootph-all;
                                 reg = <0x72>;
 
-                                i2c_arb: i2c-arb@0 {
+                                i2c_arb: i2c-arb {
                                         #address-cells = <0x1>;
                                         #size-cells = <0x0>;
-                                        reg = <0x0>;
                                         phandle = <0xcc>;
 
                                         eeprom_cc: eeprom@54 {
@@ -2548,7 +2547,7 @@
                                 xlnx,enable-superspeed = <0x1>;
                                 xlnx,usb-board-interface = "custom";
                                 xlnx,name = "psu_usb_xhci_0";
-                                dr_mode = "host";
+                                dr_mode = "otg";
                                 snps,usb3_lpm_capable;
                                 maximum-speed = "super-speed";
                                 phandle = <0x68>;
@@ -4150,7 +4149,7 @@
                 mmc0 = "/axi/mmc@ff160000";
                 mmc1 = "/axi/mmc@ff170000";
                 nvmem0 = "/axi/i2c@ff030000/eeprom@50";
-                nvmem1 = "/axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb@0/eeprom@54";
+                nvmem1 = "/axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb/eeprom@54";
                 rtc0 = "/axi/rtc@ffa60000";
                 spi1 = "/axi/spi@ff040000";
                 spi2 = "/axi/spi@ff050000";
@@ -4305,8 +4304,8 @@
                 da9130 = "/axi/i2c@ff030000/pmic@32";
                 da9130_buck1 = "/axi/i2c@ff030000/pmic@32/regulators/buck1";
                 slg7xl45106 = "/axi/i2c@ff030000/gpio@11";
-                i2c_arb = "/axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb@0";
-                eeprom_cc = "/axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb@0/eeprom@54";
+                i2c_arb = "/axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb";
+                eeprom_cc = "/axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb/eeprom@54";
                 ocm = "/axi/memory-controller@ff960000";
                 perf_monitor_ocm = "/axi/perf-monitor@ffa00000";
                 perf_monitor_ddr = "/axi/perf-monitor@fd0b0000";
