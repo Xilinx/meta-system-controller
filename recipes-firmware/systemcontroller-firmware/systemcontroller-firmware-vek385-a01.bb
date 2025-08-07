@@ -7,7 +7,7 @@ include systemcontroller-firmware.inc
 FW_DIR = "vek385"
 FW_FILENAME = "vek385-a01"
 
-COMPATIBLE_MACHINE:zynqmp-generic = "${MACHINE}"
+COMPATIBLE_MACHINE:amd-cortexa53-common = "${MACHINE}"
 
 do_install:append() {
     # create symbolic links to supported revisions of the same board
