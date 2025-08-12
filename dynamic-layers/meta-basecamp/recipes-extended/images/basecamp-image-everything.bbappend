@@ -1,1 +1,0 @@
-BASECAMP_IMAGE_FULL_INSTALL += "python3-frugy"
