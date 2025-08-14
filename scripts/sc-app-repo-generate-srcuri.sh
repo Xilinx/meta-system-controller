@@ -46,6 +46,8 @@ fi
 
 echo "# Automatically generated.  Manual changes will be lost."
 echo
+echo "A01_ES1_PATH = \"\${@d.getVarFlag('A01_ES1_PATH', d.getVar('BOARD')) or ''}\""
+echo "A02_ES1_PATH = \"\${@d.getVarFlag('A02_ES1_PATH', d.getVar('BOARD')) or ''}\""
 echo "ES1_PATH = \"\${@d.getVarFlag('ES1_PATH', d.getVar('BOARD')) or ''}\""
 echo "SYS_PATH = \"\${@d.getVarFlag('SYS_PATH', d.getVar('BOARD')) or ''}\""
 echo "ELF_PATH = \"\${@d.getVarFlag('ELF_PATH', d.getVar('BOARD')) or ''}\""
@@ -74,6 +76,12 @@ for dir in $dirnames; do
 		if [[ "$i" == *"elf"* ]]; then
 			name=$device-elf
 			yp_name="ELF_PATH"
+		elif [[ "$i" == *"pdi"* ]] && [[ "$i" == *"A01_es1"* ]]; then
+			name=$device-A01-es1-system
+			yp_name="A01_ES1_PATH"
+		elif [[ "$i" == *"pdi"* ]] && [[ "$i" == *"A02_es1"* ]]; then
+			name=$device-A02-es1-system
+			yp_name="A02_ES1_PATH"
 		elif [[ "$i" == *"pdi"* ]] && [[ "$i" == *"es1"* ]]; then
 			name=$device-es1-system
 			yp_name="ES1_PATH"

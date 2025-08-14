@@ -11,6 +11,8 @@ BOARD_upper = "VEK385"
 FILESEXTRAPATHS:prepend:zynqmp-generic := "${THISDIR}/${BOARD}:"
 
 SRC_URI = "\
+	${A01_ES1_PATH} \
+	${A02_ES1_PATH} \
 	${ES1_PATH} \
 	${SYS_PATH} \
 	${JPG_PATH} \
@@ -52,6 +54,8 @@ do_install(){
 	install -d ${D}${datadir}/config
 
 	cp ${WORKDIR}/${BOARD_upper}.json ${D}${datadir}/system-controller-app/board/
+	cp ${WORKDIR}/${BOARD}_A01_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A01_es1_system_wrapper.pdi
+	cp ${WORKDIR}/${BOARD}_A02_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A02_es1_system_wrapper.pdi
 	cp ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
 	#cp ${WORKDIR}/${BOARD}_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/system_wrapper.pdi
 	cp ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
