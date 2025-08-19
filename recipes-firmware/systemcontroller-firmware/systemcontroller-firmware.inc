@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = " \
 	"
 BRANCH = "xlnx_rel_v2024.2"
 SRC_URI = "git://github.com/Xilinx/versal-sc-firmware.git;protocol=https;branch=${BRANCH}"
-SRCREV ?= "7918dc2734fa3a93d93e1c5ef0f8bb3b7e2c6be6"
+SRCREV ?= "5150b4d633352866ca12308f702d3259b32e9643"
 PR = 'r1'
 
 inherit dfx_user_dts
