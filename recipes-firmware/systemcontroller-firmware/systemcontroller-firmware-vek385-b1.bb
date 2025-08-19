@@ -1,0 +1,18 @@
+SUMMARY = "Firmware for the vek385-b1 versal system controller"
+
+include systemcontroller-firmware.inc
+
+FW_DIR = "vek385-b1"
+FW_FILENAME = "vek385-b1"
+
+COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+
+do_install:append() {
+    # create symbolic links to supported revisions of the same board
+    install -d ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}
+    ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/${PN}.bin ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}/${FW_DIR}.bin
+    ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/${PN}.dtbo ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}/${FW_DIR}.dtbo
+    ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/shell.json ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}/shell.json
+}
+
+FILES:${PN} = "${nonarch_base_libdir}/firmware/xilinx/*"
