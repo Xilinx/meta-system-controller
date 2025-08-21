@@ -1,4 +1,4 @@
-SUMMARY = "Firmware for the vek385-a01/a02/b1 versal system controller"
+SUMMARY = "Firmware for the vek385-a01/a02 versal system controller"
 
 PROVIDES += " systemcontroller-firmware-vek385-a02"
 
@@ -11,7 +11,7 @@ COMPATIBLE_MACHINE:amd-cortexa53-common = "${MACHINE}"
 
 do_install:append() {
     # create symbolic links to supported revisions of the same board
-    for board in a01 a02 b1; do
+    for board in a01 a02; do
 	install -d ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}-${board}
 	ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/${PN}.bin ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}-${board}/${FW_DIR}-${board}.bin
 	ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/${PN}.dtbo ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}-${board}/${FW_DIR}-${board}.dtbo
