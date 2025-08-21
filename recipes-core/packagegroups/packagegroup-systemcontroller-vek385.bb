@@ -7,7 +7,6 @@ inherit packagegroup
 VEK385_PACKAGES = " \
 		systemcontroller-app-vek385 \
 		systemcontroller-firmware-vek385-a01 \
-		systemcontroller-firmware-vek385-b1 \
         "
 
 RDEPENDS:${PN} = "${VEK385_PACKAGES}"
