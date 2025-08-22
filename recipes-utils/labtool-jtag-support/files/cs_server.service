@@ -1,7 +1,7 @@
 [Unit]
 Description=Enable Chip Scopy server
-BindsTo=hw_server.service
 After=hw_server.service
+PartOf=hw_server.service
 
 [Service]
 Type=exec

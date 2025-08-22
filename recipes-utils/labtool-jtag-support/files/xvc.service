@@ -6,6 +6,7 @@ After=dfx-mgr.service
 Type=simple
 Restart=always
 NotifyAccess=all
+ExecStartPre=/bin/sh -c 'while [ -z "$(ls -lt /sys/class/uio | grep debug_bridge | awk '\''{print $9}'\'')" ]; do sleep 1; done'
 ExecStart=bash -c '/opt/labtools/bin/xvc_server -d $(ls -lt /sys/class/uio | grep debug_bridge | awk \'{print $9}\')'
 StandardOutput=journal+console
 
