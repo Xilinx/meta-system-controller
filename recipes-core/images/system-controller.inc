@@ -1,8 +1,11 @@
 IMAGE_FSTYPES += "wic wic.xz"
 
-EDF_IMAGE_ROOTFS_DIR = "${WORKDIR}/deploy-${IMAGE_BASENAME}-image-complete/${IMAGE_BASENAME}"
+WKS_FILES = "system-controller-nobootpartition.wks"
 
-WICVARS:append = "\
-    EDF_IMAGE_ROOTFS_DIR \
-    "
-WKS_FILES = "edf-disk-single-rootfs.wks"
+UBOOT_BOOT_SCRIPT = "u-boot-edf-sc-scr"
+
+ROOTFS_POSTPROCESS_COMMAND += "create_boot_symlink;"
+
+create_boot_symlink () {
+    ln -sf bootsc.scr ${IMAGE_ROOTFS}/boot/boot.scr
+}
