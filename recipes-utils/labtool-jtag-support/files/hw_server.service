@@ -1,7 +1,7 @@
 [Unit]
 Description=Enable hw_server
-BindsTo=xvc.service
 After=xvc.service
+PartOf=xvc.service
 
 [Service]
 Type=simple
