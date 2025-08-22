@@ -33,6 +33,7 @@ IMAGE_INSTALL = " \
     picocom \
     coreutils \
     embpf-bootfw-update-tool \
+    ${UBOOT_BOOT_SCRIPT} \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
