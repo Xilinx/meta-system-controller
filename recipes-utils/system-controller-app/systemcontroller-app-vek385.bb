@@ -25,7 +25,7 @@ SRC_URI = "\
 "
 
 SRC_URI:append:zynqmp-generic = " file://ser2net_vek385_a01.yaml \
-                                     file://ser2net_vek385_b1.yaml "
+                                  file://ser2net_vek385.yaml "
 
 RDEPENDS_${PN} = "packagegroup-syscontroller"
 
@@ -68,6 +68,6 @@ do_install(){
 	cp ${WORKDIR}/$(basename ${OSPI_PATH}) ${D}${datadir}/embpf-bootfw-update-tool/ospi
 	
 	cp ${WORKDIR}/ser2net_vek385_a01.yaml ${D}${datadir}/config
-	cp ${WORKDIR}/ser2net_vek385_b1.yaml ${D}${datadir}/config
+	cp ${WORKDIR}/ser2net_vek385.yaml ${D}${datadir}/config
 	ln -sr ${D}${datadir}/config/ser2net_vek385_a01.yaml ${D}${datadir}/config/ser2net_vek385_a02.yaml
 }
