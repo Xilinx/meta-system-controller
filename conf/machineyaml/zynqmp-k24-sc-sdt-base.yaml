@@ -7,6 +7,9 @@ kconfig:
 machine:
     pre:
     post:
+        include:
+            comment: "Enable meta-xilinx-imgrcvry if available"
+            op: 'conf/enable-xilinx-imgrcvry.conf'
         ENABLE_XEN_DTSI:zynqmp-k24-sc-sdt-base:
             comment: "This prevents inclusion of XEN dtsi into system.dtb"
             op: '='
