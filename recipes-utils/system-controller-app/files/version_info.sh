@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MIT
 #
 
-SC_UPDATE="SC Update 7.1"
+SC_UPDATE="SC Update 8"
 
 print_msg() {
     echo ""
