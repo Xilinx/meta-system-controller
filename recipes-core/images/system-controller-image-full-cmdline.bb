@@ -17,7 +17,6 @@ IMAGE_INSTALL = " \
     libubootenv \
     libubootenv-bin \
     linux-xlnx-udev-rules \
-    lmsensors-config-libsensors \
     lmsensors-fancontrol \
     packagegroup-core-boot \
     packagegroup-scweb \
@@ -35,6 +34,7 @@ IMAGE_INSTALL = " \
     embpf-bootfw-update-tool \
     ${UBOOT_BOOT_SCRIPT} \
     systemd-conf-sc \
+    lmsensors-config-sc-libsensors \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
