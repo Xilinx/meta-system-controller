@@ -8,6 +8,7 @@ SRC_URI = " file://sysmon.conf \
             file://fancontrol \
 "
 
+RDEPENDS:${PN}-fancontrol = "lmsensors-fancontrol"
 RDEPENDS:${PN}-dev = ""
 
 do_install() {
