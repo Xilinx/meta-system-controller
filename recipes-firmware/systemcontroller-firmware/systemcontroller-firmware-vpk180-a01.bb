@@ -11,7 +11,7 @@ COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
 
 do_install:append() {
     # create symbolic links to supported revisions of the same board
-    for board in a01 b01 112-a01 112-b01; do
+    for board in a01 b01 112-a01 112-b01 c01; do
         install -d ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}-${board}
         ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/${PN}.bin ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}-${board}/${FW_DIR}-${board}.bin
         ln -sr ${D}${nonarch_base_libdir}/firmware/xilinx/${PN}/${PN}.dtbo ${D}${nonarch_base_libdir}/firmware/xilinx/${FW_DIR}-${board}/${FW_DIR}-${board}.dtbo
