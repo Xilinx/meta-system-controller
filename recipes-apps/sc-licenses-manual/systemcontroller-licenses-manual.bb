@@ -9,6 +9,7 @@ PETALINUX_LIC_DIR ??= "system-controller-license_041624"
 
 
 COMPATIBLE_MACHINE:system-controller = "${MACHINE}"
+COMPATIBLE_MACHINE:amd-cortexa53-common = "${MACHINE}"
 
 S = "${WORKDIR}"
 
