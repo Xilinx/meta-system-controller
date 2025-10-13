@@ -35,6 +35,7 @@ IMAGE_INSTALL = " \
     ${UBOOT_BOOT_SCRIPT} \
     systemd-conf-sc \
     lmsensors-config-sc-libsensors \
+    libubootenv-sc \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
