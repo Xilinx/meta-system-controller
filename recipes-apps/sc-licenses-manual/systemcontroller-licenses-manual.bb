@@ -4,7 +4,7 @@ DESCRIPTION = "Recipe to include license files in the root filesystem"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-PETALINUX_LIC_URL ??= "https://petalinux.xilinx.com/sswreleases/rel-v2023/system-controller/license/"
+PETALINUX_LIC_URL ??= "https://edf.amd.com/sswreleases/rel-v2023/system-controller/license/"
 PETALINUX_LIC_DIR ??= "system-controller-license_041624"
 
 
