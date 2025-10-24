@@ -2733,7 +2733,7 @@
                                 xlnx,enable-superspeed = <0x1>;
                                 xlnx,usb-board-interface = "custom";
                                 xlnx,name = "psu_usb_xhci_0";
-                                dr_mode = "otg";
+                                dr_mode = "host";
                                 snps,usb3_lpm_capable;
                                 maximum-speed = "super-speed";
                         };

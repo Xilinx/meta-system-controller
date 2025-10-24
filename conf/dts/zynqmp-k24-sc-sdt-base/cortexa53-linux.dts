@@ -1904,7 +1904,7 @@
                                 xlnx,ip-name = "psu_usb_xhci";
                                 xlnx,enable-superspeed = <0x1>;
                                 xlnx,usb-board-interface = "custom";
-                                dr_mode = "otg";
+                                dr_mode = "host";
                                 snps,usb3_lpm_capable;
                                 maximum-speed = "super-speed";
                         };
