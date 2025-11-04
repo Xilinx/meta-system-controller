@@ -9,7 +9,7 @@ SRC_URI = " \
 	git://github.com/Xilinx/embpf-bootfw-update-tool.git;branch=${BRANCH};protocol=https \
 "
 
-SRCREV = "c681c3163b18c65895d3870a046645ce98b5677b"
+SRCREV = "3a46d48a1b8e3d4ddfc0099ee817b56948c193c5"
 
 S="${WORKDIR}/git"
 
