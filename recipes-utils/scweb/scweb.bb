@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://src/LICENSE.md;md5=691ccffd5cbf3847f255a28754844a10"
 SRC_URI = "git://github.com/Xilinx/system-controller-web.git;branch=xlnx_rel_v2025.2;protocol=https \
 	   file://scwebrun.service \
                   "
-SRCREV = "b01228deac917cdc48688b3cd6c708167ca5e8b5"
+SRCREV = "6be9ac97f36588fa1c463f637ce76543a1fafb29"
 
 inherit update-rc.d systemd
 
