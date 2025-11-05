@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=306deb5c0f33f4b0570c30ba8564f93f"
 
 SC_APP_REPO = "git://github.com/Xilinx/system-controller-app.git"
 SC_APP_BRANCH = "xlnx_rel_v2025.2"
-SC_APP_SRCREV = "cdfd84777e536d7a6b403e2a2d44240db84917c7"
+SC_APP_SRCREV = "a6033b7466ac38799848414c5040328f0adceb07"
 
 SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
@@ -57,6 +57,7 @@ do_install(){
     cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
     cp -r ${S}/script ${D}${datadir}/system-controller-app/
     install -m 755 ${WORKDIR}/*.sh ${D}${bindir}
+    install -m 755 ${S}/script/SI5518_command.py ${D}${bindir}
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/system_controller.service ${D}${systemd_system_unitdir}
