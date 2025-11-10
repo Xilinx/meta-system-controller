@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=306deb5c0f33f4b0570c30ba8564f93f"
 
 SC_APP_REPO = "git://github.com/Xilinx/system-controller-app.git"
 SC_APP_BRANCH = "xlnx_rel_v2025.2"
-SC_APP_SRCREV = "a6033b7466ac38799848414c5040328f0adceb07"
+SC_APP_SRCREV = "9b4bea2397934dff0054d341d1b5027e684366b7"
 
 SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
