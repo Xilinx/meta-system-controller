@@ -20,8 +20,6 @@ SRC_URI = "\
 	${PNG_PATH} \
 	${JS_PATH} \
 	${ELF_PATH} \
-	${BOOT_BIN_PATH} \
-	${OSPI_PATH} \
 "
 
 SRC_URI:append:zynqmp-generic = " file://ser2net_vek385_a01.yaml \
@@ -38,8 +36,6 @@ FILES:${PN} += " \
 	${datadir}/system-controller-app/ \
 	${datadir}/scweb/static/images/ \
 	${datadir}/scweb/static/js/ \
-	${datadir}/embpf-bootfw-update-tool/bin \
-	${datadir}/embpf-bootfw-update-tool/ospi \
 	${datadir}/config \
 	"
 
@@ -49,8 +45,6 @@ do_install(){
 	install -d ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}
 	install -d ${D}${datadir}/scweb/static/images/
 	install -d ${D}${datadir}/scweb/static/js/
-	install -d ${D}${datadir}/embpf-bootfw-update-tool/bin
-	install -d ${D}${datadir}/embpf-bootfw-update-tool/ospi
 	install -d ${D}${datadir}/config
 
 	cp ${WORKDIR}/${BOARD_upper}.json ${D}${datadir}/system-controller-app/board/
@@ -63,9 +57,6 @@ do_install(){
 	cp ${WORKDIR}/${BOARD_upper}_home.png ${D}${datadir}/scweb/static/images/
 	cp ${WORKDIR}/${BOARD}.jpg ${D}${datadir}/scweb/static/images/
 	cp ${WORKDIR}/${BOARD}_strings.js ${D}${datadir}/scweb/static/js/
-
-	cp ${WORKDIR}/BOOT_${BOARD}.bin ${D}${datadir}/embpf-bootfw-update-tool/bin
-	cp ${WORKDIR}/$(basename ${OSPI_PATH}) ${D}${datadir}/embpf-bootfw-update-tool/ospi
 	
 	cp ${WORKDIR}/ser2net_vek385_a01.yaml ${D}${datadir}/config
 	cp ${WORKDIR}/ser2net_vek385.yaml ${D}${datadir}/config
