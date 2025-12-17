@@ -42,7 +42,7 @@ do_configure[noexec]="1"
 do_compile[noexec]="1"
 
 do_install () {
-    mkdir -p ${D}${base_prefix}/opt
+    install -d ${D}${base_prefix}/opt
     cp -r ${S}/opt/labtools ${D}${base_prefix}/opt/.
 
     install -d ${D}${sysconfdir}/profile.d/
