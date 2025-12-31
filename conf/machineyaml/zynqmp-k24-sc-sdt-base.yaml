@@ -1,5 +1,5 @@
 args:
-    - --hw-description https://edf.amd.com/sswreleases/rel-v2025.2/sdt/2025.2/2025.2_1115_1_11150857/external/zynqmp-k24-sc-sdt-base/zynqmp-k24-sc-sdt-base_2025.2_1115_1_11150857.tar.gz
+    - --hw-description https://edf.amd.com/sswreleases/rel-v2025.2/sdt/2025.2.1/2025.2.1_1230_1_12310000/external/zynqmp-k24-sc-sdt-base/zynqmp-k24-sc-sdt-base_2025.2.1_1230_1_12310000.tar.gz
     - --machine-name zynqmp-k24-sc-sdt-base
     - -g full
 kconfig:
