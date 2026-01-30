@@ -67,7 +67,7 @@ if cd /usr/share/scweb; then
     rm -rf ./static/tmp 2> /dev/null
     mkdir -p ./static/tmp
     ln -s "${SCAPP_LOGDIR}/${LOGNAME}".tar.gz ./static/tmp/.
-    echo "/usr/share/scweb/static/tmp/${LOGNAME}.tar.gz"
+    echo "./static/tmp/${LOGNAME}.tar.gz"
 else
     echo "${SCAPP_LOGDIR}/${LOGNAME}.tar.gz"
 fi
