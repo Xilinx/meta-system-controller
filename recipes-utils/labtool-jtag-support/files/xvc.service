@@ -1,6 +1,6 @@
 [Unit]
 Description=Enable xvc service
-After=dfx-mgr.service
+After=dfx-mgr-fw-load.service
 
 [Service]
 Type=simple
