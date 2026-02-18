@@ -53,6 +53,9 @@ fw_printenv > "${LOGDIR}"/uboot.env || true
 # Collect device tree
 dtc -I fs -O dts /proc/device-tree -o "${LOGDIR}"/device_tree.log 2> /dev/null  || true
 
+# Collect power logs
+raft-pm-cmd powerlog --outfile "${LOGDIR}/power.log" 1> /dev/null 2> /dev/null || true
+
 #
 # Create a tarfile of logs
 #
