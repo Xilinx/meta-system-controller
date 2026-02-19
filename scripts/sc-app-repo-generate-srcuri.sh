@@ -80,6 +80,7 @@ echo "A02_ES1_PATH = \"\${@d.getVarFlag('A02_ES1_PATH', d.getVar('BOARD')) or ''
 echo "ES1_PATH = \"\${@d.getVarFlag('ES1_PATH', d.getVar('BOARD')) or ''}\""
 echo "SYS_PATH = \"\${@d.getVarFlag('SYS_PATH', d.getVar('BOARD')) or ''}\""
 echo "ELF_PATH = \"\${@d.getVarFlag('ELF_PATH', d.getVar('BOARD')) or ''}\""
+echo "LIC_PATH = \"\${@d.getVarFlag('LIC_PATH', d.getVar('BOARD')) or ''}\""
 echo "A01_JSON_PATH = \"\${@d.getVarFlag('A01_JSON_PATH', d.getVar('BOARD')) or ''}\""
 echo "A02_JSON_PATH = \"\${@d.getVarFlag('A02_JSON_PATH', d.getVar('BOARD')) or ''}\""
 echo "JSON_PATH = \"\${@d.getVarFlag('JSON_PATH', d.getVar('BOARD')) or ''}\""
@@ -108,7 +109,10 @@ for release in ${releases}; do
 			if [ "$i" == "../" ]; then
 				continue
 			fi
-			if [[ "$i" == *"elf"* ]]; then
+			if [[ "$i" == *"LICENSE_BINARIES"* ]]; then
+				name=$device-lic
+				yp_name="LIC_PATH"
+			elif [[ "$i" == *"elf"* ]]; then
 				name=$device-elf
 				yp_name="ELF_PATH"
 			elif [[ "$i" == *"pdi"* ]] && [[ "$i" == *"A01_es1"* ]]; then

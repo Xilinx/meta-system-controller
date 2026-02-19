@@ -1,7 +1,10 @@
 SUMMARY = "System Controller App - VMK180 board specific files"
 
-LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+LICENSE = "Proprietary & MIT"
+LIC_FILES_CHKSUM = " \
+	file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704 \
+	file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302 \
+	"
 
 require system-controller-app.inc
 
@@ -9,6 +12,7 @@ BOARD = "vmk180"
 BOARD_upper = "VMK180"
 
 SRC_URI = "\
+	${LIC_PATH} \
 	${SYS_PATH} \
 	${JPG_PATH} \
 	${JSON_PATH} \
