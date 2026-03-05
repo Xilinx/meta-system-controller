@@ -1,12 +1,12 @@
 #! /bin/bash
 
 #
-# Copyright (c) 2024 Advanced Micro Devices, Inc.  All rights reserved.
+# Copyright (c) 2024 - 2026 Advanced Micro Devices, Inc.  All rights reserved.
 #
 # SPDX-License-Identifier: MIT
 #
 
-SC_UPDATE="SC Update 8"
+SC_UPDATE="SC Update 8.1"
 
 print_msg() {
     echo ""
