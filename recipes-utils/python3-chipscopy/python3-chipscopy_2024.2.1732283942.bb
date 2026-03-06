@@ -43,6 +43,8 @@ do_install() {
     install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2024.2.1732283942.dist-info
     install -d ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy
 
+    # cp -r is required here to recursively copy the chipscopy Python package
+    # which contains a deep nested directory structure of modules and subpackages
     cp -r ${S}/chipscopy/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy/
     cp -r ${S}/chipscopy-2024.2.1732283942.dist-info/* ${D}${libdir}/${PYTHON_DIR}/site-packages/chipscopy-2024.2.1732283942.dist-info/
 }

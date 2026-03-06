@@ -48,6 +48,8 @@ RDEPENDS:${PN} += "bash \
 
 do_install() {
     install -d ${D}/${SCWEB_DIR}
+    # cp -r is required here to recursively copy the src directory tree
+    # which contains nested web application files (HTML, JS, CSS, Python modules)
     cp -r ${S}/src/* ${D}/${SCWEB_DIR}
 
     install -d ${D}${bindir}

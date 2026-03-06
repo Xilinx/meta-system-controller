@@ -45,6 +45,8 @@ do_configure[noexec]="1"
 do_compile[noexec]="1"
 
 do_install () {
+    # cp -r is required here to recursively copy the opt directory tree
+    # which contains a deep nested structure of labtools, binaries, and libraries
     cp -r ${S}/opt ${D}${base_prefix}
 
     if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then

@@ -42,6 +42,8 @@ do_compile[noexec]="1"
 
 do_install () {
     install -d ${D}${base_prefix}/opt
+    # cp -r is required here to recursively copy the labtools directory tree
+    # which contains a deep nested structure of tools, binaries, and libraries
     cp -r ${S}/opt/labtools ${D}${base_prefix}/opt/.
 
     install -d ${D}${sysconfdir}/profile.d/

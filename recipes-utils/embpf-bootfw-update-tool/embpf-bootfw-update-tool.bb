@@ -20,6 +20,8 @@ RDEPENDS:${PN} += " \
 
 do_install() {
     install -d ${D}${datadir}/${PN}
+    # cp -r is required here to recursively copy the entire source tree
+    # which contains a nested directory structure of scripts and utilities
     cp -r ${S}/* ${D}${datadir}/${PN}
 
 }

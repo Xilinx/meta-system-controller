@@ -52,8 +52,10 @@ do_install(){
     install -d ${D}/usr/bin/
     install -d ${D}${datadir}/system-controller-app
 
-    cp ${S}/build/sc_app ${D}${bindir}
-    cp ${S}/build/sc_appd ${D}${bindir}
+    install -m 0755 ${S}/build/sc_app ${D}${bindir}
+    install -m 0755 ${S}/build/sc_appd ${D}${bindir}
+    # cp -r is required here to recursively copy the BIT and script directories
+    # which contain nested board-specific bitstream files and script subdirectories
     cp -r ${S}/BIT ${D}${datadir}/system-controller-app/
     cp -r ${S}/script ${D}${datadir}/system-controller-app/
     install -m 755 ${WORKDIR}/*.sh ${D}${bindir}

@@ -19,7 +19,7 @@ SRC_URI[sha256sum] = "cc7f70635f93e896d4b85060228e6eb2f7a987728c6c5c551a8ebf7792
 
 do_install() {
 	install -d ${D}${datadir}/lic/
-	cp ${S}/system-controller-license/* ${D}${datadir}/lic/
+	install -m 0644 ${S}/system-controller-license/* ${D}${datadir}/lic/
 }
 
 FILES:${PN} += "${datadir}/lic/*"

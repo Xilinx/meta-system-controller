@@ -52,9 +52,13 @@ do_install () {
     install -d ${D}${prefix}/local/lib/tcl8.5/
     install -d ${D}${prefix}/local/xilinx_vitis/
 
-    cp ${S}${libdir}/libtcl* ${D}${libdir}/
+    install -m 0755 ${S}${libdir}/libtcl* ${D}${libdir}/
+    # cp -r is required here to recursively copy the tcl8.5 directory tree
+    # which contains a complex nested structure of library modules and scripts
     cp -r ${S}${prefix}/local/lib/tcl8.5 ${D}${prefix}/local/lib/
-    cp ${S}${prefix}/local/bin/* ${D}${prefix}/local/bin/
+    install -m 0755 ${S}${prefix}/local/bin/* ${D}${prefix}/local/bin/
+    # cp -r is required here to recursively copy the xilinx_vitis directory
+    # which contains a deep nested structure of tools, scripts, and binaries
     cp -r ${S}${prefix}/local/xilinx_vitis ${D}${prefix}/local/
 
     if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then

@@ -45,6 +45,8 @@ RDEPENDS:${PN} += " \
 
 do_install() {
 	install -d ${D}/${PMTOOL_DIR}
+	# cp -r is required here to recursively copy the src directory tree
+	# which contains nested Python modules and data files for the power management tool
 	cp -r ${S}/src/* ${D}/${PMTOOL_DIR}
 
 	install -d ${D}${bindir}
