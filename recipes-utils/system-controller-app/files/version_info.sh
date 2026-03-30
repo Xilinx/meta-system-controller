@@ -53,7 +53,7 @@ cat /etc/os-release
 echo "SC_APP=\"$(/usr/bin/sc_app -c version | grep 'Commit' | sed 's/^Commit:\t\+//')\""
 
 # Information about individual packages
-RPMS="system-controller-app scweb acap labtool-jtag-support pmtool raft"
+RPMS="system-controller-app scweb labtool-jtag-support pmtool raft"
 RPM_INFO=$(dnf info -C ${RPMS} 2>/dev/null)
 
 for I in ${RPMS}; do
