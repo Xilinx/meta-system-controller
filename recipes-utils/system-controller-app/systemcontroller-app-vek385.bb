@@ -19,10 +19,10 @@ do_install:append() {
 	install -m 0664 ${WORKDIR}/${BOARD_upper}-A01.json ${D}${datadir}/system-controller-app/board/
 	ln -sr ${D}${datadir}/system-controller-app/board/${BOARD_upper}-A01.json ${D}${datadir}/system-controller-app/board/${BOARD_upper}-A02.json
 
-	install -m 0664 ${WORKDIR}/${BOARD}_A01_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/
-	install -m 0664 ${WORKDIR}/${BOARD}_A02_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/
-	install -m 0664 ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/
-	install -m 0664 ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/
+	install -m 0664 ${WORKDIR}/${BOARD}_A01_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A01_es1_system_wrapper.pdi
+	install -m 0664 ${WORKDIR}/${BOARD}_A02_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A02_es1_system_wrapper.pdi
+	install -m 0664 ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
+	install -m 0664 ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
 
 	install -m 0664 ${WORKDIR}/${BOARD_upper}_home.png ${D}${datadir}/scweb/static/images/
 	install -m 0664 ${WORKDIR}/${BOARD}.jpg ${D}${datadir}/scweb/static/images/
