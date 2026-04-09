@@ -3,8 +3,8 @@ SUMMARY = "System Controller App - VEK385 board specific files"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
-SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202603241741/external/systemcontroller-app-vek385.tar.gz"
-SRC_URI[sha256sum] = "cb19bc1b408319818191e5138468a199179fd9d81f6f4e7244b8c1685a699a58"
+SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202604090739/external/systemcontroller-app-vek385.tar.gz"
+SRC_URI[sha256sum] = "dbe44ba8c72e49bc1bc21a8ce84ab974d9dda380d315e83e1b7ad92a0d675858"
 
 BOARD = "vek385"
 
