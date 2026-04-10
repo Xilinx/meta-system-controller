@@ -17,4 +17,10 @@ if [ -n "${eeprom}" ]; then
         ln -sf $config /etc/ser2net/ser2net.yaml
         exit 0
     fi
+
+    logger -t ser2net_config -p user.warning \
+        "No board-specific ser2net config found for board '${boardid}' (revision '${revision}')"
+else
+    logger -t ser2net_config -p user.warning \
+        "No EEPROM found; unable to determine board ID for ser2net config"
 fi
