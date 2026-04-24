@@ -1,0 +1,20 @@
+################################################################################
+#
+#  AMD System Controller Linux Distribution
+#
+################################################################################
+
+System Controller machines:
+    - k24-sc  - zynqmp-k24-sc-sdt-base
+    - k26-sc  - zynqmp-k26-sc-sdt-base
+
+Available images:
+    - system-controller-image-full-cmdline
+
+Rauc bundle:
+    - system-controller-rauc-bundle
+
+Example:
+    $ MACHINE=zynqmp-k24-sc-sdt-base bitbake edf-qspi
+    $ MACHINE=zynqmp-k26-sc-sdt-base bitbake edf-qspi
+    $ MACHINE=amd-cortexa53-common bitbake system-controller-image-full-cmdline
