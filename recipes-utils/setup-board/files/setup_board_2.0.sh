@@ -42,24 +42,46 @@ pkg_exists() {
     dnf -q repoquery --qf '%{name}' "$1" 2>/dev/null | grep -Fxq "$1"
 }
 
-# Install helper: treats unavailability and install failure as fatal to caller
+# Check if a package is already installed
+pkg_installed() {
+  rpm -q "$1" >/dev/null 2>&1
+}
+
+# Install/Upgrade helper:
+# - If pkg is not installed => dnf install
+# - If pkg is installed     => dnf upgrade (pull newer EVR if available)
 install_pkg() {
-    local pkg="$1"
+  local pkg="$1"
 
-    echo "Checking ${pkg} package availability"
-    if ! pkg_exists "$pkg"; then
-        echo "Error: ${pkg} is not available in repo."
-        return 1
-    fi
+  echo "Checking ${pkg} package availability"
+  if ! pkg_exists "$pkg"; then
+    echo "Error: ${pkg} is not available in repo."
+    return 1
+  fi
 
-    echo "Installing ${pkg}"
-    if dnf install -y "$pkg"; then
-        echo "${pkg} install complete."
-        return 0
+  # Refresh metadata to ensure latest repodata is used (especially after repo updates)
+  # (safe even if already fresh)
+  dnf -q makecache --refresh >/dev/null 2>&1 || true
+
+  if pkg_installed "$pkg"; then
+    echo "Package ${pkg} is already installed. Attempting upgrade..."
+    if dnf upgrade -y "$pkg"; then
+      echo "${pkg} upgrade complete."
+      return 0
     else
-        echo "Error: ${pkg} install failed."
-        return 1
+      echo "Error: ${pkg} upgrade failed."
+      return 1
     fi
+  else
+    echo "Package ${pkg} is not installed. Installing..."
+    if dnf install -y "$pkg"; then
+      echo "${pkg} install complete."
+      return 0
+    else
+      echo "Error: ${pkg} install failed."
+      return 1
+    fi
+  fi
 }
 
 # Build candidate list for board package (descending revision -> base)
