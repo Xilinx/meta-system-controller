@@ -18,4 +18,3 @@ Example:
     $ MACHINE=zynqmp-k24-sc-sdt-base bitbake edf-qspi
     $ MACHINE=zynqmp-k26-sc-sdt-base bitbake edf-qspi
     $ MACHINE=amd-cortexa53-common bitbake system-controller-image-full-cmdline
-    $ MACHINE=amd-cortexa53-common bitbake system-controller-rauc-bundle
