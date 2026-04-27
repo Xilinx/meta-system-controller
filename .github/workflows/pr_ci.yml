@@ -1,0 +1,62 @@
+# =============================================================================
+# PR Trigger Workflow Template
+# =============================================================================
+# This lightweight workflow triggers on PR events and calls the centralized
+# SC CI workflow from sc-scripts repository.
+#
+# Required Secrets (set in your repo or org, inherited automatically):
+#   - XBRBBOT_PAT: Personal Access Token with repo access
+#
+# Required Variables (set in your repo settings > Secrets and variables > Variables):
+#   - sc_ci_workflow_branches: Comma-separated list of branches to run CI on (e.g., "main,develop,release")
+# =============================================================================
+
+name: PR CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Cancel in-progress runs for the same PR
+concurrency:
+  group: pr-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Call Centralized SC CI Workflow
+  # ---------------------------------------------------------------------------
+  pr-build:
+    name: SC CI Build
+    if: |
+      vars.sc_ci_workflow_branches != '' &&
+      contains(format(',{0},', vars.sc_ci_workflow_branches), format(',{0},', github.event.pull_request.base.ref)) &&
+      github.repository_owner != 'Xilinx' &&
+      github.event.repository.fork == false
+    uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_pr_build.yml@master
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
+      # repo is auto-detected from calling context
+      # config_file: ".github/ci-config.json"  # Optional: repo-specific build config
+    secrets: inherit
+  
+  # ---------------------------------------------------------------------------
+  # Optional: Additional Checks
+  # ---------------------------------------------------------------------------
+  # Add any repo-specific checks here that should run alongside CI
+  
+  # Example: License check
+  # license-check:
+  #   name: License Check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Check licenses
+  #       run: |
+  #         # Add license checking here
+  #         echo "License check passed"

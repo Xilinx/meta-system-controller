@@ -1,0 +1,341 @@
+# =============================================================================
+# Auto-Merge Workflow
+# =============================================================================
+#
+# Automatically merges a PR when ALL conditions are met:
+#   1. Copilot code review passed (code quality check)
+#   2. At least 2 human approvals (at least 1 from ssw_devops)
+#   3. No "Request Changes" reviews pending
+#
+# This workflow runs with a PAT from a ssw_builds_team member (bypass actor),
+# so it has permission to merge into protected branches.
+#
+# SETUP REQUIRED:
+#   Create a secret named AUTO_MERGE_TOKEN:
+#   1. A ssw_builds_team member creates a Personal Access Token (PAT)
+#      with scope: repo (full control)
+#   2. Add it as a repo secret:
+#      Settings → Secrets and variables → Actions → New repository secret
+#      Name: AUTO_MERGE_TOKEN
+#      Value: <the PAT>
+#
+# =============================================================================
+
+name: Auto-Merge on Approval
+
+on:
+  # Triggers when someone submits a review (approve/reject)
+  pull_request_review:
+    types: [submitted]
+
+  # Triggers when new commits are pushed to a PR (re-evaluate after code updates)
+  pull_request:
+    types: [synchronize, ready_for_review]
+
+  # Triggers when CI checks complete
+  check_suite:
+    types: [completed]
+
+  # Triggers when Copilot code quality results are available
+  # (re-evaluates after each status change)
+  status:
+
+# Grant GITHUB_TOKEN write permissions for merge and comments
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+  actions: read
+
+jobs:
+  auto-merge:
+    # Use self-hosted runner to avoid IP allowlist block.
+    # If self-hosted runner is not available, fall back to ubuntu-latest
+    # with AUTO_MERGE_TOKEN (requires the PAT's IP to be in org allowlist).
+    runs-on: self-hosted
+
+    # Only run on PRs targeting protected branches
+    if: >
+      github.event.pull_request != null ||
+      github.event.check_suite != null ||
+      github.event_name == 'status'
+
+    steps:
+      - name: Check conditions and auto-merge
+        uses: actions/github-script@v7
+        env:
+          SC_CI_BRANCHES: ${{ vars.sc_ci_workflow_branches }}
+        with:
+          # Use PAT from ssw_builds_team member (bypass actor)
+          # Running on self-hosted runner, so IP is in the org allowlist
+          github-token: ${{ secrets.AUTO_MERGE_TOKEN }}
+          script: |
+            // ─────────────────────────────────────────────────
+            // CONFIGURATION — adjust these for your setup
+            // ─────────────────────────────────────────────────
+            const REQUIRED_APPROVALS = 2;
+            const REQUIRED_TEAM = 'ssw_devops';          // for test repo
+            const REQUIRED_TEAM_APPROVALS = 1;
+            const MERGE_METHOD = 'squash';                // squash, merge, or rebase
+
+            // ─────────────────────────────────────────────────
+            // Step 1: Find the PR
+            // ─────────────────────────────────────────────────
+            let prNumber;
+
+            if (context.payload.pull_request) {
+              prNumber = context.payload.pull_request.number;
+            } else if (context.payload.check_suite) {
+              // Find PR from check suite
+              const prs = context.payload.check_suite.pull_requests;
+              if (!prs || prs.length === 0) {
+                core.info('No PRs associated with this check suite');
+                return;
+              }
+              prNumber = prs[0].number;
+            } else {
+              // Status event — find open PRs matching the commit SHA
+              const sha = context.payload.sha;
+              const pulls = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                sort: 'updated',
+                direction: 'desc'
+              });
+              const matchingPr = pulls.data.find(p => p.head.sha === sha);
+              if (!matchingPr) {
+                core.info('No open PR found for this commit');
+                return;
+              }
+              prNumber = matchingPr.number;
+            }
+
+            core.info(`Evaluating PR #${prNumber} for auto-merge`);
+
+            // ─────────────────────────────────────────────────
+            // Step 2: Get PR details
+            // ─────────────────────────────────────────────────
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            // Skip draft PRs
+            if (pr.data.draft) {
+              core.info('PR is a draft — skipping auto-merge');
+              return;
+            }
+
+            // Skip already merged/closed PRs
+            if (pr.data.state !== 'open') {
+              core.info('PR is not open — skipping');
+              return;
+            }
+
+            // Check if base branch is in the allowed branches list
+            const allowedBranches = (process.env.SC_CI_BRANCHES || '').split(',').map(b => b.trim()).filter(Boolean);
+            if (allowedBranches.length === 0) {
+              core.info('sc_ci_workflow_branches not configured — skipping');
+              return;
+            }
+            if (!allowedBranches.includes(pr.data.base.ref)) {
+              core.info(`Base branch '${pr.data.base.ref}' not in allowed branches [${allowedBranches.join(', ')}] — skipping`);
+              return;
+            }
+
+            const headSha = pr.data.head.sha;
+
+            // ─────────────────────────────────────────────────
+            // Step 3: Check Copilot/CI status checks
+            // ─────────────────────────────────────────────────
+            const checks = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha
+            });
+
+            const checkRuns = checks.data.check_runs;
+            core.info(`Found ${checkRuns.length} check runs`);
+
+            // ── Exclude our own check run by workflow run ID ──
+            // This is the most reliable way to avoid self-detection
+            const ownJobs = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId
+            });
+            const ownCheckRunIds = new Set(ownJobs.data.jobs.map(j => j.id));
+            core.info(`Current run ID: ${context.runId}, own job IDs: ${[...ownCheckRunIds].join(', ')}`);
+
+            // Checks to exclude by name (our other workflows, notifications, Copilot review)
+            const EXCLUDED_CHECKS = [
+              'auto-merge',
+              'Check conditions and auto-merge',
+              'notify-pr',
+              'notify-push',
+              'Notify team about new PR',
+              'Notify Microsoft Teams',
+              'Notify Teams about direct push',
+              'Send Email',
+              'Parse PR Template',
+              // Copilot code review check runs
+              'Agent',
+              'Prepare',
+              'Upload results',
+              'Cleanup artifacts',
+              'Copilot',
+            ];
+
+            const isExcluded = (c) =>
+              ownCheckRunIds.has(c.id) ||
+              EXCLUDED_CHECKS.some(name => c.name.includes(name));
+
+            // Check if any checks are still in progress (excluding our own)
+            const inProgress = checkRuns.filter(c =>
+              c.status !== 'completed' && !isExcluded(c)
+            );
+            if (inProgress.length > 0) {
+              core.info(`${inProgress.length} checks still in progress — waiting`);
+              for (const c of inProgress) {
+                core.info(`  - ${c.name}: ${c.status}`);
+              }
+              return;
+            }
+
+            // Check if any checks failed (excluding our own)
+            const failed = checkRuns.filter(c =>
+              c.conclusion !== 'success' &&
+              c.conclusion !== 'skipped' &&
+              c.conclusion !== 'neutral' &&
+              c.status === 'completed' &&
+              !isExcluded(c)
+            );
+
+            if (failed.length > 0) {
+              core.info('Some checks failed — cannot auto-merge:');
+              for (const c of failed) {
+                core.info(`  - ${c.name}: ${c.conclusion}`);
+              }
+              return;
+            }
+
+            core.info('✅ All status checks passed');
+
+            // ─────────────────────────────────────────────────
+            // Step 4: Check human approvals
+            // ─────────────────────────────────────────────────
+            const reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            // Get latest review state per user (a user can approve after requesting changes)
+            const latestReviewByUser = {};
+            for (const review of reviews.data) {
+              if (review.state === 'APPROVED' || review.state === 'CHANGES_REQUESTED') {
+                const existing = latestReviewByUser[review.user.login];
+                if (!existing || new Date(review.submitted_at) > new Date(existing.submitted_at)) {
+                  latestReviewByUser[review.user.login] = review;
+                }
+              }
+            }
+
+            const hasBlockingReview = Object.values(latestReviewByUser).some(
+              r => r.state === 'CHANGES_REQUESTED'
+            );
+
+            if (hasBlockingReview) {
+              core.info('❌ There are unresolved "Request Changes" reviews — cannot auto-merge');
+              return;
+            }
+
+            // Count approvals
+            const approvals = Object.values(latestReviewByUser).filter(
+              r => r.state === 'APPROVED'
+            );
+
+            core.info(`Found ${approvals.length} approvals (need ${REQUIRED_APPROVALS})`);
+
+            if (approvals.length < REQUIRED_APPROVALS) {
+              core.info(`❌ Not enough approvals: ${approvals.length}/${REQUIRED_APPROVALS}`);
+              return;
+            }
+
+            // ─────────────────────────────────────────────────
+            // Step 5: Check team-specific approval
+            // ─────────────────────────────────────────────────
+            // Get team members
+            let teamMembers = [];
+            try {
+              const members = await github.rest.teams.listMembersInOrg({
+                org: context.repo.owner,
+                team_slug: REQUIRED_TEAM
+              });
+              teamMembers = members.data.map(m => m.login);
+              core.info(`Team ${REQUIRED_TEAM} members: ${teamMembers.join(', ')}`);
+            } catch (error) {
+              core.warning(`Could not fetch team members for ${REQUIRED_TEAM}: ${error.message}`);
+              core.warning('Skipping team-specific check');
+            }
+
+            if (teamMembers.length > 0) {
+              const teamApprovals = approvals.filter(r =>
+                teamMembers.includes(r.user.login)
+              );
+
+              core.info(`Team approvals from ${REQUIRED_TEAM}: ${teamApprovals.length} (need ${REQUIRED_TEAM_APPROVALS})`);
+
+              if (teamApprovals.length < REQUIRED_TEAM_APPROVALS) {
+                core.info(`❌ Not enough team approvals: ${teamApprovals.length}/${REQUIRED_TEAM_APPROVALS}`);
+                return;
+              }
+            }
+
+            core.info('✅ All approval requirements met');
+
+            // ─────────────────────────────────────────────────
+            // Step 6: All conditions met — MERGE
+            // ─────────────────────────────────────────────────
+            core.info(`🚀 All conditions met — merging PR #${prNumber}`);
+
+            try {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                merge_method: MERGE_METHOD,
+                commit_title: `${pr.data.title} (#${prNumber})`
+              });
+
+              core.info(`✅ PR #${prNumber} merged successfully!`);
+
+              // Post a comment confirming auto-merge
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `### ✅ Auto-Merged\n\n` +
+                  `This PR was automatically merged after all conditions were met:\n` +
+                  `- Copilot code review: Passed\n` +
+                  `- Human approvals: ${approvals.length}/${REQUIRED_APPROVALS}\n` +
+                  `- Team approvals (${REQUIRED_TEAM}): Verified\n` +
+                  `- Merge method: ${MERGE_METHOD}`
+              });
+
+            } catch (mergeError) {
+              core.setFailed(`Failed to merge: ${mergeError.message}`);
+
+              // Post failure comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `### ❌ Auto-Merge Failed\n\n` +
+                  `All conditions were met but merge failed:\n` +
+                  `\`${mergeError.message}\`\n\n` +
+                  `A ssw_builds_team member may need to merge manually.`
+              });
+            }
