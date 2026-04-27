@@ -107,7 +107,7 @@ fi
 
 # Additional SC packages
 additional_packages=(
-    "packagegroup-scweb"
+    "scweb"
     "labtool-jtag-support"
     "raft"
 )
