@@ -52,7 +52,7 @@ jobs:
     # Use self-hosted runner to avoid IP allowlist block.
     # If self-hosted runner is not available, fall back to ubuntu-latest
     # with AUTO_MERGE_TOKEN (requires the PAT's IP to be in org allowlist).
-    runs-on: self-hosted
+    runs-on: [self-hosted, sc-ci-yocto]
 
     # Only run on PRs targeting protected branches
     if: >

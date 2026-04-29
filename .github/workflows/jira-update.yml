@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   update-jira:
-    runs-on: self-hosted
+    runs-on: [self-hosted, sc-ci-yocto]
     # Only run when a PR is actually merged (not just closed) and branch is in allowed list
     if: |
       github.event.pull_request.merged == true &&
