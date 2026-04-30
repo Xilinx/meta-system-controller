@@ -73,8 +73,8 @@ jobs:
             // ─────────────────────────────────────────────────
             // CONFIGURATION — adjust these for your setup
             // ─────────────────────────────────────────────────
-            const REQUIRED_APPROVALS = 2;
-            const REQUIRED_TEAM = 'ssw_devops';          // for test repo
+            const REQUIRED_APPROVALS = 1;
+            const REQUIRED_TEAM = 'sc_reviewers';          // for test repo
             const REQUIRED_TEAM_APPROVALS = 1;
             const MERGE_METHOD = 'squash';                // squash, merge, or rebase
 
