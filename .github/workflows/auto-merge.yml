@@ -29,7 +29,7 @@ on:
     types: [submitted]
 
   # Triggers when new commits are pushed to a PR (re-evaluate after code updates)
-  pull_request:
+  pull_request_target:
     types: [synchronize, ready_for_review]
 
   # Triggers when CI checks complete
