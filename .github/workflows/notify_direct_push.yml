@@ -1,0 +1,36 @@
+# =============================================================================
+# Notify on Direct Push to Protected Branches
+# =============================================================================
+# This workflow triggers on push events and calls the centralized
+# SC notify push workflow from sc-scripts repository.
+#
+# NOTE: The 'push' event always runs the workflow from the PUSHED branch.
+# This cannot use pull_request_target. Updates to this file must be present
+# on the target branch itself.
+#
+# Required Variables (set in your repo settings > Secrets and variables > Variables):
+#   - sc_ci_workflow_branches: Comma-separated list of branches to run CI on
+# =============================================================================
+
+name: Notify on Direct Push
+
+on:
+  push:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Call Centralized SC Notify Push Workflow
+  # ---------------------------------------------------------------------------
+  notify-direct-push:
+    name: SC Notify Direct Push
+    if: |
+      vars.sc_ci_workflow_branches != '' &&
+      contains(format(',{0},', vars.sc_ci_workflow_branches), format(',{0},', github.ref_name))
+    uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_notify_direct_push.yml@master
+    with:
+      notify_people: '@cbhanupr_amdeng'
+    secrets: inherit

@@ -1,0 +1,33 @@
+﻿# =============================================================================
+# Notify on PR Created
+# =============================================================================
+# This lightweight workflow triggers on PR events and calls the centralized
+# SC notify workflow from sc-scripts repository.
+#
+# Required Variables (set in your repo settings > Secrets and variables > Variables):
+#   - sc_ci_workflow_branches: Comma-separated list of branches to run CI on
+# =============================================================================
+
+name: Notify on PR
+
+on:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Call Centralized SC Notify PR Workflow
+  # ---------------------------------------------------------------------------
+  notify-pr:
+    name: SC Notify PR
+    if: |
+      vars.sc_ci_workflow_branches != '' &&
+      contains(format(',{0},', vars.sc_ci_workflow_branches), format(',{0},', github.event.pull_request.base.ref))
+    uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_notify_pr.yml@master
+    with:
+      notify_emails: 'cbhanupr@amd.com,sreeramm@amd.com'
+    secrets: inherit

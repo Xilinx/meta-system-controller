@@ -1,17 +1,14 @@
 # =============================================================================
-# Jira Update Workflow
+# Jira Update Trigger Workflow
 # =============================================================================
+# This lightweight workflow triggers on PR merge events and calls the
+# centralized SC Jira update workflow from sc-scripts repository.
 #
-# Adds a comment to the Jira ticket(s) referenced in the PR body when
-# a PR is merged. Does NOT transition ticket status.
+# Required Secrets (set in your repo or org, inherited automatically):
+#   - SSW_CI_JIRA_TOKEN: Jira Personal Access Token
 #
-# Future: will also post build status updates from CI workflows.
-#
-# SETUP REQUIRED:
-#   Org/repo secret SSW_CI_JIRA_TOKEN must be set:
-#     A Jira Personal Access Token (PAT) with permission to add comments.
-#     Used with Bearer authentication.
-#
+# Required Variables (set in your repo settings > Secrets and variables > Variables):
+#   - sc_ci_workflow_branches: Comma-separated list of branches to run CI on
 # =============================================================================
 
 name: Update Jira on Merge
@@ -25,189 +22,16 @@ permissions:
   pull-requests: write
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # Call Centralized SC Jira Update Workflow
+  # ---------------------------------------------------------------------------
   update-jira:
-    runs-on: [self-hosted, sc-ci-yocto]
-    # Only run when a PR is actually merged (not just closed) and branch is in allowed list
+    name: SC Jira Update
     if: |
       github.event.pull_request.merged == true &&
       vars.sc_ci_workflow_branches != '' &&
       contains(format(',{0},', vars.sc_ci_workflow_branches), format(',{0},', github.event.pull_request.base.ref))
-
-    steps:
-      - name: Add merge comment to Jira ticket
-        uses: actions/github-script@v7
-        env:
-          JIRA_TOKEN: ${{ secrets.SSW_CI_JIRA_TOKEN }}
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            const prNumber = pr.number;
-            const prTitle = pr.title;
-            const prUrl = pr.html_url;
-            const prAuthor = pr.user.login;
-            const baseBranch = pr.base.ref;
-            const headBranch = pr.head.ref;
-            const mergedBy = pr.merged_by ? pr.merged_by.login : 'unknown';
-            const mergedAt = pr.merged_at;
-
-            // ─────────────────────────────────────────────────
-            // Step 1: Extract Jira ticket IDs from PR body
-            // ─────────────────────────────────────────────────
-            const body = pr.body || '';
-
-            // Match Jira ticket patterns like SSWR-18483, PROJECT-123
-            const ticketPattern = /[A-Z][A-Z0-9_]+-\d+/g;
-            const allMatches = body.match(ticketPattern) || [];
-
-            // Deduplicate
-            const tickets = [...new Set(allMatches)];
-
-            if (tickets.length === 0) {
-              core.info('No Jira ticket IDs found in PR body — skipping');
-              return;
-            }
-
-            core.info(`Found Jira tickets: ${tickets.join(', ')}`);
-
-            // ─────────────────────────────────────────────────
-            // Step 2: Build the Jira comment
-            // ─────────────────────────────────────────────────
-            const comment = [
-              `*PR Merged* — [PR #${prNumber}: ${prTitle}|${prUrl}]`,
-              '',
-              `||Field||Value||`,
-              `|Branch|${headBranch} → ${baseBranch}|`,
-              `|Author|${prAuthor}|`,
-              `|Merged by|${mergedBy}|`,
-              `|Merged at|${mergedAt}|`,
-              `|Commits|${pr.commits}|`,
-              `|Changed files|${pr.changed_files}|`,
-            ].join('\n');
-
-            // ─────────────────────────────────────────────────
-            // Step 3: Post comment to each Jira ticket
-            // ─────────────────────────────────────────────────
-            const jiraToken = process.env.JIRA_TOKEN;
-            if (!jiraToken) {
-              core.warning('SSW_CI_JIRA_TOKEN secret not set — cannot update Jira');
-              return;
-            }
-
-            const jiraBaseUrl = 'https://jira.xilinx.com';
-
-            // ─────────────────────────────────────────────────
-            // Step 3: Validate Jira tickets exist
-            // ─────────────────────────────────────────────────
-            const validTickets = [];
-            const invalidTickets = [];
-
-            for (const ticket of tickets) {
-              const url = `${jiraBaseUrl}/rest/api/2/issue/${ticket}?fields=summary,status`;
-              core.info(`Validating ${ticket}...`);
-
-              try {
-                const response = await fetch(url, {
-                  method: 'GET',
-                  headers: {
-                    'Authorization': `Bearer ${jiraToken}`,
-                  },
-                });
-
-                if (response.ok) {
-                  const data = await response.json();
-                  const summary = data.fields?.summary || 'N/A';
-                  const status = data.fields?.status?.name || 'N/A';
-                  core.info(`✅ ${ticket} exists: "${summary}" [${status}]`);
-                  validTickets.push({ key: ticket, summary, status });
-                } else if (response.status === 404) {
-                  core.warning(`❌ ${ticket} does not exist in Jira`);
-                  invalidTickets.push(ticket);
-                } else {
-                  const text = await response.text();
-                  core.warning(`⚠️ Could not validate ${ticket}: ${response.status} ${text}`);
-                  invalidTickets.push(ticket);
-                }
-              } catch (error) {
-                core.warning(`⚠️ Error validating ${ticket}: ${error.message}`);
-                invalidTickets.push(ticket);
-              }
-            }
-
-            // Report invalid tickets on the PR
-            if (invalidTickets.length > 0) {
-              const invalidList = invalidTickets.map(t => `- \`${t}\` — not found in Jira`).join('\n');
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: `### ⚠️ Invalid Jira Ticket(s)\n\nThe following ticket(s) from the PR body could not be found in Jira:\n${invalidList}\n\nPlease verify the ticket IDs are correct.`
-              });
-            }
-
-            if (validTickets.length === 0) {
-              core.warning('No valid Jira tickets found — skipping comment posting');
-              return;
-            }
-
-            // ─────────────────────────────────────────────────
-            // Step 4: Post comment to each valid Jira ticket
-            // ─────────────────────────────────────────────────
-            const updatedTickets = [];
-            const failedTickets = [];
-
-            for (const ticket of validTickets) {
-              const url = `${jiraBaseUrl}/rest/api/2/issue/${ticket.key}/comment`;
-              core.info(`Posting comment to ${ticket.key}...`);
-
-              try {
-                const response = await fetch(url, {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${jiraToken}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ body: comment }),
-                });
-
-                if (response.ok) {
-                  core.info(`✅ Comment added to ${ticket.key}`);
-                  updatedTickets.push(ticket);
-                } else {
-                  const text = await response.text();
-                  core.warning(`Failed to update ${ticket.key}: ${response.status} ${text}`);
-                  failedTickets.push(ticket.key);
-                }
-              } catch (error) {
-                core.warning(`Error posting to ${ticket.key}: ${error.message}`);
-                failedTickets.push(ticket.key);
-              }
-            }
-
-            // ─────────────────────────────────────────────────
-            // Step 5: Post summary as PR comment
-            // ─────────────────────────────────────────────────
-            let summaryBody = '### 📋 Jira Updated\n\n';
-
-            if (updatedTickets.length > 0) {
-              const updated = updatedTickets.map(t =>
-                `- [${t.key}](${jiraBaseUrl}/browse/${t.key}) — ${t.summary} [${t.status}]`
-              ).join('\n');
-              summaryBody += `Merge info posted to:\n${updated}\n`;
-            }
-
-            if (failedTickets.length > 0) {
-              const failed = failedTickets.map(t => `- \`${t}\``).join('\n');
-              summaryBody += `\n⚠️ Failed to post to:\n${failed}\n`;
-            }
-
-            if (invalidTickets.length > 0) {
-              const invalid = invalidTickets.map(t => `- \`${t}\` — not found`).join('\n');
-              summaryBody += `\n❌ Invalid tickets:\n${invalid}\n`;
-            }
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body: summaryBody
-            });
+    uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_jira_update.yml@master
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
+    secrets: inherit
