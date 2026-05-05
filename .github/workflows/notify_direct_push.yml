@@ -17,6 +17,11 @@ name: Notify on Direct Push
 on:
   push:
 
+# Auto-cancel stale/duplicate runs for the same branch
+concurrency:
+  group: notify-push-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   issues: write
@@ -27,6 +32,8 @@ jobs:
   # ---------------------------------------------------------------------------
   notify-direct-push:
     name: SC Notify Direct Push
+    # Prevent infinite hangs - kill after 5 minutes (this job is lightweight)
+    timeout-minutes: 5
     if: |
       vars.sc_ci_workflow_branches != '' &&
       contains(format(',{0},', vars.sc_ci_workflow_branches), format(',{0},', github.ref_name))
