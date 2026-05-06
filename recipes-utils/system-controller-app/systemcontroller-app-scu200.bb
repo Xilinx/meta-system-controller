@@ -20,6 +20,7 @@ do_install:append() {
 	install -d ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}
 	install -d ${D}${datadir}/scweb/static/images/
 	install -d ${D}${datadir}/scweb/static/js/
+	install -d ${D}${datadir}/config
 
 	install -m 0664 ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
 	install -m 0664 ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
@@ -27,8 +28,11 @@ do_install:append() {
 	install -m 0664 ${WORKDIR}/${BOARD_upper}_home.png ${D}${datadir}/scweb/static/images/
 	install -m 0664 ${WORKDIR}/${BOARD}.jpg ${D}${datadir}/scweb/static/images/
 	install -m 0664 ${WORKDIR}/${BOARD}_strings.js ${D}${datadir}/scweb/static/js/
+
+	install -m 0664 ${WORKDIR}/ser2net_${BOARD}.yaml ${D}${datadir}/config/
 }
 
 FILES:${PN} += " \
 	${datadir}/scweb/ \
+	${datadir}/config \
 	"
