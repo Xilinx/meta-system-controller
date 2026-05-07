@@ -17,4 +17,4 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 FILES:${PN} += "${datadir}/system-controller-app/"
 
-RDEPENDS:${PN} = "packagegroup-syscontroller"
+RDEPENDS:${PN} = "packagegroup-syscontroller system-controller-app"
