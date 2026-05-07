@@ -15,7 +15,7 @@ SRC_URI = " \
 	file://hw_server.service \
 	file://cs_server.service \
 "
-SRCREV = "1559bb0eeb8c5e850143082487a4fe5abae4defe"
+SRCREV = "87f267c7509d009044d98a2ff86735028384f2d6"
 
 inherit systemd
 
@@ -29,7 +29,7 @@ SYSTEMD_AUTO_ENABLE:${PN}="enable"
 S="${WORKDIR}/git"
 
 DEPENDS += "zlib"
-RDEPENDS:${PN} += "bash libxcrypt"
+RDEPENDS:${PN} += "bash libxcrypt libusb1"
 RPROVIDES:${PN} += "/opt/labtools/xilinx_vitis/xsdb"
 
 COMPATIBLE_MACHINE = "^$"
