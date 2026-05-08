@@ -12,7 +12,6 @@ SRC_URI = "\
     ${SC_APP_REPO};branch=${SC_APP_BRANCH};protocol=https \
     file://system_controller.service \
     file://collect_logs.sh \
-    file://setup_board.sh \
     file://system_config.sh \
     file://version_info.sh \
 "

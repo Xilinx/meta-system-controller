@@ -1,10 +1,10 @@
 DESCRIPTION = "Setup board helper script package"
-SUMMARY = "Installs board_setup_2.0.sh for board package provisioning"
+SUMMARY = "Installs board_setup.sh for board package provisioning"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_URI = "file://setup_board_2.0.sh"
+SRC_URI = "file://setup_board.sh"
 
 S = "${WORKDIR}"
 
@@ -21,5 +21,5 @@ RDEPENDS:${PN} += " \
 
 do_install() {
     install -d ${D}${bindir}
-    install -m 0755 ${WORKDIR}/setup_board_2.0.sh ${D}${bindir}/setup_board_2.0.sh
+    install -m 0755 ${WORKDIR}/setup_board.sh ${D}${bindir}/setup_board.sh
 }
