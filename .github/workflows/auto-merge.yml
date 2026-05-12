@@ -22,6 +22,11 @@ on:
   check_suite:
     types: [completed]
 
+  # Triggers when PR CI workflow completes (reliable re-trigger after CI)
+  workflow_run:
+    workflows: ["PR CI"]
+    types: [completed]
+
 # Grant GITHUB_TOKEN write permissions for merge and comments
 permissions:
   contents: write
@@ -37,7 +42,8 @@ jobs:
     name: SC Auto-Merge
     if: >
       github.event.pull_request != null ||
-      github.event.check_suite != null
+      github.event.check_suite != null ||
+      github.event.workflow_run != null
     uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_auto_merge.yml@master
     with:
       event_name: ${{ github.event_name }}
