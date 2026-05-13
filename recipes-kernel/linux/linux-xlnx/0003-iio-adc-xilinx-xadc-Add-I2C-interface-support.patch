@@ -1,0 +1,393 @@
+From 5681a4cec429ee3410a4ecab7992301d535983c1 Mon Sep 17 00:00:00 2001
+From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Date: Wed, 18 Mar 2026 23:37:21 +0530
+Subject: [LINUX PATCH 3/4] iio: adc: xilinx-xadc: Add I2C interface support
+
+Add I2C interface support for Xilinx System Management Wizard IP along
+with the existing AXI memory-mapped interface. This support enables
+monitoring the voltage and temperature on UltraScale+ devices where the
+System Management Wizard is connected via I2C.
+
+Key changes:
+- Implement 32-bit DRP(Dynamic Reconfiguration Port) packet format as per
+  Xilinx PG185 specification.
+- Add separate I2C probe with xadc_i2c_of_match_table to handle same
+  compatible string("xlnx,system-management-wiz-1.3") on I2C bus.
+- Implement delayed version of hardware initialization for I2C interface
+  to handle the case where System Management Wizard IP is not ready during
+  the I2C probe.
+- Add NULL checks for get_dclk_rate callback function in sampling rate
+  functions to support interfaces without clock control
+- Create separate iio_info structure(xadc_i2c_info) without event
+  callbacks for I2C devices
+- Add xadc_i2c_transaction() function to handle I2C read/write operations
+- Add XADC_TYPE_US_I2C type to distinguish I2C interface from AXI
+
+Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+---
+ drivers/iio/adc/Kconfig            |  15 ++
+ drivers/iio/adc/Makefile           |   1 +
+ drivers/iio/adc/xilinx-xadc-core.c |  28 +++-
+ drivers/iio/adc/xilinx-xadc-i2c.c  | 216 +++++++++++++++++++++++++++++
+ drivers/iio/adc/xilinx-xadc.h      |   1 +
+ 5 files changed, 257 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/iio/adc/xilinx-xadc-i2c.c
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index e10e9fc1a972..9cbce149936b 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -1648,6 +1648,21 @@ config XILINX_XADC
+ 	  The driver can also be build as a module. If so, the module will be called
+ 	  xilinx-xadc.
+ 
++config XILINX_XADC_I2C
++	tristate "Xilinx System Management Wizard I2C Interface support"
++	depends on I2C
++	select XILINX_XADC_CORE
++	help
++	  Say yes here to allow accessing the System Management
++	  Wizard on UltraScale+ devices via I2C.
++
++	  This provides voltage and temperature monitoring capabilities
++	  through the same IIO sysfs interface, but using I2C communication
++	  protocol.
++
++	  The driver can also be build as a module. If so, the module will be called
++	  xilinx-xadc-i2c.
++
+ config XILINX_AMS
+ 	tristate "Xilinx AMS driver"
+ 	depends on ARCH_ZYNQMP || COMPILE_TEST
+diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+index a8adf6df5985..f5153588e395 100644
+--- a/drivers/iio/adc/Makefile
++++ b/drivers/iio/adc/Makefile
+@@ -147,6 +147,7 @@ obj-$(CONFIG_XILINX_AMS) += xilinx-ams.o
+ xilinx-xadc-common-y := xilinx-xadc-core.o xilinx-xadc-events.o
+ obj-$(CONFIG_XILINX_XADC_CORE) += xilinx-xadc-common.o
+ obj-$(CONFIG_XILINX_XADC) += xilinx-xadc-platform.o
++obj-$(CONFIG_XILINX_XADC_I2C) += xilinx-xadc-i2c.o
+ obj-$(CONFIG_VERSAL_SYSMON_CORE) += versal-sysmon-core.o
+ obj-$(CONFIG_VERSAL_SYSMON) += versal-sysmon.o
+ obj-$(CONFIG_VERSAL_SYSMON_I2C) += versal-sysmon-i2c.o
+diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+index a4eeb3029d38..a9edd13bef3e 100644
+--- a/drivers/iio/adc/xilinx-xadc-core.c
++++ b/drivers/iio/adc/xilinx-xadc-core.c
+@@ -222,7 +222,8 @@ static int xadc_power_adc_b(struct xadc *xadc, unsigned int seq_mode)
+ 	 * non-existing ADC-B powers down the main ADC, so just return and don't
+ 	 * do anything.
+ 	 */
+-	if (xadc->ops->type == XADC_TYPE_US)
++	if (xadc->ops->type == XADC_TYPE_US ||
++	    xadc->ops->type == XADC_TYPE_US_I2C)
+ 		return 0;
+ 
+ 	/* Powerdown the ADC-B when it is not needed. */
+@@ -245,7 +246,8 @@ static int xadc_get_seq_mode(struct xadc *xadc, unsigned long scan_mode)
+ 	unsigned int aux_scan_mode = scan_mode >> 16;
+ 
+ 	/* UltraScale has only one ADC and supports only continuous mode */
+-	if (xadc->ops->type == XADC_TYPE_US)
++	if (xadc->ops->type == XADC_TYPE_US ||
++	    xadc->ops->type == XADC_TYPE_US_I2C)
+ 		return XADC_CONF1_SEQ_CONTINUOUS;
+ 
+ 	if (xadc->external_mux_mode == XADC_EXTERNAL_MUX_DUAL)
+@@ -346,6 +348,9 @@ int xadc_read_samplerate(struct xadc *xadc)
+ 	uint16_t val16;
+ 	int ret;
+ 
++	if (!xadc->ops->get_dclk_rate)
++		return -EOPNOTSUPP;
++
+ 	ret = xadc_read_adc_reg(xadc, XADC_REG_CONF2, &val16);
+ 	if (ret)
+ 		return ret;
+@@ -457,9 +462,14 @@ EXPORT_SYMBOL_GPL(xadc_setup_buffer_and_triggers);
+ 
+ int xadc_write_samplerate(struct xadc *xadc, int val)
+ {
+-	unsigned long clk_rate = xadc_get_dclk_rate(xadc);
++	unsigned long clk_rate;
+ 	unsigned int div;
+ 
++	if (!xadc->ops->get_dclk_rate)
++		return -EOPNOTSUPP;
++
++	clk_rate = xadc_get_dclk_rate(xadc);
++
+ 	if (!clk_rate)
+ 		return -EINVAL;
+ 
+@@ -653,6 +663,11 @@ static const struct iio_info xadc_info = {
+ 	.update_scan_mode = &xadc_update_scan_mode,
+ };
+ 
++static const struct iio_info xadc_i2c_info = {
++	.read_raw = &xadc_read_raw,
++	.write_raw = &xadc_write_raw,
++};
++
+ int xadc_parse_dt(struct iio_dev *indio_dev, unsigned int *conf, int irq)
+ {
+ 	struct device *dev = indio_dev->dev.parent;
+@@ -765,6 +780,7 @@ EXPORT_SYMBOL_GPL(xadc_parse_dt);
+ static const char * const xadc_type_names[] = {
+ 	[XADC_TYPE_S7] = "xadc",
+ 	[XADC_TYPE_US] = "xilinx-system-monitor",
++	[XADC_TYPE_US_I2C] = "xilinx-system-monitor",
+ };
+ 
+ struct iio_dev *xadc_device_setup(struct device *dev, int size,
+@@ -781,7 +797,11 @@ struct iio_dev *xadc_device_setup(struct device *dev, int size,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	indio_dev->name = xadc_type_names[(*ops)->type];
+-	indio_dev->info = &xadc_info;
++	if ((*ops)->type == XADC_TYPE_US_I2C)
++		indio_dev->info = &xadc_i2c_info;
++	else
++		indio_dev->info = &xadc_info;
++
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 
+ 	return indio_dev;
+diff --git a/drivers/iio/adc/xilinx-xadc-i2c.c b/drivers/iio/adc/xilinx-xadc-i2c.c
+new file mode 100644
+index 000000000000..c2fa59f1be9a
+--- /dev/null
++++ b/drivers/iio/adc/xilinx-xadc-i2c.c
+@@ -0,0 +1,216 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Xilinx XADC I2C Interface Driver
++ *
++ * Copyright (C) 2026 Advanced Micro Devices, Inc.
++ *
++ * This driver implements I2C interface support for Xilinx System Management
++ * Wizard IP on UltraScale+ devices. It uses the 32-bit DRP (Dynamic
++ * Reconfiguration Port) packet format as per Xilinx PG185 specification.
++ */
++
++#include <linux/bits.h>
++#include <linux/bitfield.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++
++#include <linux/iio/iio.h>
++
++#include "xilinx-xadc.h"
++
++#define XADC_I2C_READ_DATA_SIZE		2
++#define XADC_I2C_WRITE_DATA_SIZE	4	/* 32-bit DRP packet */
++#define XADC_I2C_INSTR_READ		BIT(2)
++#define XADC_I2C_INSTR_WRITE		BIT(3)
++
++#define XADC_I2C_DRP_DATA0_MASK		GENMASK(7, 0)
++#define XADC_I2C_DRP_DATA1_MASK		GENMASK(15, 8)
++#define XADC_I2C_DRP_ADDR_MASK		GENMASK(7, 0)
++
++#define XADC_INPUT_MODE_BITS		16
++
++struct xadc_i2c {
++	struct xadc xadc;
++	struct i2c_client *client;
++	bool hw_initialized;
++	unsigned int conf0;
++	unsigned int bipolar_mask;
++};
++
++static int xadc_i2c_read_transaction(struct xadc *xadc, unsigned int reg, u16 *val)
++{
++	struct xadc_i2c *xadc_i2c = container_of(xadc, struct xadc_i2c, xadc);
++	char write_buffer[XADC_I2C_WRITE_DATA_SIZE] = { 0 };
++	struct i2c_client *client = xadc_i2c->client;
++	char read_buffer[XADC_I2C_READ_DATA_SIZE];
++	int ret;
++
++	write_buffer[2] = FIELD_GET(XADC_I2C_DRP_ADDR_MASK, reg);
++	write_buffer[3] = XADC_I2C_INSTR_READ;
++
++	ret = i2c_master_send(client, write_buffer, XADC_I2C_WRITE_DATA_SIZE);
++	if (ret < 0)
++		return ret;
++
++	ret = i2c_master_recv(client, read_buffer, XADC_I2C_READ_DATA_SIZE);
++	if (ret < 0)
++		return ret;
++
++	*val = FIELD_PREP(XADC_I2C_DRP_DATA0_MASK, read_buffer[0]) |
++	       FIELD_PREP(XADC_I2C_DRP_DATA1_MASK, read_buffer[1]);
++
++	return 0;
++}
++
++static int xadc_i2c_write_transaction(struct xadc *xadc, unsigned int reg, u16 val)
++{
++	struct xadc_i2c *xadc_i2c = container_of(xadc, struct xadc_i2c, xadc);
++	struct i2c_client *client = xadc_i2c->client;
++	char write_buffer[XADC_I2C_WRITE_DATA_SIZE];
++	int ret;
++
++	write_buffer[0] = FIELD_GET(XADC_I2C_DRP_DATA0_MASK, val);
++	write_buffer[1] = FIELD_GET(XADC_I2C_DRP_DATA1_MASK, val);
++	write_buffer[2] = FIELD_GET(XADC_I2C_DRP_ADDR_MASK, reg);
++	write_buffer[3] = XADC_I2C_INSTR_WRITE;
++
++	ret = i2c_master_send(client, write_buffer, XADC_I2C_WRITE_DATA_SIZE);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int xadc_hardware_init(struct xadc *xadc)
++{
++	struct xadc_i2c *xadc_i2c = container_of(xadc, struct xadc_i2c, xadc);
++	int ret;
++	u32 i;
++
++	for (i = 0; i < ARRAY_SIZE(xadc->threshold); i++) {
++		ret = xadc_i2c_read_transaction(xadc, XADC_REG_THRESHOLD(i),
++						&xadc->threshold[i]);
++		if (ret)
++			return ret;
++	}
++
++	ret = xadc_i2c_write_transaction(xadc, XADC_REG_CONF0, xadc_i2c->conf0);
++	if (ret)
++		return ret;
++
++	ret = xadc_i2c_write_transaction(xadc, XADC_REG_INPUT_MODE(0),
++					 xadc_i2c->bipolar_mask);
++	if (ret)
++		return ret;
++
++	ret = xadc_i2c_write_transaction(xadc, XADC_REG_INPUT_MODE(1),
++					 xadc_i2c->bipolar_mask >> XADC_INPUT_MODE_BITS);
++	if (ret)
++		return ret;
++
++	xadc_i2c->hw_initialized = true;
++
++	return 0;
++}
++
++static int xadc_i2c_read_reg(struct xadc *xadc, unsigned int reg, u16 *val)
++{
++	struct xadc_i2c *xadc_i2c = container_of(xadc, struct xadc_i2c, xadc);
++
++	if (!xadc_i2c->hw_initialized) {
++		int ret;
++
++		ret = xadc_hardware_init(xadc);
++		if (ret)
++			return ret;
++	}
++
++	return xadc_i2c_read_transaction(xadc, reg, val);
++}
++
++static int xadc_i2c_write_reg(struct xadc *xadc, unsigned int reg, u16 val)
++{
++	struct xadc_i2c *xadc_i2c = container_of(xadc, struct xadc_i2c, xadc);
++
++	if (!xadc_i2c->hw_initialized) {
++		int ret;
++
++		ret = xadc_hardware_init(xadc);
++		if (ret)
++			return ret;
++	}
++
++	return xadc_i2c_write_transaction(xadc, reg, val);
++}
++
++static const struct xadc_ops xadc_system_mgmt_wiz_i2c_ops = {
++	.read = xadc_i2c_read_reg,
++	.write = xadc_i2c_write_reg,
++	.setup_channels = xadc_parse_dt,
++	.type = XADC_TYPE_US_I2C,
++	.temp_scale = 509314,
++	.temp_offset = 280231,
++};
++
++static int xadc_i2c_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	unsigned int conf0, bipolar_mask;
++	const struct xadc_ops *ops;
++	struct iio_dev *indio_dev;
++	struct xadc_i2c *xadc_i2c;
++	struct xadc *xadc;
++	int ret;
++
++	indio_dev = xadc_device_setup(dev, sizeof(*xadc_i2c), &ops);
++	if (IS_ERR(indio_dev))
++		return PTR_ERR(indio_dev);
++
++	xadc_i2c = iio_priv(indio_dev);
++	xadc_i2c->client = client;
++	xadc = &xadc_i2c->xadc;
++	xadc->clk = NULL;
++	xadc->ops = ops;
++	mutex_init(&xadc->mutex);
++	spin_lock_init(&xadc->lock);
++
++	ret = xadc_device_configure(dev, indio_dev, 0, &conf0, &bipolar_mask);
++	if (ret) {
++		dev_err(dev, "Failed to setup the device: %d\n", ret);
++		return ret;
++	}
++
++	i2c_set_clientdata(client, indio_dev);
++	xadc_i2c->conf0 = conf0;
++	xadc_i2c->bipolar_mask = bipolar_mask;
++	xadc_i2c->hw_initialized = false;
++
++	return devm_iio_device_register(dev, indio_dev);
++}
++
++static const struct of_device_id xadc_i2c_of_match_table[] = {
++	{
++		.compatible = "xlnx,system-management-wiz-1.3",
++		.data = &xadc_system_mgmt_wiz_i2c_ops,
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, xadc_i2c_of_match_table);
++
++static struct i2c_driver xadc_i2c_driver = {
++	.probe = xadc_i2c_probe,
++	.driver = {
++		.name = "xadc-i2c",
++		.of_match_table = xadc_i2c_of_match_table,
++	},
++};
++module_i2c_driver(xadc_i2c_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>");
++MODULE_DESCRIPTION("Xilinx XADC I2C Interface Driver");
++
+diff --git a/drivers/iio/adc/xilinx-xadc.h b/drivers/iio/adc/xilinx-xadc.h
+index 37b0c1b74fbe..a20601922a88 100644
+--- a/drivers/iio/adc/xilinx-xadc.h
++++ b/drivers/iio/adc/xilinx-xadc.h
+@@ -72,6 +72,7 @@ struct xadc {
+ enum xadc_type {
+ 	XADC_TYPE_S7, /* Series 7 */
+ 	XADC_TYPE_US, /* UltraScale and UltraScale+ */
++	XADC_TYPE_US_I2C, /* UltraScale+ I2C interface */
+ };
+ 
+ struct xadc_ops {
+-- 
+2.44.4
+

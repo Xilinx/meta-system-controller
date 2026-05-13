@@ -1,0 +1,27 @@
+From 19458ae0b749d9489446a173261f8cfb78082d5b Mon Sep 17 00:00:00 2001
+From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Date: Mon, 23 Mar 2026 03:10:15 +0530
+Subject: [LINUX PATCH 4/4] arm64: xilinx: Enable XADC I2C interface
+
+Enable Xilinx XADC I2C interface in defconfig.
+
+Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+---
+ arch/arm64/configs/xilinx_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/xilinx_defconfig b/arch/arm64/configs/xilinx_defconfig
+index 8fcf98da60f8..e11e3790b425 100644
+--- a/arch/arm64/configs/xilinx_defconfig
++++ b/arch/arm64/configs/xilinx_defconfig
+@@ -570,6 +570,7 @@ CONFIG_IIO=y
+ CONFIG_INA2XX_ADC=y
+ CONFIG_INA260_ADC=y
+ CONFIG_XILINX_XADC=y
++CONFIG_XILINX_XADC_I2C=y
+ CONFIG_XILINX_AMS=y
+ CONFIG_VERSAL_SYSMON=y
+ CONFIG_VERSAL_SYSMON_I2C=y
+-- 
+2.44.4
+
