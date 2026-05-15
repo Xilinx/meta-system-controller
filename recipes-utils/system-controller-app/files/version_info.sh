@@ -6,8 +6,6 @@
 # SPDX-License-Identifier: MIT
 #
 
-SC_UPDATE="SC Update 8.1"
-
 print_msg() {
     echo ""
     echo "$1"
@@ -48,7 +46,6 @@ fi
 
 MSG="${BOOT_DEVICE} Image Information"
 print_msg "${MSG}"
-echo "RELEASE=\"${SC_UPDATE}\""
 cat /etc/os-release
 echo "SC_APP=\"$(/usr/bin/sc_app -c version | grep 'Commit' | sed 's/^Commit:\t\+//')\""
 
