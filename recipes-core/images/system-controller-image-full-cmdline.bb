@@ -38,6 +38,7 @@ IMAGE_INSTALL = " \
     libubootenv-sc \
     vim-common \
     setup-board \
+    python3-image-mgmt \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
