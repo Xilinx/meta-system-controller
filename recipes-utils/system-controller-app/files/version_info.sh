@@ -28,7 +28,7 @@ LEGACY_BOARD=$(if [ "${BOARD}" = "VCK190" ] || [ "${BOARD}" = "VMK180" ]; then e
 if [ "${LEGACY_BOARD}" -eq 0 ]; then
     MSG="QSPI Image Information"
     print_msg "${MSG}"
-    QSPI_INFO=$(/usr/bin/image_update -p 2>&1)
+    QSPI_INFO=$(image-mgmt version 2>&1)
 
     if echo "$QSPI_INFO" | grep -q "Unable to retrieve"; then
 	    echo "Unable to fetch boot.bin information from spi flash (layout mismatch)"
