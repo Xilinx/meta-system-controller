@@ -5,11 +5,28 @@ such as machine configuration files, boot firmware components, applications etc.
 
 ## Contributing & Maintainers
 
-Please submit contributions to this layer via Pull Requests on the GitHub repository:
+Please send any patches, comments or questions for this layer to
+below mailing list with ['meta-system-controller'] in the subject:
 
-- https://github.com/Xilinx/meta-system-controller
+        git_sysctrl@amd.com
 
-<!-- TODO: PR workflow details to be added after discussion -->
+When sending patches, please make sure the email subject line includes
+`[meta-system-controller][<BRANCH_NAME>][PATCH]` and cc'ing the maintainers.
+
+
+`git send-email --to git_sysctrl@amd.com *.patch`
+
+> **Note:** When creating patches, please use below format. To follow best practice,
+> if you have more than one patch use `--cover-letter` option while generating the
+> patches. Edit the 0000-cover-letter.patch and change the title and top of the
+> body as appropriate.
+
+**Syntax:**
+`git format-patch -s --subject-prefix="meta-system-controller][<BRANCH_NAME>][PATCH" -1`
+
+**Example:**
+`git format-patch -s --subject-prefix="meta-system-controller][rel-v2025.2-sc][PATCH" -1`
+
 
 **Maintainers:**
 
