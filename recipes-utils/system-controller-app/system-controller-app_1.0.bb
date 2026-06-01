@@ -13,7 +13,6 @@ SRC_URI = "\
     file://system_controller.service \
     file://collect_logs.sh \
     file://system_config.sh \
-    file://version_info.sh \
 "
 
 SRCREV="${SC_APP_SRCREV}"

@@ -39,6 +39,7 @@ IMAGE_INSTALL = " \
     vim-common \
     setup-board \
     python3-image-mgmt \
+    sc-version-info \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
