@@ -92,10 +92,12 @@ CONF_VERSION = "2"
 ################################################################################
 
 
-#INHERIT += "own-mirrors"
-#SOURCE_MIRROR_URL = ""
+INHERIT += "own-mirrors"
+SOURCE_MIRROR_URL = "https://edf.amd.com/sswreleases/systemcontroller/2025.2/downloads"
 
-#SSTATE_MIRRORS = ""
+SSTATE_MIRRORS = " \
+file://.* https://edf.amd.com/sswreleases/systemcontroller/2025.2/sstate-cache/PATH;downloadfilename=PATH \n \
+"
 
 # Skip warning messages
 SKIP_META_XILINX_STANDALONE_SANITY_CHECK = "1"
