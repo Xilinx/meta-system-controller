@@ -1,6 +1,6 @@
 ################################################################################
 #
-#  AMD System Controller Linux Distribution
+#  AMD Embedded Development Framework Linux distribution SC build
 #
 ################################################################################
 

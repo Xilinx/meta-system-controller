@@ -39,3 +39,10 @@ CC_DTBS_DUP:eval-brd-sc-zynqmp = " \
 
 SRC_URI:remove:zynqmp-k24-sc-xsct-base = "file://sc_fru.cfg"
 DEPENDS:remove:zynqmp-k24-sc-xsct-base = " uboot-device-tree"
+
+# SC SDT machine u-boot configs (previously in dynamic-layers/meta-amd-edf)
+FILESEXTRAPATHS:prepend:zynqmp-k24-sc-sdt-base := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend:zynqmp-k26-sc-sdt-base := "${THISDIR}/files:"
+
+SRC_URI:append:zynqmp-k24-sc-sdt-base = " file://sc_u-boot-edf.cfg"
+SRC_URI:append:zynqmp-k26-sc-sdt-base = " file://sc_u-boot-edf.cfg"
