@@ -1,0 +1,51 @@
+From 817d463e74ee95835fc5e0f2a884a9d2cbe7ab79 Mon Sep 17 00:00:00 2001
+From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Date: Thu, 4 Jun 2026 17:51:49 +0530
+Subject: [LINUX PATCH] iio: adc: xilinx-xadc: Handle I2C errors with known
+ values
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Return predefined values instead of propagating I2C read
+errors to maintain compatibility with monitoring applications.
+
+Temperature channels return 0xFFC0 (~229°C out-of-range value)
+and voltage channels return 0 on I2C failures, aligning behavior
+with SoC-based implementations.
+
+This is a temporary workaround to align with SoC-based DUT.
+
+Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+---
+ drivers/iio/adc/xilinx-xadc-core.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+index a9edd13bef3e..9319f9edafd3 100644
+--- a/drivers/iio/adc/xilinx-xadc-core.c
++++ b/drivers/iio/adc/xilinx-xadc-core.c
+@@ -376,8 +376,18 @@ static int xadc_read_raw(struct iio_dev *indio_dev, struct iio_chan_spec const *
+ 		if (iio_buffer_enabled(indio_dev))
+ 			return -EBUSY;
+ 		ret = xadc_read_adc_reg(xadc, chan->address, &val16);
+-		if (ret < 0)
+-			return ret;
++		if (ret < 0) {
++			/*
++			 * Return the Max Temp value instead of error. This is a temporary
++			 * workaround to align with the SoC based DUT behavior.
++			 */
++			if (chan->type == IIO_TEMP)
++				val16 = 0xFFC0;
++			else if (chan->type == IIO_VOLTAGE)
++				val16 = 0;	/* return 0V on error */
++			else
++				return ret;
++		}
+ 
+ 		val16 >>= chan->scan_type.shift;
+ 		if (chan->scan_type.sign == 'u')
+-- 
+2.25.1
+
