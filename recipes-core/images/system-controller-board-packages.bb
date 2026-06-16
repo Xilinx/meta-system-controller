@@ -15,6 +15,8 @@ SC_PACKAGES_INSTALL = " \
     packagegroup-scweb \
     labtool-jtag-support \
     raft \
+    pmtool \
+    embpf-bootfw-update-tool \
     "
 
 IMAGE_INSTALL = " ${SC_PACKAGES_INSTALL}"
