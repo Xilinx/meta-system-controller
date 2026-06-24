@@ -1,7 +1,7 @@
 # SDT machine bootbin-version-header BIF defaults
 # (overridden by xilinx-bootbin-sc.inc for system-controller machines)
 BIF_PARTITION_ATTR[bootbin-version-header] = "udf_bh"
-BIF_PARTITION_IMAGE[bootbin-version-header] = "${DEPLOY_DIR_IMAGE}/bootbin-version-header-${MACHINE}.bin"
+BIF_PARTITION_IMAGE[bootbin-version-header] = "${DEPLOY_DIR_IMAGE}/bootbin-version-header-${MACHINE}.txt"
 
 BOOTBIN_INCLUDE:system-controller = "xilinx-bootbin-sc.inc"
 
