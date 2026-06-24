@@ -10,13 +10,19 @@ COMPATIBLE_MACHINE:amd-cortexa53-common = "${MACHINE}"
 # through all of the dependencies.
 IMAGE_FSTYPES = ""
 
-SC_PACKAGES_INSTALL = " \
+BOARD_PACKAGES = " \
     packagegroup-systemcontroller-boards \
+    "
+
+SC_PACKAGES = " \
     packagegroup-scweb \
     labtool-jtag-support \
     raft \
     pmtool \
     embpf-bootfw-update-tool \
+    setup-board \
+    sc-version-info \
+    python3-image-mgmt \
     "
 
-IMAGE_INSTALL = " ${SC_PACKAGES_INSTALL}"
+IMAGE_INSTALL = " ${BOARD_PACKAGES} ${SC_PACKAGES}"
