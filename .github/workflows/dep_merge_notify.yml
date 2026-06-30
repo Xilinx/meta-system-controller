@@ -1,0 +1,13 @@
+name: Dependency Merge Notify
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  dep-notify:
+    if: github.event.pull_request.merged == true
+    uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_dep_merge_notify.yml@master
+    with:
+      merged_pr_url: ${{ github.event.pull_request.html_url }}
+    secrets: inherit
