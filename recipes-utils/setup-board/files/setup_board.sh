@@ -6,12 +6,46 @@
 #
 
 #########################################################################
-# Deployment customization
-# Leave empty for online/Yocto flow.
-# Offline packaging script may replace this value.
+# Local repository path for offline installs.
+# Defaults to empty (online/Yocto flow) unless --local-package-feed is provided.
 #########################################################################
-LOCAL_REPO=""
+LOCAL_PACKAGE_FEED_PATH=""
 #########################################################################
+
+usage() {
+    echo "Usage: $0 [-h|--help] [--local-package-feed <path>]"
+}
+
+# Command-line options:
+# - no option passed: use online/Yocto flow (LOCAL_PACKAGE_FEED_PATH stays empty)
+# - --local-package-feed <path>: use provided local package feed path
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --local-package-feed)
+            if [[ -z "$2" || "$2" == -* ]]; then
+                echo "Error: $1 requires a path argument."
+                usage
+                exit 1
+            fi
+            LOCAL_PACKAGE_FEED_PATH="$2"
+            if [[ "$LOCAL_PACKAGE_FEED_PATH" != /* || ! -d "$LOCAL_PACKAGE_FEED_PATH" ]]; then
+                echo "Error: --local-package-feed must be an existing absolute directory path."
+                usage
+                exit 1
+            fi
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Error: Unknown option: $1"
+            usage
+            exit 1
+            ;;
+    esac
+done
 
 # Source proxy settings if present
 if [ -f /etc/profile.d/socks_proxy.sh ]; then
@@ -45,13 +79,13 @@ else
     PAD_FMT="%d"
 fi
 
-# Repo args selector:
-# - LOCAL_REPO empty/unset: use default DNF_ARGS=(-y)
-# - LOCAL_REPO set: use local offline repo dnf args
-if [[ -z "$LOCAL_REPO" ]]; then
+# Repo argument selector:
+# - LOCAL_PACKAGE_FEED_PATH empty (default): use normal DNF args
+# - LOCAL_PACKAGE_FEED_PATH set via --local-package-feed: use local offline repo args
+if [[ -z "$LOCAL_PACKAGE_FEED_PATH" ]]; then
     DNF_ARGS=(-y)
 else
-    DNF_ARGS=(-y --nogpgcheck --repofrompath="local,file://${LOCAL_REPO}" --repo=local)
+    DNF_ARGS=(-y --nogpgcheck --repofrompath="local,file://${LOCAL_PACKAGE_FEED_PATH}" --repo=local)
 fi
 
 # Check if a package exists in the repo
