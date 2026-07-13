@@ -1,0 +1,523 @@
+#!/usr/bin/env bash
+# -----------------------------------------------------------------------------
+# sc-board-id: Card revision and name provider from U-Boot env vars or EEPROM
+#
+# Supports two valid card1_rev formats:
+#   1) New format (preferred): "HW.FUNC" (e.g., "A1.01")
+#        - HW: uppercase letter A-Z + hex digit 1-F
+#        - FUNC: two hex digits 01-FF (cannot be 00)
+#   2) Legacy format: "A1"/"A12" (e.g., "C12")
+#        - Uppercase letter A-Z + decimal integer >= 1
+#
+# Sources (in order):
+#   1. U-Boot env vars (via fw_printenv):
+#      - Primary: card1_rev / card1_name
+#      - Alternate: board_rev / board_name
+#   2. EEPROM FRU fields (via ipmi-fru):
+#      - FRU Board Custom (for rev)
+#      - Board Product Name (for name)
+#
+# Usage:
+#   sc-board-id [--hw-rev|--func-rev|--board-rev|--name|--force-eeprom-read|--version|--help]
+#
+# Exit codes:
+#   0  success (JSON or scalar output, depending on mode)
+#   1  not found / invalid / cannot resolve
+#   2  invalid option
+# -----------------------------------------------------------------------------
+
+set -u
+
+# -------------------------- Configuration ------------------------------------
+ENV_VAR_NAME="card1_rev"
+ENV_VAR_NAME_FIELD="card1_name"
+ENV_VAR_ALT_NAME="board_rev"
+ENV_VAR_ALT_NAME_FIELD="board_name"
+FW_PRINTENV_CMD=("fw_printenv" "-n")
+
+LOG_TAG="board-id-provider"
+VERSION="1.0.0"
+
+# New-format regex: A1.01
+REV_REGEX_NEW='^[A-Z][1-9A-F]\.[0-9A-F]{2}$'
+# Legacy-format regex: A1 or A12 (letter + decimal integer >=1)
+REV_REGEX_LEGACY='^[A-Z][1-9][0-9]*$'
+
+# ----------------------- Supported CLI Switches ----------------------------
+# 
+#   (no args)               Default: output structured JSON with card1_rev, 
+#                           card1_name, source (env/eeprom), and parsed format.
+#
+#   --hw-rev                Output hardware revision only (scalar string).
+#                           Examples: "a1" (new format) or "c12" (legacy)
+#
+#   --func-rev              Output functional revision for new format, or hardware
+#                           revision for legacy format (scalar string).
+#                           For new format: "01"-"FF"
+#                           For legacy format: hardware revision string (e.g., "c12")
+#
+#   --board-rev             Output raw card1_rev (scalar string).
+#                           Examples: "a1.01" (new) or "c12" (legacy)
+#
+#   --name                  Output board name only (scalar string).
+#                           Tries env vars (card1_name, board_name) then 
+#                           EEPROM fallback (Board Product Name field).
+#
+#   --force-eeprom-read     Output JSON (like default mode) but bypass env vars
+#                           and read directly from EEPROM FRU fields.
+#
+#   --version               Display version number and exit 0.
+#
+#   -h, --help              Display usage and option summary, exit 0.
+#
+# Exit Codes:
+#   0  Success: output is valid (mode-dependent)
+#   1  Failure: unable to resolve or invalid format detected
+#   2  Invalid option provided
+# 
+# -------------------------------------------------------------------------
+
+# --------------------------- Logging -----------------------------------------
+log_warn()  { printf '%s: WARN: %s\n'  "$LOG_TAG" "$*" >&2; }
+log_error() { printf '%s: ERROR: %s\n' "$LOG_TAG" "$*" >&2; }
+
+# ------------------------- Helpers -------------------------------------------
+trim() {
+  # usage: trim "  text  "
+  # shellcheck disable=SC2001
+  echo -n "$1" | sed -e 's/^[[:space:]\r\n\t]*//' -e 's/[[:space:]\r\n\t]*$//'
+}
+
+toupper() {
+  echo -n "$1" | tr '[:lower:]' '[:upper:]'
+}
+
+tolower() {
+  echo -n "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+json_escape() {
+  # naive JSON string escape for simple fields
+  local s=${1//\\/\\\\}
+  s=${s//\"/\\\"}
+  s=${s//$'\n'/\\n}
+  s=${s//$'\r'/\\r}
+  s=${s//$'\t'/\\t}
+  echo -n "$s"
+}
+
+# ------------------------- Validation & Parsing ------------------------------
+is_valid_card1_rev_new() {
+  local raw="$1"
+  [ -n "$raw" ] || return 1
+  local v; v="$(toupper "$(trim "$raw")")"
+  [[ "$v" =~ $REV_REGEX_NEW ]] || return 1
+
+  local func="${v#*.}"
+  [ "$func" != "00" ] || return 1
+  return 0
+}
+
+is_valid_card1_rev_legacy() {
+  local raw="$1"
+  [ -n "$raw" ] || return 1
+  local v; v="$(toupper "$(trim "$raw")")"
+  [[ "$v" =~ $REV_REGEX_LEGACY ]] || return 1
+  return 0
+}
+
+is_valid_card1_rev_any() {
+  is_valid_card1_rev_new "$1" && return 0
+  is_valid_card1_rev_legacy "$1" && return 0
+  return 1
+}
+
+get_rev_format() {
+  if is_valid_card1_rev_new "$1"; then
+    echo -n "new"
+  elif is_valid_card1_rev_legacy "$1"; then
+    echo -n "legacy"
+  else
+    echo -n ""
+  fi
+}
+
+parse_card1_rev_json_fragment() {
+  local raw="$1"
+  local v fmt norm
+  # Normalize once so validation, JSON fields, and output formatting stay consistent.
+  norm="$(toupper "$(trim "$raw")")"
+  fmt="$(get_rev_format "$norm")"
+  v="$(tolower "$norm")"
+  if [ "$fmt" = "new" ]; then
+    local hw func
+    hw="${v%%.*}"
+    func="${v#*.}"
+
+    printf '{'
+    printf '"format":"new",'
+    printf '"raw":"%s",' "$(json_escape "$v")"
+    printf '"hw_rev":"%s",' "$(json_escape "$hw")"
+    printf '"func_rev":"%s"' "$(json_escape "$func")"
+    printf '}'
+  elif [ "$fmt" = "legacy" ]; then
+    printf '{'
+    printf '"format":"legacy",'
+    printf '"raw":"%s",' "$(json_escape "$v")"
+    printf '"hw_rev":"%s",' "$(json_escape "$v")"
+    printf '"func_rev":null'
+    printf '}'
+  else
+    printf '{'
+    printf '"format":"unknown","raw":"%s","hw_rev":null,"func_rev":null' "$(json_escape "$v")"
+    printf '}'
+  fi
+}
+
+# -------------------------- Source Helpers ----------------------------------
+get_name_from_env() {
+  local out
+  # Try primary variable first
+  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
+    out="$(trim "$out")"
+    if [ -n "$out" ]; then
+      out="$(tolower "$out")"
+      printf '"%s"' "$(json_escape "$out")"
+      return 0
+    fi
+  fi
+  # Fallback to alternate variable
+  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_ALT_NAME_FIELD" 2>/dev/null)"; then
+    out="$(trim "$out")"
+    if [ -n "$out" ]; then
+      out="$(tolower "$out")"
+      printf '"%s"' "$(json_escape "$out")"
+      return 0
+    fi
+  fi
+  return 1
+}
+
+get_name_from_eeprom() {
+  # FRU/YAML mapping: card1_name <- BoardInfo.product_name
+  local eeprom
+  eeprom="$(ls /sys/bus/i2c/devices/*54/eeprom 2>/dev/null | head -n1 || true)"
+  if [ -z "$eeprom" ]; then
+    return 1
+  fi
+
+  local out
+  # ipmi-fru renders this field as "Board Product Name" in interpreted output.
+  if ! out="$(ipmi-fru --fru-file="$eeprom" --interpret-oem-data 2>/dev/null | awk -F": " '/Board Product Name/ { print $2; exit }')" || [ -z "$out" ]; then
+    return 1
+  fi
+
+  out="$(trim "$out")"
+  if [ -z "$out" ]; then
+    return 1
+  fi
+
+  out="$(tolower "$out")"
+  printf '"%s"' "$(json_escape "$out")"
+  return 0
+}
+get_rev_from_env() {
+  local out
+  # Try primary variable first
+  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME" 2>/dev/null)"; then
+    out="$(trim "$out")"
+    if [ -n "$out" ] && is_valid_card1_rev_any "$out"; then
+      echo -n "$(tolower "$(toupper "$out")")"
+      return 0
+    fi
+    if [ -z "$out" ]; then
+      log_warn "env '$ENV_VAR_NAME' is empty"
+    elif ! is_valid_card1_rev_any "$out"; then
+      log_warn "env '$ENV_VAR_NAME' invalid format: '$out'"
+    fi
+  else
+    log_warn "fw_printenv failed or variable '$ENV_VAR_NAME' not found"
+  fi
+  # Fallback to alternate variable
+  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_ALT_NAME" 2>/dev/null)"; then
+    out="$(trim "$out")"
+    if [ -n "$out" ] && is_valid_card1_rev_any "$out"; then
+      echo -n "$(tolower "$(toupper "$out")")"
+      return 0
+    fi
+    if [ -z "$out" ]; then
+      log_warn "env '$ENV_VAR_ALT_NAME' is empty"
+    elif ! is_valid_card1_rev_any "$out"; then
+      log_warn "env '$ENV_VAR_ALT_NAME' invalid format: '$out'"
+    fi
+  fi
+  return 1
+}
+
+get_rev_from_eeprom() {
+  # Fallback: read from EEPROM FRU Board Custom field
+  local eeprom
+  eeprom="$(ls /sys/bus/i2c/devices/*54/eeprom 2>/dev/null | head -n1 || true)"
+  if [ -z "$eeprom" ]; then
+    log_warn "EEPROM not found"
+    return 1
+  fi
+
+  local out
+  if ! out="$(ipmi-fru --fru-file="$eeprom" --interpret-oem-data 2>/dev/null | awk -F": " '/FRU Board Custom/ { print $2; exit }')" || [ -z "$out" ]; then
+    log_warn "ipmi-fru failed for EEPROM"
+    return 1
+  fi
+
+  out="$(trim "$out")"
+  if [ -z "$out" ]; then
+    log_warn "FRU Board Custom not found in EEPROM"
+    return 1
+  fi
+
+  out="$(toupper "$out")"
+  if ! is_valid_card1_rev_any "$out"; then
+    log_warn "EEPROM value invalid format: '$out'"
+    return 1
+  fi
+
+  echo -n "$(tolower "$out")"
+  return 0
+}
+
+# ------------------------ Resolution & CLI -----------------------------------
+resolve_card1_rev() {
+  local force_eeprom="${1:-false}"
+  local rev parsed name
+
+  # Default behavior prefers U-Boot env for faster access and explicit overrides.
+  if [ "$force_eeprom" != "true" ]; then
+    if rev="$(get_rev_from_env)"; then
+      name="$(get_name_from_env || echo -n 'null')"
+      parsed="$(parse_card1_rev_json_fragment "$rev")"
+      printf '{"ok":true,"source":"env","card1_name":%s,"card1_rev":%s}\n' \
+             "$name" "$parsed"
+      return 0
+    fi
+  fi
+
+  # Forced mode or env failure: resolve both revision and name from EEPROM.
+  if rev="$(get_rev_from_eeprom)"; then
+    name="$(get_name_from_eeprom || echo -n 'null')"
+    parsed="$(parse_card1_rev_json_fragment "$rev")"
+    printf '{"ok":true,"source":"eeprom","card1_name":%s,"card1_rev":%s}\n' \
+           "$name" "$parsed"
+    return 0
+  fi
+
+  printf '{"ok":false,"reason":"both_failed"}\n'
+  return 1
+}
+
+print_help() {
+  cat <<'EOF'
+sc-board-id - Board revision and name provider from card1_rev and card1_name
+
+Usage:
+  sc-board-id                    # Default: JSON output
+  sc-board-id --hw-rev           # Hardware revision only
+  sc-board-id --func-rev           # Functional revision (new format) or HW rev (legacy)
+  sc-board-id --board-rev        # Raw revision string
+  sc-board-id --name             # Board name only
+  sc-board-id --force-eeprom-read # JSON, force EEPROM read (skip env vars)
+  sc-board-id --version          # Print version
+  sc-board-id -h, --help         # Print this help message
+
+Output:
+  Default: JSON object with card1_rev, card1_name, source, and parsed format info.
+  --hw-rev: Hardware revision only (e.g., 'A1' or 'C12').
+  --func-rev: Functional revision for new format boards (e.g., '01'), hardware revision for legacy format (e.g., 'C12'). Never returns null.
+  --board-rev: Raw revision string (e.g., 'A1.01' or 'C12').
+  --name: Card name string only.
+  --force-eeprom-read: JSON output, forces EEPROM read and skips U-Boot env vars.
+  --version: Version number (v1.0.0).
+
+Exit codes:
+  0: Success
+  1: Failure (missing or invalid revision/name)
+  2: Invalid option
+
+Data Sources (in priority order):
+  1. Primary: U-Boot env 'card1_rev' and 'card1_name' (via fw_printenv)
+  2. Alternate: U-Boot env 'board_rev' and 'board_name' (via fw_printenv)
+  3. EEPROM: FRU Board Info (Board Custom field for rev, product name for name) (via ipmi-fru)
+
+Board Revision Formats:
+  * NEW format: 'HW.FUNC' where HW is letter + hex digit (1-F), FUNC is two hex digits (e.g., 'A1.01')
+  * LEGACY format: 'HW' where HW is letter + decimal digits (e.g., 'C12')
+EOF
+}
+
+# get_resolved_rev - returns normalized card1_rev via stdout
+# Parameters: $1 = force_eeprom (true/false, default false)
+# Returns 0 on success, 1 on failure
+get_resolved_rev() {
+  local force_eeprom="${1:-false}"
+  local rev
+
+  if [ "$force_eeprom" != "true" ]; then
+    if rev="$(get_rev_from_env)"; then
+      echo -n "$rev"
+      return 0
+    fi
+  fi
+
+  if rev="$(get_rev_from_eeprom)"; then
+    echo -n "$rev"
+    return 0
+  fi
+
+  return 1
+}
+
+# get_board_hw_rev - returns hardware revision string via stdout
+# Parameters: $1 = force_eeprom (true/false, default false)
+# Returns 0 on success, 1 on failure
+get_board_hw_rev() {
+  local force_eeprom="${1:-false}"
+  local rev fmt
+  if ! rev="$(get_resolved_rev "$force_eeprom")"; then
+    return 1
+  fi
+
+  fmt="$(get_rev_format "$rev")"
+  if [ "$fmt" = "new" ]; then
+    echo -n "${rev%%.*}"
+    return 0
+  fi
+
+  if [ "$fmt" = "legacy" ]; then
+    echo -n "$rev"
+    return 0
+  fi
+
+  return 1
+}
+
+# get_board_func_rev - returns functional revision for new format or hardware revision for legacy format
+# Parameters: $1 = force_eeprom (true/false, default false)
+# Returns 0 on success, 1 on failure
+# Output:
+#   - New format: functional revision (e.g., "01", "ff")
+#   - Legacy format: hardware revision (e.g., "c12")
+get_board_func_rev() {
+  local force_eeprom="${1:-false}"
+  local rev fmt
+  if ! rev="$(get_resolved_rev "$force_eeprom")"; then
+    return 1
+  fi
+
+  fmt="$(get_rev_format "$rev")"
+  if [ "$fmt" = "new" ]; then
+    echo -n "${rev#*.}"
+    return 0
+  fi
+
+  if [ "$fmt" = "legacy" ]; then
+    echo -n "$rev"
+    return 0
+  fi
+
+  return 1
+}
+
+# get_board_rev - returns raw card1_rev via stdout
+# Parameters: $1 = force_eeprom (true/false, default false)
+# Returns 0 on success, 1 on failure
+get_board_rev() {
+  local force_eeprom="${1:-false}"
+  get_resolved_rev "$force_eeprom"
+}
+
+# get_board_name_raw - resolves board name via env (card1_name/board_name) or EEPROM fallback
+# Returns 0 on success, 1 on failure
+get_board_name_raw() {
+  local name
+  # Try primary variable first
+  if name="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
+    name="$(trim "$name")"
+    if [ -n "$name" ]; then
+      echo -n "$(tolower "$name")"
+      return 0
+    fi
+  fi
+
+  # Fallback to alternate variable
+  if name="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_ALT_NAME_FIELD" 2>/dev/null)"; then
+    name="$(trim "$name")"
+    if [ -n "$name" ]; then
+      echo -n "$(tolower "$name")"
+      return 0
+    fi
+  fi
+
+  local eeprom
+  eeprom="$(ls /sys/bus/i2c/devices/*54/eeprom 2>/dev/null | head -n1 || true)"
+  if [ -z "$eeprom" ]; then
+    return 1
+  fi
+
+  # Keep field mapping identical to get_name_from_eeprom().
+  if ! name="$(ipmi-fru --fru-file="$eeprom" --interpret-oem-data 2>/dev/null | awk -F": " '/Board Product Name/ { print $2; exit }')" || [ -z "$name" ]; then
+    return 1
+  fi
+
+  name="$(trim "$name")"
+  if [ -z "$name" ]; then
+    return 1
+  fi
+
+  echo -n "$(tolower "$name")"
+  return 0
+}
+
+# get_board_id - returns output by selected mode via stdout
+# Returns 0 on success, 1 on failure, 2 on invalid option
+get_board_id() {
+  local mode="${1:-}"
+  case "$mode" in
+    "")
+      # Default returns structured JSON for machine consumers.
+      resolve_card1_rev false
+      ;;
+    --hw-rev)
+      get_board_hw_rev false
+      ;;
+    --func-rev)
+      get_board_func_rev false
+      ;;
+    --board-rev)
+      get_board_rev false
+      ;;
+    --name)
+      get_board_name_raw
+      ;;
+    --force-eeprom-read)
+      # Explicitly bypass env vars and read from EEPROM.
+      resolve_card1_rev true
+      ;;
+    --version)
+      printf '%s\n' "$VERSION"
+      return 0
+      ;;
+    -h|--help)
+      print_help
+      return 0
+      ;;
+    *)
+      log_error "Unknown option: $mode"
+      print_help
+      return 2
+      ;;
+  esac
+}
+
+# Execute only when this script is run directly (not sourced)
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  get_board_id "$@"
+fi

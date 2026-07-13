@@ -11,6 +11,7 @@ IMAGE_FEATURES += "splash ssh-server-openssh hwcodecs package-management"
 
 IMAGE_INSTALL = " \
     ${CORE_IMAGE_EXTRA_INSTALL} \
+    ${SC_PACKAGES} \
     dfx-mgr \
     image-update \
     kernel-modules \
@@ -19,27 +20,21 @@ IMAGE_INSTALL = " \
     linux-xlnx-udev-rules \
     lmsensors-config-sc-fancontrol \
     packagegroup-core-boot \
-    packagegroup-scweb \
     packagegroup-syscontroller \
     python3-pip \
     python3-psutil \
     python3-frugy \
-    raft \
     repart-resize \
     systemcontroller-licenses-manual \
     u-boot-tools \
     ser2net \
     picocom \
     coreutils \
-    embpf-bootfw-update-tool \
     ${UBOOT_BOOT_SCRIPT} \
     systemd-conf-sc \
     lmsensors-config-sc-libsensors \
     libubootenv-sc \
     vim-common \
-    setup-board \
-    python3-image-mgmt \
-    sc-version-info \
 "
 
 IMAGE_INSTALL:append:eval-brd-sc-zynqmp = " uboot-device-tree"
