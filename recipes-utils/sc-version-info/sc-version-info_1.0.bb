@@ -22,6 +22,6 @@ do_install() {
 
 RDEPENDS:${PN} = " \
     bash \
-    freeipmi \
+    sc-board-id \
     dnf \
     "

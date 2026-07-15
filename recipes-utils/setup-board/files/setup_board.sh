@@ -52,31 +52,13 @@ if [ -f /etc/profile.d/socks_proxy.sh ]; then
     . /etc/profile.d/socks_proxy.sh
 fi
 
-# Locate EEPROM nvmem node
-EEPROM="$(ls /sys/bus/i2c/devices/*/eeprom_cc*/nvmem 2>/dev/null)"
-if [[ -z "$EEPROM" ]]; then
-    echo "No EEPROM nvmem found under /sys/bus/i2c/devices/*/eeprom_cc*/nvmem"
-    exit 1
-fi
-
-# Run ipmi-fru once; parse required fields from the output
-FRU_OUT="$(/usr/sbin/ipmi-fru --fru-file="$EEPROM" --interpret-oem-data 2>/dev/null)"
-BOARD="$(awk -F": " '/FRU Board Product/ { print tolower($2) }' <<<"$FRU_OUT")"
-REVISION="$(awk -F": " '/FRU Board Custom/ { print tolower($2); exit }' <<<"$FRU_OUT")"
+# Get board info using sc-board-id (supports both new a1.01 and legacy a1 formats)
+BOARD=$(sc-board-id --name 2>/dev/null)
+REVISION=$(sc-board-id --func-rev 2>/dev/null)
 
 if [[ -z "$BOARD" || -z "$REVISION" ]]; then
-    echo "Failed to detect BOARD/REVISION from FRU data."
+    echo "Failed to detect BOARD/REVISION via sc-board-id."
     exit 1
-fi
-
-REV_LETTER="${REVISION:0:1}"
-REV_NUMBER="${REVISION:1}"
-
-# Determine number padding format
-if [[ "$REV_NUMBER" =~ ^0[0-9]+$ ]]; then
-    PAD_FMT="%02d"
-else
-    PAD_FMT="%d"
 fi
 
 # Repo argument selector:
@@ -95,11 +77,24 @@ pkg_exists() {
 
 # Build candidate list for board package (descending revision -> base)
 package_list=()
-REV_NUM_INT=$((10#$REV_NUMBER))
-for ((i=REV_NUM_INT; i>0; i--)); do
-    package_list+=("packagegroup-systemcontroller-${BOARD}-${REV_LETTER}$(printf "$PAD_FMT" "$i")")
-    echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REV_LETTER}$(printf "$PAD_FMT" "$i")"
-done
+
+# Detect revision format:
+#   New format func_rev: 2 hex digits (e.g., "01", "0a", "ff")
+#   Legacy format func_rev: letter + decimal (e.g., "a1", "c12")
+if [[ "$REVISION" =~ ^[0-9a-f]{2}$ ]]; then
+    # New format: each func_rev has its own packagegroup, no fallback needed
+    package_list+=("packagegroup-systemcontroller-${BOARD}-${REVISION}")
+    echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REVISION}"
+else
+    # Legacy format: letter + decimal number, count down for symlink fallback
+    REV_LETTER="${REVISION:0:1}"
+    REV_NUMBER="${REVISION:1}"
+    REV_NUM_INT=$((10#$REV_NUMBER))
+    for ((i=REV_NUM_INT; i>0; i--)); do
+        package_list+=("packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}")
+        echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}"
+    done
+fi
 package_list+=("packagegroup-systemcontroller-${BOARD}")
 
 # Pick first available board package candidate

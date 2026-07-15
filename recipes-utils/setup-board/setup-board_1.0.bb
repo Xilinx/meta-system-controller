@@ -16,7 +16,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 RDEPENDS:${PN} += " \
     bash \
     dnf \
-    freeipmi \
+    sc-board-id \
     "
 
 do_install() {

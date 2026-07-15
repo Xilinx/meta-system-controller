@@ -23,20 +23,13 @@ fi
 # Read RPM release version
 RPM_RELEASE_VERSION="@@RPM_RELEASE_VERSION@@"
 
-# Get board and revision info from EEPROM
-EEPROM=$(ls /sys/bus/i2c/devices/*/eeprom_cc*/nvmem 2> /dev/null)
-if [[ -z "$EEPROM" ]]; then
-    echo "Error: No EEPROM nvmem found."
-    exit 1
-fi
-
-FRU_OUT="$(/usr/sbin/ipmi-fru --fru-file="$EEPROM" --interpret-oem-data 2>/dev/null)"
-BOARD="$(awk -F": " '/FRU Board Product/ { print tolower($2) }' <<<"$FRU_OUT")"
-REVISION="$(awk -F": " '/FRU Board Custom/ { print tolower($2); exit }' <<<"$FRU_OUT")"
+# Get board and revision info using sc-board-id
+BOARD=$(sc-board-id --name 2>/dev/null)
+REVISION=$(sc-board-id --func-rev 2>/dev/null)
 LEGACY_BOARD=$(if [ "${BOARD}" = "vck190" ] || [ "${BOARD}" = "vmk180" ]; then echo "1"; else echo "0"; fi)
 
 if [[ -z "$BOARD" ]]; then
-    echo "Error: Failed to detect BOARD from EEPROM FRU data."
+    echo "Error: Failed to detect BOARD via sc-board-id."
     exit 1
 fi
 
@@ -44,7 +37,7 @@ fi
 if [ "${LEGACY_BOARD}" -eq 0 ]; then
     MSG="QSPI Image Information"
     print_msg "${MSG}"
-    QSPI_INFO=$(image-mgmt version 2>&1)
+    QSPI_INFO=$(image-mgmt image-info 2>&1)
 
     if echo "$QSPI_INFO" | grep -q "Unable to retrieve"; then
 	    echo "Unable to fetch boot.bin information from spi flash (layout mismatch)"

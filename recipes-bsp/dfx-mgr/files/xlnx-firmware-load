@@ -1,0 +1,88 @@
+#!/bin/sh
+
+# Copyright (C) 2026 Advanced Micro Devices, Inc. All Rights Reserved.
+# SPDX-License-Identifier: MIT
+#
+# Modified for System Controller: uses sc-board-id utility instead of direct
+# EEPROM access for board identification. Supports both new (a1.01) and
+# legacy (a1) revision formats.
+
+# Load firmware and check the return status
+function load_firmware() {
+	fwname=$1
+	dfx-mgr-client -load "${fwname}"
+
+	rv=$?
+	if [ $rv -eq 0 ]; then
+		echo "Loaded default firmware: ${fwname}"
+	elif [ $rv -eq 254 ]; then
+		echo "Default firmware not found: ${fwname}"
+	else
+		echo "Failed to load default firmware: ${fwname}"
+	fi
+
+	return $rv
+}
+
+# read values from dfx-mgr conf file
+conffile="/etc/dfx-mgrd/daemon.conf"
+if [ ! -f "${conffile}" ]; then
+        echo "dfx-mgrd configuration file not found: ${conffile}"
+        exit 1
+fi
+
+fwfile=$(grep "default_accel" ${conffile} | sed 's/.*:.*\"\(.*\)\",\?/\1/')
+if [ -z "${fwfile}" ]; then
+        echo "Property 'default_accel' not found in ${conffile}"
+        exit 1
+fi
+
+# check if default firmware is already set and present
+if [ -f "${fwfile}" ]; then
+    fwname=$(cat ${fwfile})
+
+    load_firmware ${fwname}
+    ret=$?
+    # For user defined default firmware, return success(0) only if the firmware found and loaded successfully
+    if [ $ret -eq 0 ]; then
+	    exit 0
+    fi
+    exit 1
+fi
+
+# search for firmware based on board id
+echo "Trying to detect default firmware..."
+
+# Use sc-board-id utility for board identification
+# Supports both new revision format (e.g., a1.01) and legacy format (e.g., a1)
+# --func-rev returns functional revision for new format (e.g., "01") or
+# hardware revision for legacy format (e.g., "a1"), working uniformly for both.
+if command -v sc-board-id > /dev/null 2>&1; then
+    boardid=$(sc-board-id --name 2>/dev/null)
+    revision=$(sc-board-id --func-rev 2>/dev/null)
+
+    if [ -z "${boardid}" ]; then
+        echo "sc-board-id: No Board-ID read"
+        exit 0
+    fi
+
+    if [ -n "${revision}" ]; then
+        fwname="${boardid}-${revision}"
+    else
+        fwname="${boardid}"
+    fi
+
+    echo "Board identified via sc-board-id: name=${boardid}, revision=${revision}"
+
+    load_firmware ${fwname}
+    ret=$?
+    # For Board-ID default firmware, return success(0) if it is loaded
+    # successfully or if the firmware not found
+    if [ $ret -eq 0 ] || [ $ret -eq 254 ] ; then
+	    exit 0
+    fi
+    exit 1
+fi
+
+echo "sc-board-id utility not found"
+exit 1
