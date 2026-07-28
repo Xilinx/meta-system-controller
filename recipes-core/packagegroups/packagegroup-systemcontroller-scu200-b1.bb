@@ -5,7 +5,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 SCU200_B1_PACKAGES = " \
-        systemcontroller-firmware-scu200-b1 \
+	systemcontroller-firmware-scu200-b1 \
+	systemcontroller-app-scu200 \
         "
 
 RDEPENDS:${PN} = "${SCU200_B1_PACKAGES}"
