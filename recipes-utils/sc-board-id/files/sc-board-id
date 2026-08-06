@@ -80,6 +80,7 @@ REV_REGEX_LEGACY='^[A-Z][1-9][0-9]*$'
 # --------------------------- Logging -----------------------------------------
 log_warn()  { printf '%s: WARN: %s\n'  "$LOG_TAG" "$*" >&2; }
 log_error() { printf '%s: ERROR: %s\n' "$LOG_TAG" "$*" >&2; }
+log_info()  { printf '%s: INFO: %s\n'  "$LOG_TAG" "$*" >&2; }
 
 # ------------------------- Helpers -------------------------------------------
 trim() {
@@ -177,17 +178,8 @@ parse_card1_rev_json_fragment() {
 # -------------------------- Source Helpers ----------------------------------
 get_name_from_env() {
   local out
-  # Try primary variable first
+  # Only check card1_name; board_name is SOM-level data and must not be used as a fallback
   if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
-    out="$(trim "$out")"
-    if [ -n "$out" ]; then
-      out="$(tolower "$out")"
-      printf '"%s"' "$(json_escape "$out")"
-      return 0
-    fi
-  fi
-  # Fallback to alternate variable
-  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_ALT_NAME_FIELD" 2>/dev/null)"; then
     out="$(trim "$out")"
     if [ -n "$out" ]; then
       out="$(tolower "$out")"
@@ -203,17 +195,20 @@ get_name_from_eeprom() {
   local eeprom
   eeprom="$(ls /sys/bus/i2c/devices/*54/eeprom 2>/dev/null | head -n1 || true)"
   if [ -z "$eeprom" ]; then
+    log_warn "EEPROM not found"
     return 1
   fi
 
   local out
   # ipmi-fru renders this field as "Board Product Name" in interpreted output.
   if ! out="$(ipmi-fru --fru-file="$eeprom" --interpret-oem-data 2>/dev/null | awk -F": " '/Board Product Name/ { print $2; exit }')" || [ -z "$out" ]; then
+    log_warn "ipmi-fru failed for EEPROM"
     return 1
   fi
 
   out="$(trim "$out")"
   if [ -z "$out" ]; then
+    log_warn "Board Product Name not found in EEPROM"
     return 1
   fi
 
@@ -223,7 +218,7 @@ get_name_from_eeprom() {
 }
 get_rev_from_env() {
   local out
-  # Try primary variable first
+  # Only check card1_rev; board_rev is SOM-level data and must not be used as a fallback
   if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME" 2>/dev/null)"; then
     out="$(trim "$out")"
     if [ -n "$out" ] && is_valid_card1_rev_any "$out"; then
@@ -238,19 +233,7 @@ get_rev_from_env() {
   else
     log_warn "fw_printenv failed or variable '$ENV_VAR_NAME' not found"
   fi
-  # Fallback to alternate variable
-  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_ALT_NAME" 2>/dev/null)"; then
-    out="$(trim "$out")"
-    if [ -n "$out" ] && is_valid_card1_rev_any "$out"; then
-      echo -n "$(tolower "$(toupper "$out")")"
-      return 0
-    fi
-    if [ -z "$out" ]; then
-      log_warn "env '$ENV_VAR_ALT_NAME' is empty"
-    elif ! is_valid_card1_rev_any "$out"; then
-      log_warn "env '$ENV_VAR_ALT_NAME' invalid format: '$out'"
-    fi
-  fi
+
   return 1
 }
 
@@ -293,12 +276,16 @@ resolve_card1_rev() {
   # Default behavior prefers U-Boot env for faster access and explicit overrides.
   if [ "$force_eeprom" != "true" ]; then
     if rev="$(get_rev_from_env)"; then
+      log_info "resolved card1_rev and card1_name from env"
       name="$(get_name_from_env || echo -n 'null')"
       parsed="$(parse_card1_rev_json_fragment "$rev")"
       printf '{"ok":true,"source":"env","card1_name":%s,"card1_rev":%s}\n' \
              "$name" "$parsed"
       return 0
     fi
+    log_info "falling back to EEPROM for card1_rev and card1_name"
+  else
+    log_info "forced EEPROM read for card1_rev and card1_name"
   fi
 
   # Forced mode or env failure: resolve both revision and name from EEPROM.
@@ -362,9 +349,13 @@ get_resolved_rev() {
 
   if [ "$force_eeprom" != "true" ]; then
     if rev="$(get_rev_from_env)"; then
+      log_info "resolved card1_rev from env"
       echo -n "$rev"
       return 0
     fi
+    log_info "falling back to EEPROM for card1_rev"
+  else
+    log_info "forced EEPROM read for card1_rev"
   fi
 
   if rev="$(get_rev_from_eeprom)"; then
@@ -438,37 +429,37 @@ get_board_rev() {
 # Returns 0 on success, 1 on failure
 get_board_name_raw() {
   local name
-  # Try primary variable first
+  # Only check card1_name; board_name is SOM-level data and must not be used as a fallback
   if name="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
     name="$(trim "$name")"
     if [ -n "$name" ]; then
+      log_info "resolved card1_name from env"
       echo -n "$(tolower "$name")"
       return 0
     fi
+    log_warn "env '$ENV_VAR_NAME_FIELD' is empty"
+  else
+    log_warn "fw_printenv failed or variable '$ENV_VAR_NAME_FIELD' not found"
   fi
 
-  # Fallback to alternate variable
-  if name="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_ALT_NAME_FIELD" 2>/dev/null)"; then
-    name="$(trim "$name")"
-    if [ -n "$name" ]; then
-      echo -n "$(tolower "$name")"
-      return 0
-    fi
-  fi
+  log_info "falling back to EEPROM for card1_name"
 
   local eeprom
   eeprom="$(ls /sys/bus/i2c/devices/*54/eeprom 2>/dev/null | head -n1 || true)"
   if [ -z "$eeprom" ]; then
+    log_warn "EEPROM not found"
     return 1
   fi
 
   # Keep field mapping identical to get_name_from_eeprom().
   if ! name="$(ipmi-fru --fru-file="$eeprom" --interpret-oem-data 2>/dev/null | awk -F": " '/Board Product Name/ { print $2; exit }')" || [ -z "$name" ]; then
+    log_warn "ipmi-fru failed for EEPROM"
     return 1
   fi
 
   name="$(trim "$name")"
   if [ -z "$name" ]; then
+    log_warn "Board Product Name not found in EEPROM"
     return 1
   fi
 
