@@ -3,8 +3,8 @@ SUMMARY = "System Controller App - VPK360 board specific files"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
-SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608101108/external/systemcontroller-app-vpk360.tar.gz"
-SRC_URI[sha256sum] = "816f5e4e540fc1abb44a1814e1ac2283a635311b318dcb6fa8cf8f6cbc2e8641"
+SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608111050/external/systemcontroller-app-vpk360.tar.gz"
+SRC_URI[sha256sum] = "3c9f772b37d8efeb47338de2ebc19366fd59ef66ae6b87042861a028abfd513c"
 
 BOARD = "vpk360"
 
