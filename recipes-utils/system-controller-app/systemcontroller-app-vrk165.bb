@@ -3,8 +3,8 @@ SUMMARY = "System Controller App - VRK165 board specific files"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
-SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608030818/external/systemcontroller-app-vrk165.tar.gz"
-SRC_URI[sha256sum] = "84d9518ea5aa105de3bf2d5f655bccabb058c0e9bdf277ddd8f59124f4e2ca31"
+SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608131017/external/systemcontroller-app-vrk165.tar.gz"
+SRC_URI[sha256sum] = "8fd4491568508255eb99ecd2310026a33ee3aaab3067a55502f1c7f77c40f1bb"
 
 BOARD = "vrk165"
 
@@ -17,6 +17,7 @@ do_install:append() {
 	install -d ${D}${datadir}/config
 
 	install -m 0664 ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
+	install -m 0664 ${WORKDIR}/${BOARD}_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/system_wrapper.pdi
 	install -m 0664 ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
 
 	install -m 0664 ${WORKDIR}/${BOARD_upper}_home.png ${D}${datadir}/scweb/static/images/
