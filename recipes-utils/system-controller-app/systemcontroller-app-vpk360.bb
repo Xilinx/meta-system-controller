@@ -4,7 +4,7 @@ LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
 SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608131017/external/systemcontroller-app-vpk360.tar.gz"
-SRC_URI[sha256sum] = "fbb7fe03fae282e98c69eaf8e713f446be9ea3d6caf425b19626ca2ec83923bf"
+SRC_URI[sha256sum] = "bb2ed5de3085a184f85a6ebf819acbfaec34217ac931ef69dea1092ca64db95e"
 
 BOARD = "vpk360"
 
