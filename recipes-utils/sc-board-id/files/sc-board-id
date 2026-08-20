@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # -----------------------------------------------------------------------------
 # sc-board-id: Card revision and name provider from U-Boot env vars or EEPROM
+# with automatic caching to environment when fallback succeeds
 #
 # Supports two valid card1_rev formats:
 #   1) New format (preferred): "HW.FUNC" (e.g., "A1.01")
@@ -9,13 +10,14 @@
 #   2) Legacy format: "A1"/"A12" (e.g., "C12")
 #        - Uppercase letter A-Z + decimal integer >= 1
 #
-# Sources (in order):
-#   1. U-Boot env vars (via fw_printenv):
-#      - Primary: card1_rev / card1_name
-#      - Alternate: board_rev / board_name
-#   2. EEPROM FRU fields (via ipmi-fru):
+# Resolution flow:
+#   1. Try U-Boot env vars (via fw_printenv):
+#      - card1_rev / card1_name
+#   2. On env failure, fallback to EEPROM FRU fields (via ipmi-fru):
 #      - FRU Board Custom (for rev)
 #      - Board Product Name (for name)
+#   3. On successful EEPROM fallback, cache values back to env (via fw_setenv)
+#      for faster subsequent access. Caching skipped if --force-eeprom-read used.
 #
 # Usage:
 #   sc-board-id [--hw-rev|--func-rev|--board-rev|--name|--force-eeprom-read|--version|--help]
@@ -31,17 +33,18 @@ set -u
 # -------------------------- Configuration ------------------------------------
 ENV_VAR_NAME="card1_rev"
 ENV_VAR_NAME_FIELD="card1_name"
-ENV_VAR_ALT_NAME="board_rev"
-ENV_VAR_ALT_NAME_FIELD="board_name"
 FW_PRINTENV_CMD=("fw_printenv" "-n")
+CARD1_REV_RESOLVED=""
+CARD1_NAME_RESOLVED=""
+CARD1_SOURCE_RESOLVED=""
 
 LOG_TAG="board-id-provider"
 VERSION="1.0.0"
 
 # New-format regex: A1.01
 REV_REGEX_NEW='^[A-Z][1-9A-F]\.[0-9A-F]{2}$'
-# Legacy-format regex: A1 or A12 (letter + decimal integer >=1)
-REV_REGEX_LEGACY='^[A-Z][1-9][0-9]*$'
+# Legacy-format regex: A1 or A12 or A01 (letter + decimal integer >=1, with at most one leading zero)
+REV_REGEX_LEGACY='^[A-Z](0?[1-9][0-9]*)$'
 
 # ----------------------- Supported CLI Switches ----------------------------
 # 
@@ -60,11 +63,12 @@ REV_REGEX_LEGACY='^[A-Z][1-9][0-9]*$'
 #                           Examples: "a1.01" (new) or "c12" (legacy)
 #
 #   --name                  Output board name only (scalar string).
-#                           Tries env vars (card1_name, board_name) then 
-#                           EEPROM fallback (Board Product Name field).
+#                           Resolves both card1_rev and card1_name as a pair
+#                           from the same source (env or EEPROM).
 #
 #   --force-eeprom-read     Output JSON (like default mode) but bypass env vars
 #                           and read directly from EEPROM FRU fields.
+#                           Does NOT cache values to env on this mode.
 #
 #   --version               Display version number and exit 0.
 #
@@ -74,6 +78,12 @@ REV_REGEX_LEGACY='^[A-Z][1-9][0-9]*$'
 #   0  Success: output is valid (mode-dependent)
 #   1  Failure: unable to resolve or invalid format detected
 #   2  Invalid option provided
+#
+# Caching Behavior:
+#   When env resolution fails but EEPROM succeeds, resolved values are
+#   automatically cached to U-Boot environment via fw_setenv. This allows
+#   subsequent calls to use the cached env values (faster, no EEPROM access).
+#   Caching is skipped if --force-eeprom-read is used.
 # 
 # -------------------------------------------------------------------------
 
@@ -166,7 +176,7 @@ parse_card1_rev_json_fragment() {
     printf '"format":"legacy",'
     printf '"raw":"%s",' "$(json_escape "$v")"
     printf '"hw_rev":"%s",' "$(json_escape "$v")"
-    printf '"func_rev":null'
+    printf '"func_rev":"%s"' "$(json_escape "$v")"
     printf '}'
   else
     printf '{'
@@ -178,12 +188,11 @@ parse_card1_rev_json_fragment() {
 # -------------------------- Source Helpers ----------------------------------
 get_name_from_env() {
   local out
-  # Only check card1_name; board_name is SOM-level data and must not be used as a fallback
   if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
     out="$(trim "$out")"
     if [ -n "$out" ]; then
       out="$(tolower "$out")"
-      printf '"%s"' "$(json_escape "$out")"
+      printf '%s' "$out"
       return 0
     fi
   fi
@@ -213,12 +222,11 @@ get_name_from_eeprom() {
   fi
 
   out="$(tolower "$out")"
-  printf '"%s"' "$(json_escape "$out")"
+  printf '%s' "$out"
   return 0
 }
 get_rev_from_env() {
   local out
-  # Only check card1_rev; board_rev is SOM-level data and must not be used as a fallback
   if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME" 2>/dev/null)"; then
     out="$(trim "$out")"
     if [ -n "$out" ] && is_valid_card1_rev_any "$out"; then
@@ -268,19 +276,48 @@ get_rev_from_eeprom() {
   return 0
 }
 
-# ------------------------ Resolution & CLI -----------------------------------
-resolve_card1_rev() {
-  local force_eeprom="${1:-false}"
-  local rev parsed name
+cache_values_to_env() {
+  # Attempt to write resolved values back to U-Boot environment
+  # Returns 0 on success, 1 on failure (but doesn't stop execution)
+  # Parameters: $1 = card1_rev, $2 = card1_name
+  local rev="$1"
+  local name="$2"
 
-  # Default behavior prefers U-Boot env for faster access and explicit overrides.
+  if ! command -v fw_setenv &>/dev/null; then
+    log_warn "fw_setenv not available, cannot cache values to env"
+    return 1
+  fi
+
+  # Convert to uppercase for U-Boot env consistency
+  local rev_upper; rev_upper="$(toupper "$rev")"
+  local name_upper; name_upper="$(toupper "$name")"
+
+  if fw_setenv card1_rev "$rev_upper" 2>/dev/null && \
+     fw_setenv card1_name "$name_upper" 2>/dev/null; then
+    log_info "cached card1_rev and card1_name to env"
+    return 0
+  fi
+
+  log_warn "failed to cache values to env (may require elevated privileges)"
+  return 1
+}
+
+resolve_card1_values() {
+  local force_eeprom="${1:-false}"
+  local rev name
+  local env_attempted="false"
+
+  CARD1_REV_RESOLVED=""
+  CARD1_NAME_RESOLVED=""
+  CARD1_SOURCE_RESOLVED=""
+
   if [ "$force_eeprom" != "true" ]; then
-    if rev="$(get_rev_from_env)"; then
+    env_attempted="true"
+    if rev="$(get_rev_from_env)" && name="$(get_name_from_env)"; then
+      CARD1_REV_RESOLVED="$rev"
+      CARD1_NAME_RESOLVED="$name"
+      CARD1_SOURCE_RESOLVED="env"
       log_info "resolved card1_rev and card1_name from env"
-      name="$(get_name_from_env || echo -n 'null')"
-      parsed="$(parse_card1_rev_json_fragment "$rev")"
-      printf '{"ok":true,"source":"env","card1_name":%s,"card1_rev":%s}\n' \
-             "$name" "$parsed"
       return 0
     fi
     log_info "falling back to EEPROM for card1_rev and card1_name"
@@ -288,12 +325,31 @@ resolve_card1_rev() {
     log_info "forced EEPROM read for card1_rev and card1_name"
   fi
 
-  # Forced mode or env failure: resolve both revision and name from EEPROM.
-  if rev="$(get_rev_from_eeprom)"; then
-    name="$(get_name_from_eeprom || echo -n 'null')"
-    parsed="$(parse_card1_rev_json_fragment "$rev")"
-    printf '{"ok":true,"source":"eeprom","card1_name":%s,"card1_rev":%s}\n' \
-           "$name" "$parsed"
+  if rev="$(get_rev_from_eeprom)" && name="$(get_name_from_eeprom)"; then
+    CARD1_REV_RESOLVED="$rev"
+    CARD1_NAME_RESOLVED="$name"
+    CARD1_SOURCE_RESOLVED="eeprom"
+
+    # Cache EEPROM values to env if env resolution was initially attempted and failed
+    if [ "$env_attempted" = "true" ]; then
+      cache_values_to_env "$rev" "$name"
+    fi
+
+    return 0
+  fi
+
+  return 1
+}
+
+# ------------------------ Resolution & CLI -----------------------------------
+resolve_card1_rev() {
+  local force_eeprom="${1:-false}"
+  local parsed
+
+  if resolve_card1_values "$force_eeprom"; then
+    parsed="$(parse_card1_rev_json_fragment "$CARD1_REV_RESOLVED")"
+    printf '{"ok":true,"source":"%s","card1_name":"%s","card1_rev":%s}\n' \
+           "$CARD1_SOURCE_RESOLVED" "$(json_escape "$CARD1_NAME_RESOLVED")" "$parsed"
     return 0
   fi
 
@@ -303,7 +359,7 @@ resolve_card1_rev() {
 
 print_help() {
   cat <<'EOF'
-sc-board-id - Board revision and name provider from card1_rev and card1_name
+sc-board-id - Board revision and name provider with EEPROM caching
 
 Usage:
   sc-board-id                    # Default: JSON output
@@ -311,7 +367,7 @@ Usage:
   sc-board-id --func-rev           # Functional revision (new format) or HW rev (legacy)
   sc-board-id --board-rev        # Raw revision string
   sc-board-id --name             # Board name only
-  sc-board-id --force-eeprom-read # JSON, force EEPROM read (skip env vars)
+  sc-board-id --force-eeprom-read # JSON, force EEPROM read (no caching)
   sc-board-id --version          # Print version
   sc-board-id -h, --help         # Print this help message
 
@@ -321,7 +377,7 @@ Output:
   --func-rev: Functional revision for new format boards (e.g., '01'), hardware revision for legacy format (e.g., 'C12'). Never returns null.
   --board-rev: Raw revision string (e.g., 'A1.01' or 'C12').
   --name: Card name string only.
-  --force-eeprom-read: JSON output, forces EEPROM read and skips U-Boot env vars.
+  --force-eeprom-read: JSON output, forces EEPROM read and skips U-Boot env vars (does not cache).
   --version: Version number (v1.0.0).
 
 Exit codes:
@@ -330,13 +386,19 @@ Exit codes:
   2: Invalid option
 
 Data Sources (in priority order):
-  1. Primary: U-Boot env 'card1_rev' and 'card1_name' (via fw_printenv)
-  2. Alternate: U-Boot env 'board_rev' and 'board_name' (via fw_printenv)
-  3. EEPROM: FRU Board Info (Board Custom field for rev, product name for name) (via ipmi-fru)
+  1. U-Boot env 'card1_rev' and 'card1_name' (via fw_printenv)
+  2. EEPROM: FRU Board Info (Board Custom field for rev, product name for name) (via ipmi-fru)
+  3. Automatic caching: When env resolution fails but EEPROM succeeds, values are cached
+     to U-Boot env for faster subsequent access (skipped with --force-eeprom-read)
 
 Board Revision Formats:
   * NEW format: 'HW.FUNC' where HW is letter + hex digit (1-F), FUNC is two hex digits (e.g., 'A1.01')
   * LEGACY format: 'HW' where HW is letter + decimal digits (e.g., 'C12')
+
+Caching Behavior:
+  First call (env missing):  Resolves from EEPROM → Caches to env
+  Second call:               Uses env (no EEPROM access needed, faster)
+  With --force-eeprom-read:  Resolves from EEPROM → No caching
 EOF
 }
 
@@ -345,21 +407,8 @@ EOF
 # Returns 0 on success, 1 on failure
 get_resolved_rev() {
   local force_eeprom="${1:-false}"
-  local rev
-
-  if [ "$force_eeprom" != "true" ]; then
-    if rev="$(get_rev_from_env)"; then
-      log_info "resolved card1_rev from env"
-      echo -n "$rev"
-      return 0
-    fi
-    log_info "falling back to EEPROM for card1_rev"
-  else
-    log_info "forced EEPROM read for card1_rev"
-  fi
-
-  if rev="$(get_rev_from_eeprom)"; then
-    echo -n "$rev"
+  if resolve_card1_values "$force_eeprom"; then
+    echo -n "$CARD1_REV_RESOLVED"
     return 0
   fi
 
@@ -425,46 +474,16 @@ get_board_rev() {
   get_resolved_rev "$force_eeprom"
 }
 
-# get_board_name_raw - resolves board name via env (card1_name/board_name) or EEPROM fallback
+# get_board_name_raw - resolves card1_rev and card1_name as a pair, then returns name
 # Returns 0 on success, 1 on failure
 get_board_name_raw() {
-  local name
-  # Only check card1_name; board_name is SOM-level data and must not be used as a fallback
-  if name="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
-    name="$(trim "$name")"
-    if [ -n "$name" ]; then
-      log_info "resolved card1_name from env"
-      echo -n "$(tolower "$name")"
-      return 0
-    fi
-    log_warn "env '$ENV_VAR_NAME_FIELD' is empty"
-  else
-    log_warn "fw_printenv failed or variable '$ENV_VAR_NAME_FIELD' not found"
+  local force_eeprom="${1:-false}"
+  if resolve_card1_values "$force_eeprom"; then
+    echo -n "$CARD1_NAME_RESOLVED"
+    return 0
   fi
 
-  log_info "falling back to EEPROM for card1_name"
-
-  local eeprom
-  eeprom="$(ls /sys/bus/i2c/devices/*54/eeprom 2>/dev/null | head -n1 || true)"
-  if [ -z "$eeprom" ]; then
-    log_warn "EEPROM not found"
-    return 1
-  fi
-
-  # Keep field mapping identical to get_name_from_eeprom().
-  if ! name="$(ipmi-fru --fru-file="$eeprom" --interpret-oem-data 2>/dev/null | awk -F": " '/Board Product Name/ { print $2; exit }')" || [ -z "$name" ]; then
-    log_warn "ipmi-fru failed for EEPROM"
-    return 1
-  fi
-
-  name="$(trim "$name")"
-  if [ -z "$name" ]; then
-    log_warn "Board Product Name not found in EEPROM"
-    return 1
-  fi
-
-  echo -n "$(tolower "$name")"
-  return 0
+  return 1
 }
 
 # get_board_id - returns output by selected mode via stdout
@@ -486,7 +505,7 @@ get_board_id() {
       get_board_rev false
       ;;
     --name)
-      get_board_name_raw
+      get_board_name_raw false
       ;;
     --force-eeprom-read)
       # Explicitly bypass env vars and read from EEPROM.
