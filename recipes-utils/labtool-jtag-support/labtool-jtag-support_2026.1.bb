@@ -15,7 +15,7 @@ SRC_URI = " \
 	file://hw_server.service \
 	file://cs_server.service \
 "
-SRCREV = "90d456a414625163027289c2bda0102125b9baf7"
+SRCREV = "642665e04bfad01016730df2ab446b1c4946ad3b"
 
 inherit systemd
 
