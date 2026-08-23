@@ -10,8 +10,8 @@
 <!--
   Specify MACHINE:TARGET build combinations for CI.
   Comma-separated for multiple. Leave empty for defaults.
-  Default: amd-cortexa53-common:edf-image-everything
-  Example: BUILDS=mac1:recipe1, mac2:recipe2
+  Default: amd-cortexa53-common:system-controller-board-packages
+  Example: BUILDS=amd-cortexa53-common:system-controller-board-packages
 -->
 ```
 BUILDS=
