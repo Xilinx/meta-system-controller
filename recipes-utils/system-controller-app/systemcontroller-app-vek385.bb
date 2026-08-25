@@ -3,8 +3,8 @@ SUMMARY = "System Controller App - VEK385 board specific files"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
-SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608200834/external/systemcontroller-app-vek385.tar.gz"
-SRC_URI[sha256sum] = "429e2b9fb070d2bf52cfe3d334b581dc2cff0bf29df6654df2d24e5d014c0b53"
+SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608241038/external/systemcontroller-app-vek385.tar.gz"
+SRC_URI[sha256sum] = "4e2575455b6e496dcd345ef977362523a2c3f48f73fbb0f706ca4c28b1969ec1"
 
 BOARD = "vek385"
 
@@ -20,7 +20,7 @@ do_install:append() {
 	ln -sr ${D}${datadir}/system-controller-app/board/${BOARD_upper}-A01.json ${D}${datadir}/system-controller-app/board/${BOARD_upper}-A02.json
 
 	install -m 0664 ${WORKDIR}/${BOARD}_A01_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A01_es1_system_wrapper.pdi
-	install -m 0664 ${WORKDIR}/${BOARD}_A02_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A02_es1_system_wrapper.pdi
+	ln -sr ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A01_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/A02_es1_system_wrapper.pdi
 	install -m 0664 ${WORKDIR}/${BOARD}_es1_system_wrapper.pdi ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/es1_system_wrapper.pdi
 	install -m 0664 ${WORKDIR}/${BOARD}_versal_bit.elf ${D}${datadir}/system-controller-app/BIT/${BOARD_upper}/versal_bit.elf
 
