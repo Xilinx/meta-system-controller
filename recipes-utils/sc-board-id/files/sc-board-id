@@ -11,8 +11,9 @@
 #        - Uppercase letter A-Z + decimal integer >= 1
 #
 # Resolution flow:
-#   1. Try U-Boot env vars (via fw_printenv):
-#      - card1_rev / card1_name
+#   1. Try U-Boot env vars (via fw_printenv): discover all cardN_* prefixes and
+#      probe them in numeric order, using the first valid pair:
+#      - cardN_rev / cardN_name
 #   2. On env failure, fallback to EEPROM FRU fields (via ipmi-fru):
 #      - FRU Board Custom (for rev)
 #      - Board Product Name (for name)
@@ -31,8 +32,10 @@
 set -u
 
 # -------------------------- Configuration ------------------------------------
-ENV_VAR_NAME="card1_rev"
-ENV_VAR_NAME_FIELD="card1_name"
+# Card env prefixes (card1_*, card2_*, ...) are discovered dynamically from the
+# U-Boot environment, so any number of nvmem aliases is handled. The same
+# carrier EEPROM at 0x54 may appear under different cardN_* prefixes depending
+# on board topology; the first prefix yielding a valid rev/name pair wins.
 FW_PRINTENV_CMD=("fw_printenv" "-n")
 CARD1_REV_RESOLVED=""
 CARD1_NAME_RESOLVED=""
@@ -192,8 +195,9 @@ parse_card1_rev_json_fragment() {
 
 # -------------------------- Source Helpers ----------------------------------
 get_name_from_env() {
+  local prefix="${1:-card1}"
   local out
-  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME_FIELD" 2>/dev/null)"; then
+  if out="$("${FW_PRINTENV_CMD[@]}" "${prefix}_name" 2>/dev/null)"; then
     out="$(trim "$out")"
     if [ -n "$out" ]; then
       out="$(tolower "$out")"
@@ -231,20 +235,23 @@ get_name_from_eeprom() {
   return 0
 }
 get_rev_from_env() {
+  local prefix="${1:-card1}"
+  local var="${prefix}_rev"
   local out
-  if out="$("${FW_PRINTENV_CMD[@]}" "$ENV_VAR_NAME" 2>/dev/null)"; then
+  if out="$("${FW_PRINTENV_CMD[@]}" "$var" 2>/dev/null)"; then
     out="$(trim "$out")"
     if [ -n "$out" ] && is_valid_card1_rev_any "$out"; then
       echo -n "$(tolower "$(toupper "$out")")"
       return 0
     fi
     if [ -z "$out" ]; then
-      log_warn "env '$ENV_VAR_NAME' is empty"
+      log_warn "env '$var' is empty"
     elif ! is_valid_card1_rev_any "$out"; then
-      log_warn "env '$ENV_VAR_NAME' invalid format: '$out'"
+      log_warn "env '$var' invalid format: '$out'"
     fi
   else
-    log_warn "fw_printenv failed or variable '$ENV_VAR_NAME' not found"
+    # Missing var is expected while probing multiple card prefixes.
+    log_info "env '$var' not set"
   fi
 
   return 1
@@ -307,6 +314,15 @@ cache_values_to_env() {
   return 1
 }
 
+# Discover card env prefixes (card1, card2, ...) that define a *_rev variable,
+# ordered numerically. Prints one prefix per line; empty output if none found.
+discover_card_env_prefixes() {
+  fw_printenv 2>/dev/null \
+    | grep -oE '^card[0-9]+_rev=' \
+    | sed 's/_rev=$//' \
+    | sort -u -V
+}
+
 resolve_card1_values() {
   local force_eeprom="${1:-false}"
   local rev name
@@ -318,14 +334,21 @@ resolve_card1_values() {
 
   if [ "$force_eeprom" != "true" ]; then
     env_attempted="true"
-    if rev="$(get_rev_from_env)" && name="$(get_name_from_env)"; then
-      CARD1_REV_RESOLVED="$rev"
-      CARD1_NAME_RESOLVED="$name"
-      CARD1_SOURCE_RESOLVED="env"
-      log_info "resolved card1_rev and card1_name from env"
-      return 0
+    local prefixes prefix
+    prefixes="$(discover_card_env_prefixes)"
+    if [ -z "$prefixes" ]; then
+      log_info "no cardN_* env vars found"
     fi
-    log_info "falling back to EEPROM for card1_rev and card1_name"
+    for prefix in $prefixes; do
+      if rev="$(get_rev_from_env "$prefix")" && name="$(get_name_from_env "$prefix")"; then
+        CARD1_REV_RESOLVED="$rev"
+        CARD1_NAME_RESOLVED="$name"
+        CARD1_SOURCE_RESOLVED="env"
+        log_info "resolved rev and name from env ($prefix)"
+        return 0
+      fi
+    done
+    log_info "falling back to EEPROM for card rev and name"
   else
     log_info "forced EEPROM read for card1_rev and card1_name"
   fi
@@ -393,7 +416,8 @@ Exit codes:
   2: Invalid option
 
 Data Sources (in priority order):
-  1. U-Boot env 'card1_rev' and 'card1_name' (via fw_printenv)
+  1. U-Boot env 'cardN_rev' and 'cardN_name' (via fw_printenv): all cardN_*
+     prefixes are discovered and probed in numeric order; first valid pair wins
   2. EEPROM: FRU Board Info (Board Custom field for rev, product name for name) (via ipmi-fru)
   3. Automatic caching: When env resolution fails but EEPROM succeeds, values are cached
      to U-Boot env for faster subsequent access (skipped with --force-eeprom-read)

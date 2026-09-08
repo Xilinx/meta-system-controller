@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Direct carrier EEPROM at i2c1 address 0x54, a sibling of the pca9541
+ * arbitrated eeprom_cc. Boards are either arbitration (EEPROM behind the
+ * pca9541 -> eeprom_cc) or no-arbitration (EEPROM directly on i2c1 -> this
+ * node). Both topologies are kept in the DT; U-Boot removes the unused leaf
+ * before Linux enumerates i2c so only one owner of 0x54 remains
+ * (see edf-sc-boot.cmd).
+ */
+/ {
+	aliases {
+		nvmem2 = &eeprom_cc_no_arb;
+	};
+};
+
+&i2c1 {
+	eeprom_cc_no_arb: eeprom@54 {
+		compatible = "atmel,24c128";
+		label = "eeprom_cc";
+		reg = <0x54>;
+		bootph-all;
+	};
+};

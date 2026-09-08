@@ -42,6 +42,27 @@ done
 
 if test -n "${RAUC_BOOTPART}"; then
   fdt addr ${fdtcontroladdr}
+
+  # Select the carrier EEPROM topology before Linux I2C enumeration.
+  i2c dev 1
+  if i2c md 0x72 0 1; then
+    arb_present=1
+  else
+    arb_present=0
+  fi
+
+  if test "${arb_present}" = "1"; then
+    echo "SC: PCA9541 arbitrator present - removing direct carrier eeprom@54"
+    if fdt get value _cc /axi/i2c@ff030000/eeprom@54 compatible; then
+      fdt rm /axi/i2c@ff030000/eeprom@54
+    fi
+  else
+    echo "SC: PCA9541 arbitrator absent - removing arbitrated carrier eeprom@54"
+    if fdt get value _arb /axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb/eeprom@54 compatible; then
+      fdt rm /axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb/eeprom@54
+    fi
+  fi
+
   fdt get value bootargs /chosen bootargs
   env set bootargs "${bootargs} ro rootwait uio_pdrv_genirq.of_id=generic-uio root=${RAUC_BOOTPART} rauc.slot=${RAUC_SLOT}"
   env save
