@@ -3,8 +3,8 @@ SUMMARY = "System Controller App - SCU200 board specific files"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
-SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202608190334/external/systemcontroller-app-scu200.tar.gz"
-SRC_URI[sha256sum] = "fd7d0d57d43366fe9ece09c7a45a2792c7963bd79b856e0cc0faaee379baad84"
+SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202609171022/external/systemcontroller-app-scu200.tar.gz"
+SRC_URI[sha256sum] = "9f0a97d62ef44bcd3e3c66758b75dbe37dfcf581146ecf17949c827752ca1df8"
 
 BOARD = "scu200"
 
