@@ -55,6 +55,7 @@ fi
 # Get board info using sc-board-id (supports both new a1.01 and legacy a1 formats)
 BOARD=$(sc-board-id --name 2>/dev/null)
 REVISION=$(sc-board-id --func-rev 2>/dev/null)
+REV_FORMAT=$(sc-board-id --rev-format 2>/dev/null)
 
 if [[ -z "$BOARD" || -z "$REVISION" ]]; then
     echo "Failed to detect BOARD/REVISION via sc-board-id."
@@ -75,27 +76,51 @@ pkg_exists() {
     dnf "${DNF_ARGS[@]}" -q repoquery --qf '%{name}' "$1" 2>/dev/null | grep -Fxq "$1"
 }
 
-# Build candidate list for board package (descending revision -> base)
+# Build candidate list for board package (descending revision -> base),
+# using the format already resolved by sc-board-id --rev-format ("new" or
+# "legacy") instead of re-deriving it here.
 package_list=()
 
-# Detect revision format:
-#   New format func_rev: 2 hex digits (e.g., "01", "0a", "ff")
-#   Legacy format func_rev: letter + decimal (e.g., "a1", "c12")
-if [[ "$REVISION" =~ ^[0-9a-f]{2}$ ]]; then
-    # New format: each func_rev has its own packagegroup, no fallback needed
-    package_list+=("packagegroup-systemcontroller-${BOARD}-${REVISION}")
-    echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REVISION}"
-else
-    # Legacy format: letter + decimal number, count down for symlink fallback
-    REV_LETTER="${REVISION:0:1}"
-    REV_NUMBER="${REVISION:1}"
-    REV_NUM_INT=$((10#$REV_NUMBER))
-    for ((i=REV_NUM_INT; i>0; i--)); do
-        package_list+=("packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}")
-        echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}"
-    done
-fi
-package_list+=("packagegroup-systemcontroller-${BOARD}")
+case "$REV_FORMAT" in
+    new)
+        echo "Detected new revision format."
+        # New format func_rev must be exactly 2 hex digits (e.g., "01", "0a", "ff"), and not "00".
+        if [[ ! "$REVISION" =~ ^[0-9a-fA-F]{2}$ || "$REVISION" == "00" ]]; then
+            echo "Error: invalid new-format functional revision '${REVISION}' (expected 2 hex digits)."
+            exit 1
+        fi
+
+        # New-format packages are named by functional revision only,
+        # skipping the hardware revision letter entirely.
+        package_list+=("packagegroup-systemcontroller-${BOARD}-${REVISION}")
+        echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REVISION}"
+        ;;
+    legacy)
+        echo "Detected legacy revision format."
+        # Legacy revision: one letter followed by an all-numeric portion.
+        if [[ ! "$REVISION" =~ ^[A-Za-z][0-9]+$ ]]; then
+            echo "Error: invalid legacy-format revision '${REVISION}'."
+            exit 1
+        fi
+
+        # Legacy format: letter + decimal number, count down for symlink fallback
+        REV_LETTER="${REVISION:0:1}"
+        REV_NUMBER="${REVISION:1}"
+        REV_NUM_INT=$((10#$REV_NUMBER))
+        for ((i=REV_NUM_INT; i>0; i--)); do
+            package_list+=("packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}")
+            echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}"
+        done
+
+        # Legacy-only generic fallback (no revision suffix).
+        package_list+=("packagegroup-systemcontroller-${BOARD}")
+        echo "Added package candidate: packagegroup-systemcontroller-${BOARD}"
+        ;;
+    *)
+        # Revision format unresolved/unrecognized: nothing to add.
+        echo "Unrecognized revision format; no package candidates to try."
+        ;;
+esac
 
 # Pick first available board package candidate
 PKG=""

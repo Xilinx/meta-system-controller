@@ -62,6 +62,11 @@ REV_REGEX_LEGACY='^[A-Z](0?[1-9][0-9]*)$'
 #   --board-rev             Output raw card1_rev (scalar string).
 #                           Examples: "a1.01" (new) or "c12" (legacy)
 #
+#   --rev-format            Output the parsed revision format only (scalar string).
+#                           Either "new" or "legacy". Lets external consumers
+#                           (e.g. setup_board.sh) branch on format without
+#                           re-deriving it from the revision string.
+#
 #   --name                  Output board name only (scalar string).
 #                           Resolves both card1_rev and card1_name as a pair
 #                           from the same source (env or EEPROM).
@@ -366,6 +371,7 @@ Usage:
   sc-board-id --hw-rev           # Hardware revision only
   sc-board-id --func-rev           # Functional revision (new format) or HW rev (legacy)
   sc-board-id --board-rev        # Raw revision string
+  sc-board-id --rev-format       # Revision format: "new" or "legacy"
   sc-board-id --name             # Board name only
   sc-board-id --force-eeprom-read # JSON, force EEPROM read (no caching)
   sc-board-id --version          # Print version
@@ -376,6 +382,7 @@ Output:
   --hw-rev: Hardware revision only (e.g., 'A1' or 'C12').
   --func-rev: Functional revision for new format boards (e.g., '01'), hardware revision for legacy format (e.g., 'C12'). Never returns null.
   --board-rev: Raw revision string (e.g., 'A1.01' or 'C12').
+  --rev-format: Parsed revision format only: 'new' or 'legacy'.
   --name: Card name string only.
   --force-eeprom-read: JSON output, forces EEPROM read and skips U-Boot env vars (does not cache).
   --version: Version number (v1.0.0).
@@ -466,6 +473,25 @@ get_board_func_rev() {
   return 1
 }
 
+# get_board_rev_format - returns the parsed revision format ("new" or "legacy")
+# Parameters: $1 = force_eeprom (true/false, default false)
+# Returns 0 on success, 1 on failure (unresolved or unrecognized format)
+get_board_rev_format() {
+  local force_eeprom="${1:-false}"
+  local rev fmt
+  if ! rev="$(get_resolved_rev "$force_eeprom")"; then
+    return 1
+  fi
+
+  fmt="$(get_rev_format "$rev")"
+  if [ -z "$fmt" ]; then
+    return 1
+  fi
+
+  echo -n "$fmt"
+  return 0
+}
+
 # get_board_rev - returns raw card1_rev via stdout
 # Parameters: $1 = force_eeprom (true/false, default false)
 # Returns 0 on success, 1 on failure
@@ -503,6 +529,9 @@ get_board_id() {
       ;;
     --board-rev)
       get_board_rev false
+      ;;
+    --rev-format)
+      get_board_rev_format false
       ;;
     --name)
       get_board_name_raw false
