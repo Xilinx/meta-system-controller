@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Reserved CMA region backing the JTAG TDO buffer dma-buf heap on K24 SC.
+ */
+/ {
+	reserved-memory {
+		jtag_tdo_buffer: jtag_tdo_buffer@7f800000 {
+			compatible = "shared-dma-pool";
+			reusable;
+			reg = <0x0 0x7f800000 0x0 0x400000>;
+		};
+	};
+
+	__symbols__ {
+		jtag_tdo_buffer = "/reserved-memory/jtag_tdo_buffer@7f800000";
+	};
+};

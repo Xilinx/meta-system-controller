@@ -1,0 +1,51 @@
+From fda947d72910c9940beefcddd511c92be66579d5 Mon Sep 17 00:00:00 2001
+From: Maxime Ripard <mripard@kernel.org>
+Date: Mon, 13 Oct 2025 10:35:18 +0200
+Subject: [PATCH 4/6] dma: contiguous: Register reusable CMA regions at boot
+
+In order to create a CMA dma-buf heap instance for each CMA heap region
+in the system, we need to collect all of them during boot.
+
+They are created from two main sources: the reserved-memory regions in
+the device tree, and the default CMA region created from the
+configuration or command line parameters, if no default region is
+provided in the device tree.
+
+Let's collect all the device-tree defined CMA regions flagged as
+reusable.
+
+Reviewed-by: T.J. Mercier <tjmercier@google.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+Link: https://lore.kernel.org/r/20251013-dma-buf-ecc-heap-v8-3-04ce150ea3d9@kernel.org
+---
+ kernel/dma/contiguous.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index 9e5d63efe7c5..2bae3433a4a3 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -42,6 +42,7 @@
+ #include <linux/memblock.h>
+ #include <linux/err.h>
+ #include <linux/sizes.h>
++#include <linux/dma-buf/heaps/cma.h>
+ #include <linux/dma-map-ops.h>
+ #include <linux/cma.h>
+ #include <linux/nospec.h>
+@@ -490,6 +491,10 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
+ 	pr_info("Reserved memory: created CMA memory pool at %pa, size %ld MiB\n",
+ 		&rmem->base, (unsigned long)rmem->size / SZ_1M);
+ 
++	err = dma_heap_cma_register_heap(cma);
++	if (err)
++		pr_warn("Couldn't register CMA heap.");
++
+ 	return 0;
+ }
+ RESERVEDMEM_OF_DECLARE(cma, "shared-dma-pool", rmem_cma_setup);
+-- 
+2.43.7
+

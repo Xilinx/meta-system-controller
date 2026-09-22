@@ -1,0 +1,59 @@
+From 56fa7275851a365d3df52b866ab5a2c4fb464c58 Mon Sep 17 00:00:00 2001
+From: Maxime Ripard <mripard@kernel.org>
+Date: Mon, 13 Oct 2025 10:35:16 +0200
+Subject: [PATCH 2/6] doc: dma-buf: List the heaps by name
+
+Since we're going to introduce multiple instances of the CMA heap
+driver, there's no single CMA heap anymore.
+
+Let's use the heap name instead to differentiate between all the heaps
+available in the system.
+
+While we're at it, let's also rework the backward compatibility part to
+make it easier to amend later on.
+
+Reviewed-by: T.J. Mercier <tjmercier@google.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+  [sumits: rebased to latest Doc]
+Link: https://lore.kernel.org/r/20251013-dma-buf-ecc-heap-v8-1-04ce150ea3d9@kernel.org
+---
+ Documentation/userspace-api/dma-buf-heaps.rst | 22 ++++++++++---------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
+index a0979440d2a4..5d68cab9ef13 100644
+--- a/Documentation/userspace-api/dma-buf-heaps.rst
++++ b/Documentation/userspace-api/dma-buf-heaps.rst
+@@ -16,16 +16,18 @@ following heaps:
+ 
+  - The ``system`` heap allocates virtually contiguous, cacheable, buffers.
+ 
+- - The ``cma`` heap allocates physically contiguous, cacheable,
+-   buffers. Only present if a CMA region is present. Such a region is
+-   usually created either through the kernel commandline through the
+-   ``cma`` parameter, a memory region Device-Tree node with the
+-   ``linux,cma-default`` property set, or through the ``CMA_SIZE_MBYTES`` or
+-   ``CMA_SIZE_PERCENTAGE`` Kconfig options. The heap's name in devtmpfs is
+-   ``default_cma_region``. For backwards compatibility, when the
+-   ``DMABUF_HEAPS_CMA_LEGACY`` Kconfig option is set, a duplicate node is
+-   created following legacy naming conventions; the legacy name might be
+-   ``reserved``, ``linux,cma``, or ``default-pool``.
++ - The ``default_cma_region`` heap allocates physically contiguous,
++   cacheable, buffers. Only present if a CMA region is present. Such a
++   region is usually created either through the kernel commandline
++   through the ``cma`` parameter, a memory region Device-Tree node with
++   the ``linux,cma-default`` property set, or through the
++   ``CMA_SIZE_MBYTES`` or ``CMA_SIZE_PERCENTAGE`` Kconfig options. Prior
++   to Linux 6.17, its name wasn't stable and could be called
++   ``reserved``, ``linux,cma``, or ``default-pool``, depending on the
++   platform. From Linux 6.17 onwards, the creation of these heaps is
++   controlled through the ``DMABUF_HEAPS_CMA_LEGACY`` Kconfig option for
++   backwards compatibility.
++
+ Naming Convention
+ =================
+ 
+-- 
+2.43.7
+

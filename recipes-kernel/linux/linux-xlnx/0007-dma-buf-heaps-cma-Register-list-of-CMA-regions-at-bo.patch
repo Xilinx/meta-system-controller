@@ -1,0 +1,98 @@
+From 5f1b9e7ccd7900c00ed434302f461446fedfaea8 Mon Sep 17 00:00:00 2001
+From: Maxime Ripard <mripard@kernel.org>
+Date: Mon, 13 Oct 2025 10:35:17 +0200
+Subject: [PATCH 3/6] dma-buf: heaps: cma: Register list of CMA regions at boot
+
+In order to create a CMA heap instance for each CMA region found in the
+system, we need to register each of these instances.
+
+While it would appear trivial, the CMA regions are created super early
+in the kernel boot process, before most of the subsystems are
+initialized. Thus, we can't just create an exported function to create a
+heap from the CMA region being initialized.
+
+What we can do however is create a two-step process, where we collect
+all the CMA regions into an array early on, and then when we initialize
+the heaps we iterate over that array and create the heaps from the CMA
+regions we collected.
+
+Reviewed-by: T.J. Mercier <tjmercier@google.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+Link: https://lore.kernel.org/r/20251013-dma-buf-ecc-heap-v8-2-04ce150ea3d9@kernel.org
+---
+ MAINTAINERS                       |  1 +
+ drivers/dma-buf/heaps/cma_heap.c  | 14 ++++++++++++++
+ include/linux/dma-buf/heaps/cma.h | 16 ++++++++++++++++
+ 3 files changed, 31 insertions(+)
+ create mode 100644 include/linux/dma-buf/heaps/cma.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5dff9f572db6..09bc5d637ac6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6756,6 +6756,7 @@ F:	Documentation/userspace-api/dma-buf-alloc-exchange.rst
+ F:	drivers/dma-buf/
+ F:	include/linux/*fence.h
+ F:	include/linux/dma-buf.h
++F:	include/linux/dma-buf/
+ F:	include/linux/dma-resv.h
+ K:	\bdma_(?:buf|fence|resv)\b
+ 
+diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
+index 93be88b805fe..2cb48a1c6050 100644
+--- a/drivers/dma-buf/heaps/cma_heap.c
++++ b/drivers/dma-buf/heaps/cma_heap.c
+@@ -11,6 +11,7 @@
+  */
+ #include <linux/cma.h>
+ #include <linux/dma-buf.h>
++#include <linux/dma-buf/heaps/cma.h>
+ #include <linux/dma-heap.h>
+ #include <linux/dma-map-ops.h>
+ #include <linux/err.h>
+@@ -23,6 +24,19 @@
+ #include <linux/vmalloc.h>
+ 
+ 
++static struct cma *dma_areas[MAX_CMA_AREAS] __initdata;
++static unsigned int dma_areas_num __initdata;
++
++int __init dma_heap_cma_register_heap(struct cma *cma)
++{
++	if (dma_areas_num >= ARRAY_SIZE(dma_areas))
++		return -EINVAL;
++
++	dma_areas[dma_areas_num++] = cma;
++
++	return 0;
++}
++
+ struct cma_heap {
+ 	struct dma_heap *heap;
+ 	struct cma *cma;
+diff --git a/include/linux/dma-buf/heaps/cma.h b/include/linux/dma-buf/heaps/cma.h
+new file mode 100644
+index 000000000000..e751479e21e7
+--- /dev/null
++++ b/include/linux/dma-buf/heaps/cma.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef DMA_BUF_HEAP_CMA_H_
++#define DMA_BUF_HEAP_CMA_H_
++
++struct cma;
++
++#ifdef CONFIG_DMABUF_HEAPS_CMA
++int dma_heap_cma_register_heap(struct cma *cma);
++#else
++static inline int dma_heap_cma_register_heap(struct cma *cma)
++{
++	return 0;
++}
++#endif // CONFIG_DMABUF_HEAPS_CMA
++
++#endif // DMA_BUF_HEAP_CMA_H_
+-- 
+2.43.7
+

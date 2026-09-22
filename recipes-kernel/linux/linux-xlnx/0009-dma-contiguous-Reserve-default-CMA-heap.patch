@@ -1,0 +1,48 @@
+From a364a7d5652ffd4795be80f3d6bec6667caf262b Mon Sep 17 00:00:00 2001
+From: Maxime Ripard <mripard@kernel.org>
+Date: Mon, 13 Oct 2025 10:35:19 +0200
+Subject: [PATCH 5/6] dma: contiguous: Reserve default CMA heap
+
+The CMA code, in addition to the reserved-memory regions in the device
+tree, will also register a default CMA region if the device tree doesn't
+provide any, with its size and position coming from either the kernel
+command-line or configuration.
+
+Let's register that one for use to create a heap for it.
+
+Reviewed-by: T.J. Mercier <tjmercier@google.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+Link: https://lore.kernel.org/r/20251013-dma-buf-ecc-heap-v8-4-04ce150ea3d9@kernel.org
+---
+ kernel/dma/contiguous.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index 2bae3433a4a3..30a07cf4e370 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -239,6 +239,8 @@ void __init dma_contiguous_reserve(phys_addr_t limit)
+ 	}
+ 
+ 	if (selected_size && !dma_contiguous_default_area) {
++		int ret;
++
+ 		pr_debug("%s: reserving %ld MiB for global area\n", __func__,
+ 			 (unsigned long)selected_size / SZ_1M);
+ 
+@@ -246,6 +248,10 @@ void __init dma_contiguous_reserve(phys_addr_t limit)
+ 					    selected_limit,
+ 					    &dma_contiguous_default_area,
+ 					    fixed);
++
++		ret = dma_heap_cma_register_heap(dma_contiguous_default_area);
++		if (ret)
++			pr_warn("Couldn't register default CMA heap.");
+ 	}
+ }
+ 
+-- 
+2.43.7
+

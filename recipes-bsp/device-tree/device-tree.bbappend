@@ -13,4 +13,7 @@ FILESEXTRAPATHS:prepend:zynqmp-k24-sc-sdt-base:linux := "${THISDIR}/files:"
 
 EXTRA_DT_INCLUDE_FILES:append:zynqmp-k24-sc-sdt-base:linux = " sc-k24-carrier-eeprom.dtsi"
 
+# Reserved CMA region for the JTAG TDO buffer dma-buf heap, K24 SC only.
+EXTRA_DT_INCLUDE_FILES:append:zynqmp-k24-sc-sdt-base:linux = " sc-k24-jtag-tdo-buffer.dtsi"
+
 include device-tree-sc-${XILINX_XSCT_VERSION}.inc
