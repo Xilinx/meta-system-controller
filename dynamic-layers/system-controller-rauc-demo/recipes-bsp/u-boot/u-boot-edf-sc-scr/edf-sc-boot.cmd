@@ -44,12 +44,26 @@ if test -n "${RAUC_BOOTPART}"; then
   fdt addr ${fdtcontroladdr}
 
   # Select the carrier EEPROM topology before Linux I2C enumeration.
+
+  # Mute i2c probe output by redirecting stdio to nulldev; save and restore the
+  # existing console so any console configuration is preserved.
+  setenv sc_saved_stdout "${stdout}"
+  setenv sc_saved_stderr "${stderr}"
+  setenv stdout nulldev
+  setenv stderr nulldev
+
   i2c dev 1
   if i2c md 0x72 0 1; then
     arb_present=1
   else
     arb_present=0
   fi
+
+  setenv stdout "${sc_saved_stdout}"
+  setenv stderr "${sc_saved_stderr}"
+  setenv sc_saved_stdout
+  setenv sc_saved_stderr
+
 
   if test "${arb_present}" = "1"; then
     echo "SC: PCA9541 arbitrator present - removing direct carrier eeprom@54"
