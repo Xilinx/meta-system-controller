@@ -1,6 +1,8 @@
 [Unit]
 Description=Enable xvc service
-After=dfx-mgr-fw-load.service
+Wants=jtag-mode.service
+After=dfx-mgr-fw-load.service jtag-mode.service
+ConditionPathExists=/run/labtool/mode-xvc
 
 [Service]
 Type=simple

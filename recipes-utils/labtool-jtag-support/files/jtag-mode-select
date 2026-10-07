@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# Copyright (c) 2026 Advanced Micro Devices, Inc.  All rights reserved.
+#
+# SPDX-License-Identifier: MIT
+#
+# jtag-mode-select: pick how hw_server reaches the board's JTAG chain, from
+# what the loaded PL design provides:
+#
+#   xvc         a debug_bridge UIO, served by xvc_server (xvc.service)
+#   controller  jtag_ctl and jtag_clock UIOs, the AMD JTAG controller
+#               (jtag-controller-config.service)
+#
+# Writes, under /run/labtool:
+#   jtag-mode    the selected mode
+#   mode-<mode>  flag file tested by the services' ConditionPathExists
+#   hws.txt      link to the hw_server init file for that mode
+#
+# If neither appears in time (no board firmware installed yet), nothing is
+# written and hw_server is skipped by its ConditionPathExists.
+
+RUN_DIR="/run/labtool"
+TIMEOUT=30
+
+# Succeed if a UIO's device path contains $1. Matches the same way as
+# xvc.service and jtag-controller-config.service find their devices.
+uio_present() {
+    local uio
+    for uio in /sys/class/uio/uio*; do
+        if [[ -L "$uio" && "$(readlink "$uio")" == *"$1"* ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+mkdir -p "$RUN_DIR"
+rm -f "$RUN_DIR/jtag-mode" "$RUN_DIR"/mode-* "$RUN_DIR/hws.txt"
+
+mode=""
+for ((i = 0; i < TIMEOUT * 10; i++)); do
+    if uio_present jtag_ctl && uio_present jtag_clock; then
+        mode="controller"
+        init="/etc/hws0.txt"
+        break
+    fi
+    if uio_present debug_bridge; then
+        mode="xvc"
+        init="/etc/hws-xvc.txt"
+        break
+    fi
+    sleep 0.1
+done
+
+if [[ -z "$mode" ]]; then
+    echo "No debug_bridge or jtag_ctl/jtag_clock UIO after ${TIMEOUT}s;" \
+         "is the board firmware installed? hw_server will not start."
+    exit 0
+fi
+
+echo "$mode" >"$RUN_DIR/jtag-mode"
+touch "$RUN_DIR/mode-$mode"
+ln -s "$init" "$RUN_DIR/hws.txt"
+echo "JTAG mode: $mode (hw_server init $init)"

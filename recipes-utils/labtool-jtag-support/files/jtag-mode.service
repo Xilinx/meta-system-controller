@@ -1,0 +1,12 @@
+[Unit]
+Description=Select the JTAG path (XVC or JTAG controller) for hw_server
+After=dfx-mgr-fw-load.service
+Before=xvc.service jtag-controller-config.service hw_server.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/jtag-mode-select
+
+[Install]
+WantedBy=multi-user.target

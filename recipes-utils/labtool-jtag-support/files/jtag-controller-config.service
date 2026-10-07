@@ -1,0 +1,15 @@
+[Unit]
+Description=Generate AVC JTAG controller config
+Wants=jtag-mode.service
+After=dfx-mgr-fw-load.service jtag-mode.service
+ConditionPathExists=/run/labtool/mode-controller
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sh -c 'while [ -z "$(ls -l /sys/class/uio | grep jtag_ctl)" ] || [ -z "$(ls -l /sys/class/uio | grep jtag_clock)" ]; do sleep 0.1; done'
+ExecStartPre=/bin/sh -c 'heap=$(ls /dev/dma_heap/jtag_tdo_buffer@* 2>/dev/null | head -1); [ -n "$heap" ] && /usr/bin/dma_heap_test "$(basename $heap)" 0x100000'
+ExecStart=/usr/bin/jtag-controller-config.sh
+
+[Install]
+WantedBy=multi-user.target
