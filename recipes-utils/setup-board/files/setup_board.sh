@@ -111,16 +111,18 @@ case "$REV_FORMAT" in
             package_list+=("packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}")
             echo "Added package candidate: packagegroup-systemcontroller-${BOARD}-${REV_LETTER}${i}"
         done
-
-        # Legacy-only generic fallback (no revision suffix).
-        package_list+=("packagegroup-systemcontroller-${BOARD}")
-        echo "Added package candidate: packagegroup-systemcontroller-${BOARD}"
         ;;
     *)
         # Revision format unresolved/unrecognized: nothing to add.
-        echo "Unrecognized revision format; no package candidates to try."
+        echo "Unrecognized revision format; falling back to the default packagegroup only."
         ;;
 esac
+
+# Default fallback (common to all formats): the plain board packagegroup points
+# to the latest available packagegroup and records the default firmware for
+# dfx-mgr via its post-install script.
+package_list+=("packagegroup-systemcontroller-${BOARD}")
+echo "Added package candidate: packagegroup-systemcontroller-${BOARD}"
 
 # Pick first available board package candidate
 PKG=""

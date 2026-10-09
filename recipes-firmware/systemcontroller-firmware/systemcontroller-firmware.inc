@@ -25,3 +25,13 @@ python move_fw_files () {
     shutil.move(os.path.join(s, fw_filename + '.bit'), os.path.join(s, pn + '.bit'))
     shutil.move(os.path.join(s, fw_filename + '.dtsi'), os.path.join(s, pn + '.dtsi'))
 }
+
+# dfx-mgr default firmware name (board-revision), derived from the recipe name.
+FIRMWARE_APP_NAME ?= "${@d.getVar('PN').replace('systemcontroller-firmware-', '')}"
+
+# Every firmware records itself as the dfx-mgr default on target install, so the
+# most recently installed board firmware is the one loaded on boot.
+pkg_postinst_ontarget:${PN}() {
+	mkdir -p ${sysconfdir}/dfx-mgrd
+	echo "${FIRMWARE_APP_NAME}" > ${sysconfdir}/dfx-mgrd/default_firmware
+}

@@ -1,12 +1,12 @@
-DESCRIPTION = "Required packages for vpk360"
+DESCRIPTION = "Default packagegroup for VPK360 pointing to the latest available revision packagegroup"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit packagegroup
 
-VPK360_PACKAGES = " \
-			systemcontroller-firmware-vpk360-a1 \
-			systemcontroller-app-vpk360 \
-			"
+# Points to the latest available revision packagegroup for this board.
+VPK360_DEFAULT_PACKAGES = " \
+	packagegroup-systemcontroller-vpk360-a1 \
+	"
 
-RDEPENDS:${PN} = "${VPK360_PACKAGES}"
+RDEPENDS:${PN} = "${VPK360_DEFAULT_PACKAGES}"

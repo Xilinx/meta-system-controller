@@ -1,13 +1,12 @@
-DESCRIPTION = "Required packages for VEK385"
+DESCRIPTION = "Default packagegroup for VEK385 pointing to the latest available revision packagegroup"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit packagegroup
 
-VEK385_PACKAGES = " \
-		systemcontroller-app-vek385 \
-		systemcontroller-firmware-vek385-a01 \
-        "
+# Points to the latest available revision packagegroup for this board.
+VEK385_DEFAULT_PACKAGES = " \
+	packagegroup-systemcontroller-vek385-b1 \
+	"
 
-RDEPENDS:${PN} = "${VEK385_PACKAGES}"
-
+RDEPENDS:${PN} = "${VEK385_DEFAULT_PACKAGES}"

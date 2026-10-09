@@ -1,12 +1,12 @@
-DESCRIPTION = "Packagegroup for the VRK165-A1 SC, including the SC app and firmware required for system functionality"
+DESCRIPTION = "Default packagegroup for VRK165 pointing to the latest available revision packagegroup"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit packagegroup
 
-VRK165_PACKAGES = " \
-		systemcontroller-app-vrk165 \
-		systemcontroller-firmware-vrk165-a1 \
-"
+# Points to the latest available revision packagegroup for this board.
+VRK165_DEFAULT_PACKAGES = " \
+	packagegroup-systemcontroller-vrk165-b1 \
+	"
 
-RDEPENDS:${PN} = "${VRK165_PACKAGES}"
+RDEPENDS:${PN} = "${VRK165_DEFAULT_PACKAGES}"
