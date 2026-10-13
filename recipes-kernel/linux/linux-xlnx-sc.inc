@@ -7,6 +7,9 @@ SRC_URI:append:amd-cortexa53-common = " file://0003-iio-adc-xilinx-xadc-Add-I2C-
 SRC_URI:append:amd-cortexa53-common = " file://0004-arm64-xilinx-Enable-XADC-I2C-interface.patch"
 SRC_URI:append:amd-cortexa53-common = " file://0001-iio-adc-xilinx-xadc-Handle-I2C-errors-with-known-val.patch"
 
+# Enable i2c-mux-gpio driver (CONFIG_I2C_MUX_GPIO)
+SRC_URI:append:amd-cortexa53-common = " file://i2c-mux-gpio.cfg"
+
 # DMA-buf heaps: CMA heap for reserved memory regions (cherry-picked from mainline)
 # Original commits:
 #   507211e3c7a1 Documentation: dma-buf: heaps: Add naming guidelines
