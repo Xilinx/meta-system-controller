@@ -18,7 +18,7 @@ SRC_URI = " \
 	file://cs_server.service \
 	file://jtag-controller-config.service \
 "
-SRCREV = "9b01e9f855a1d4d701b168bbf111a1b703bc7a97"
+SRCREV = "c6b9d6664078da939c1dc26e84ac63ce6ee40e12"
 
 inherit systemd
 
