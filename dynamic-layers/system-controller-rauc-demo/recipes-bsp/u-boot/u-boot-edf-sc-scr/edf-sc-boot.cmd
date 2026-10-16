@@ -73,7 +73,7 @@ if test -n "${RAUC_BOOTPART}"; then
   else
     echo "SC: PCA9541 arbitrator absent - removing arbitrated carrier eeprom@54"
     if fdt get value _arb /axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb/eeprom@54 compatible; then
-      fdt rm /axi/i2c@ff030000/i2c-arbitrator@72/i2c-arb/eeprom@54
+      fdt rm /axi/i2c@ff030000/i2c-arbitrator@72
     fi
   fi
 
