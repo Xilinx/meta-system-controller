@@ -4,12 +4,12 @@ SUMMARY = "Scripts used to program Versal and Kria OSPI and QSPI Boot image"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=15a2ee395e9805633766dce7d5d10a0f"
 
-BRANCH = "main"
+BRANCH = "8.0_release_candidate"
 SRC_URI = " \
 	git://github.com/Xilinx/embpf-bootfw-update-tool.git;branch=${BRANCH};protocol=https \
 "
 
-SRCREV = "9cdeb9ea7d2a7e733c904c4d6f22120bc71f075d"
+SRCREV = "01bdcfa578d9a0a9173c4e703a362962c7b867da"
 
 S="${WORKDIR}/git"
 
