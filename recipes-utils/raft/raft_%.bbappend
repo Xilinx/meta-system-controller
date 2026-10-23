@@ -3,7 +3,7 @@ COMPATIBLE_MACHINE:amd-cortexa53-common = "${MACHINE}"
 
 BRANCH = "2025.2"
 SRC_URI = "git://github.com/Xilinx/RAFT;protocol=https;branch=${BRANCH}"
-SRCREV = "946d0862aa8cec7ce48456c46a7e1fc678693ce5"
+SRCREV = "ec00f2200a3ddf0d491cc31c4ccc37761eb78a0c"
 
 PACKAGECONFIG:append:amd-cortexa53-common = " raftstartupsc"
 
