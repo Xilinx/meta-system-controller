@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = " \
 	"
 BRANCH = "xlnx_rel_v2025.2"
 SRC_URI = "git://github.com/Xilinx/versal-sc-firmware.git;protocol=https;branch=${BRANCH}"
-SRCREV ?= "f29ab3c5760a6d31d859566b19aee1719353b7d2"
+SRCREV ?= "2394b3ccf5f303439c7b2e14670c128af9a6eeb7"
 
 PR = 'r1'
 

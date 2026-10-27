@@ -22,6 +22,8 @@ SC_BOARDS_PACKAGES = " \
 	packagegroup-systemcontroller-vrk165 \
 	packagegroup-systemcontroller-vrk165-a1 \
 	packagegroup-systemcontroller-vrk165-b1 \
+	packagegroup-systemcontroller-vmk365 \
+	packagegroup-systemcontroller-vmk365-01 \
 "
 
 RDEPENDS:${PN} = "${SC_BOARDS_PACKAGES}"
