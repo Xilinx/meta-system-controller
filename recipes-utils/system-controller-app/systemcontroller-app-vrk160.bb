@@ -3,8 +3,8 @@ SUMMARY = "System Controller App - VRK160 board specific files"
 LICENSE = "Proprietary & MIT"
 LIC_FILES_CHKSUM:append = " file://${WORKDIR}/LICENSE_BINARIES.md;md5=fef5c700acd3d5fa08c24279a8126704"
 
-SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202610061237/external/systemcontroller-app-vrk160.tar.gz"
-SRC_URI[sha256sum] = "cec3a298955e6af32e2be8c1334ac8942ca047471ac141a4b5e7016ef8c3feec"
+SRC_URI = "https://edf.amd.com/sswreleases/rel-v2025.2/system-controller/sc_app_bsp/2025.2/2025.2_202610270257/external/systemcontroller-app-vrk160.tar.gz"
+SRC_URI[sha256sum] = "4f9cdc6dae485d9f7b08e477b817f0eb6e5ba4465ec9dc50558ab964eb0422c3"
 
 BOARD = "vrk160"
 
