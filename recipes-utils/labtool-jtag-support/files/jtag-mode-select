@@ -20,7 +20,7 @@
 # written and hw_server is skipped by its ConditionPathExists.
 
 RUN_DIR="/run/labtool"
-TIMEOUT=30
+TIMEOUT=5
 
 # Succeed if a UIO's device path contains $1. Matches the same way as
 # xvc.service and jtag-controller-config.service find their devices.
