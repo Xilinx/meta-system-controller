@@ -3,11 +3,15 @@ name: Dependency Merge Notify
 on:
   pull_request:
     types: [closed]
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   dep-notify:
-    if: github.event.pull_request.merged == true
+    # Run on a merge (closed+merged) or on an approval review (co-merge re-eval).
+    if: github.event.pull_request.merged == true || github.event.review.state == 'approved'
     uses: AMD-AECG-SSW-PUBLIC/sc-scripts/.github/workflows/sc_dep_merge_notify.yml@master
     with:
-      merged_pr_url: ${{ github.event.pull_request.html_url }}
+      merged_pr_url: ${{ github.event.pull_request.merged == true && github.event.pull_request.html_url || '' }}
+      updated_pr_url: ${{ github.event.review.state == 'approved' && github.event.pull_request.html_url || '' }}
     secrets: inherit

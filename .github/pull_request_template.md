@@ -19,7 +19,8 @@ BUILDS=
 
 ## Cross-Repo Dependencies
 <!--
-  If this PR depends on a PR from another repo, specify it below.
+  If this PR depends on a PR from another repo, put it in the DEPENDS code block
+  below (it MUST be inside the ``` ``` block, NOT in this comment).
   Use the full GitHub PR URL. One DEPENDS per line for multiple deps.
   Format:
     DEPENDS=https://github.com/org/repo/pull/NUMBER
@@ -28,8 +29,11 @@ BUILDS=
     DEPENDS=https://github.com/org/repo2/pull/M
   Or comma-separated:
     DEPENDS=https://github.com/org/repo1/pull/N, https://github.com/org/repo2/pull/M
-  Leave empty if no cross-repo dependencies.
+  Leave the block empty if no cross-repo dependencies.
 -->
+```
+DEPENDS=
+```
 
 
 ## Additional Notes
